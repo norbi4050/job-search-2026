@@ -101,7 +101,7 @@ Claude Code · Cursor
 ## Languages
 
 - **Spanish:** native
-- **English:** C1 Advanced (EF SET certification 61/100) · 3 years living in Australia with daily professional use
+- **English:** Upper-intermediate (B2) · EF SET certification 61/100 · 3 years living in Australia with daily operational use
 
 ---
 
