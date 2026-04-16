@@ -1232,11 +1232,11 @@ git tag v1-empleo-conseguido
 ## Checklist global de progreso
 
 **Setup (semana 1):**
-- [ ] Task 1.1 — Estructura repo
-- [ ] Task 1.2 — CV español
-- [ ] Task 1.3 — CV inglés
-- [ ] Task 1.4 — LinkedIn optimizado
-- [ ] Task 1.5 — Caso de estudio
+- [x] Task 1.1 — Estructura repo (2026-04-16)
+- [x] Task 1.2 — CV español (2026-04-16)
+- [x] Task 1.3 — CV inglés (2026-04-16)
+- [x] Task 1.4 — LinkedIn optimizado (2026-04-16)
+- [ ] Task 1.5 — Caso de estudio (escrito ✓ · pendiente publicar)
 - [ ] Task 2.1 — Howdy
 - [ ] Task 2.2 — Terminal
 - [ ] Task 2.3 — Lemon
