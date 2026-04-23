@@ -329,13 +329,13 @@ git commit -m "feat(WF08): redirect automático a WhatsApp post-booking (Feature
 **Files:**
 - Modify: `.work/wf02-code.js` (helpers al inicio, junto a `sendList`)
 
-- [ ] **Step 1: Pull fresh copy de WF02**
+- [x] **Step 1: Pull fresh copy de WF02**
 
 ```bash
 node .work/pull.js la5XjIMeKIMoTa0q .work/wf02.json .work/wf02-code.js 1
 ```
 
-- [ ] **Step 2: Agregar función `sendCTAUrl` después de `sendList`**
+- [x] **Step 2: Agregar función `sendCTAUrl` después de `sendList`**
 
 Buscar en `.work/wf02-code.js` el final de `sendList`:
 
@@ -367,7 +367,7 @@ async function sendCTAUrl(phone, text, buttonText, url) {
 }
 ```
 
-- [ ] **Step 3: Verificar syntax**
+- [x] **Step 3: Verificar syntax**
 
 ```bash
 node --check .work/wf02-code.js
@@ -380,7 +380,7 @@ Expected: sin output.
 **Files:**
 - Modify: `.work/wf02-code.js` función `mostrarDias()`
 
-- [ ] **Step 1: Reemplazar el `sendText` final de `mostrarDias`**
+- [x] **Step 1: Reemplazar el `sendText` final de `mostrarDias`**
 
 Buscar:
 
@@ -402,7 +402,7 @@ await sendCTAUrl(ph,
 **Files:**
 - Modify: `.work/wf02-code.js` función `triggerWaitlist()`
 
-- [ ] **Step 1: Reemplazar el `sendText` de `triggerWaitlist`**
+- [x] **Step 1: Reemplazar el `sendText` de `triggerWaitlist`**
 
 Buscar:
 
@@ -424,7 +424,7 @@ await sendCTAUrl(wPac[0].telefono_wa,
 **Files:**
 - Modify: `.work/wf02-code.js` estado `esperando_seguimiento`
 
-- [ ] **Step 1: Reemplazar el `sendText` del agendado de control**
+- [x] **Step 1: Reemplazar el `sendText` del agendado de control**
 
 Dentro del bloque `if (btnId === 'fb_seguimiento_si') { ... }`, buscar:
 
@@ -443,7 +443,7 @@ await sendCTAUrl(phone,
 
 ## Task 8: Push WF02 y verificación live Feature 2
 
-- [ ] **Step 1: Verificar syntax final**
+- [x] **Step 1: Verificar syntax final**
 
 ```bash
 node --check .work/wf02-code.js
@@ -451,7 +451,7 @@ node --check .work/wf02-code.js
 
 Expected: sin output.
 
-- [ ] **Step 2: Push WF02**
+- [x] **Step 2: Push WF02**
 
 ```bash
 node .work/push.js la5XjIMeKIMoTa0q .work/wf02.json .work/wf02-code.js 1
@@ -459,7 +459,7 @@ node .work/push.js la5XjIMeKIMoTa0q .work/wf02.json .work/wf02-code.js 1
 
 Expected: `Status: 200 / OK — workflow actualizado`
 
-- [ ] **Step 3: Test live del call site #1 (mostrarDias)**
+- [x] **Step 3: Test live del call site #1 (mostrarDias)**
 
 Desde WhatsApp: sacar un turno hasta el paso donde normalmente se mandaba el link.
 
