@@ -1507,6 +1507,8 @@ git commit -m "feat(WF02): verificación proactiva de datos + actualización sta
 
 # FASE 5 — Integración end-to-end y cleanup
 
+> **Estado 2026-04-23:** Features 1, 2, 3, 4 implementadas y deployadas en n8n (WF02 id `la5XjIMeKIMoTa0q`). Testing live pendiente — el chat de WhatsApp de prueba quedó en estado intermedio. Re-testear desde "hola" cuando el paciente de prueba tenga chat limpio.
+
 ## Task 24: Testing integral (todos los casos del spec §9)
 
 - [ ] **Step 1: Caso 9.1 — Flujo feliz paciente nuevo**
