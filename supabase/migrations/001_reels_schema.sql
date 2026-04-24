@@ -66,3 +66,21 @@ CREATE TABLE IF NOT EXISTS reference_images (
   tags TEXT[],
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+-- Indexes
+CREATE INDEX IF NOT EXISTS idx_video_render_jobs_reel_id ON video_render_jobs(reel_id);
+CREATE INDEX IF NOT EXISTS idx_reels_status ON reels(status);
+
+-- Auto-update updated_at on row changes
+CREATE OR REPLACE FUNCTION set_updated_at()
+RETURNS TRIGGER LANGUAGE plpgsql AS $$
+BEGIN NEW.updated_at = NOW(); RETURN NEW; END;
+$$;
+
+CREATE TRIGGER trg_reels_updated_at
+  BEFORE UPDATE ON reels
+  FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+
+CREATE TRIGGER trg_video_render_jobs_updated_at
+  BEFORE UPDATE ON video_render_jobs
+  FOR EACH ROW EXECUTE FUNCTION set_updated_at();
