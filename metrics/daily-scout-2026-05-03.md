@@ -1,11 +1,10 @@
-# Daily Scout — 2026-05-03 (sesión de mejora de fuentes)
+# Daily Scout — 2026-05-03 (dos sesiones consolidadas)
 
-**Hora ejecución:** 2026-05-03 ~21:20 UTC (agente automático — sesión de análisis + búsqueda extendida)
-**Objetivo de esta sesión:** Ampliar fuentes de búsqueda + aplicar prompt v2 mejorado por primera vez
-**Fuentes revisadas:** InfoJobs España, Indeed España, Tecnoempleo, Manfred, Get on Board, Himalayas, Wellfound, Glassdoor España, n8n Community, WeWorkRemotely (mirrors), Remotive, Working Nomads, Workable, Torre.co, WeRemoto, Ben's Bites, HN Who is Hiring (May 2026), Twitter/X (vía WebSearch), career pages (Plain Concepts, Ruby Labs)
-**Total ofertas revisadas:** ~50 listados
-**Total que pasaron filtros:** 2 nuevas (+ 7 de sesión anterior del 2026-05-01)
-**Airtable:** ✅ 2 nuevos registros agregados (total acumulado del día: 9)
+**Hora ejecución:** 2026-05-03 21:20 UTC (sesión 1: análisis + prompt v2) + 21:45 UTC (sesión 2: scout `/scout` con prompt v2)
+**Fuentes revisadas:** InfoJobs España, Indeed España, Tecnoempleo, Manfred, Get on Board, Himalayas, Wellfound, Glassdoor España, n8n Community, WeWorkRemotely (mirrors), Remotive, Working Nomads, Workable, Torre.co, WeRemoto, Bumeran AR, Ben's Bites, HN Who is Hiring (May 2026), Twitter/X (vía WebSearch), career pages (Plain Concepts, Ruby Labs, n8n Ashby), BambooHR (Aloware)
+**Total ofertas revisadas:** ~70 listados
+**Total que pasaron filtros:** 5 nuevas hoy (Sesión 1: 2 + Sesión 2: 3)
+**Airtable:** ✅ 5 nuevos registros agregados (total acumulado: 12)
 
 ---
 
@@ -41,13 +40,54 @@ Esta sesión agrega 2 más: Consultoriadeventas (de 30-abr, no cargado) y Ruby L
 
 ## 🥈 Nivel 2 — Bilingüe / LATAM-preferred
 
-*(Ver scout 2026-05-01 — The Global Talent Co. x2 son los mejores de este nivel)*
+### 2. ⭐ HireHawk — AI Solutions Engineer (Remote LatAm) — NUEVA HOY
+
+- **URL:** https://www.glassdoor.com/job-listing/ai-solutions-engineer-remote-latam-hirehawk-JV_IC2494161_KO0,34_KE35,43.htm?jl=1009784895241
+- **Fuente:** Glassdoor + Workable
+- **Empresa:** HireHawk (US, scaleó 0→$100M+ en 2 años)
+- **Tipo:** Full-time contractor, 40h/semana, US PST preferido
+- **Idioma manager:** Inglés (con énfasis en perfil LatAm de alto inglés)
+- **Stack:** Agentic AI, AI automation, marketing/sales/recruiting ops, integrations, OpenAI/Anthropic/Google AI
+- **Inglés:** No dice C1/fluent explícito, pero la empresa menciona Argentina = ranking #1 LatAm en inglés (positivo)
+- **Países:** Remote LatAm explícito (Argentina incluida)
+- **Por qué matchea:** LatAm explícito, agentic AI alineado con voice agents de Carlos, integrations nativo. Senior level pero los 3 sitios + voice agent en producción son evidencia válida.
+- **⚠️ Verificar:** que el listing aún esté activo en Glassdoor (Senior puede ser exigente).
+
+---
+
+### 3. ⭐ INFUSE — n8n Workflow Specialist — NUEVA HOY
+
+- **URL:** https://job-boards.greenhouse.io/infuse/jobs/4613649005
+- **Fuente:** Himalayas → Greenhouse
+- **Empresa:** INFUSE (318 puestos abiertos globalmente, fuerte presencia LatAm: Costa Rica, Colombia, Brasil)
+- **Tipo:** Contract, remote
+- **Idioma manager:** Inglés
+- **Stack:** n8n workflows (principal), APIs, data transformations, GTM operations
+- **Inglés:** Sin requisito C1 explícito
+- **Países:** "Open to candidates from all countries" — WORLDWIDE
+- **Por qué matchea:** Stack n8n como skill principal, worldwide remote (Argentina ok), empresa establecida con operaciones LatAm. Aplicación directa vía Greenhouse.
+
+*(Ver scout 2026-05-01 — The Global Talent Co. x2 también son top de este nivel)*
 
 ---
 
 ## 🥉 Nivel 3 — Inglés escrito OK / async-first
 
-### 2. Ruby Labs — N8N Engineer (Payments and Automation)
+### 4. Propertyse — Technical Projects & Automation Specialist — NUEVA HOY
+
+- **URL:** https://himalayas.app/companies/propertyse/jobs/technical-projects-automation-specialist
+- **URL alt (Workable):** https://jobs.workable.com/view/u2EW5R6LATZzthN55dja3u/
+- **Fuente:** Himalayas
+- **Tipo:** Remote (publicado como "in Mexico City" pero rol es 100% remoto)
+- **Idioma manager:** Inglés
+- **Stack:** Zapier / n8n / Make + agentic AI / LLM workflow + REST APIs + webhooks + DNS/SPF/DKIM
+- **Inglés:** No dice C1/fluent
+- **Países:** ⚠️ Indica México pero al ser remoto puede aceptar Argentina — VERIFICAR antes de aplicar
+- **Por qué matchea:** Stack idéntico al perfil de Carlos. Rol descrito como "technical generalist powered by low-code, no software engineer" → match perfecto. "Verifiable with real examples" → el portfolio de Carlos (3 sitios + voice agent) es exactamente eso.
+
+---
+
+### 5. Ruby Labs — N8N Engineer (Payments and Automation)
 
 - **URL:** https://jobs.ashbyhq.com/ruby-labs/da019cc7-adb0-49e8-a424-2bc278ec2a96/application
 - **Fuente:** Glassdoor España + Ashby
