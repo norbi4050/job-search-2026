@@ -300,6 +300,61 @@ Luego: `git add`, `git commit -m "scout: búsqueda diaria YYYY-MM-DD"`, `git pus
 
 ---
 
+## PASO 7 — Output final accionable al usuario (OBLIGATORIO)
+
+Después de cargar Airtable y crear el daily-scout y commitear, **terminar SIEMPRE el turno con un mensaje al usuario en formato de "lista accionable con links directos"**. Este es el output que el usuario realmente consume — los archivos son backup.
+
+### Formato exacto del mensaje final:
+
+```
+## 🥇 Aplicar HOY (máxima prioridad)
+
+### N. {Empresa} — {Rol} {🇪🇸 ESPAÑOL si aplica}
+👉 **Aplicar:** {URL directo}
+- {país aceptado / restricción geo}
+- Stack: {stack relevante}
+- {tipo: full-time / contractor / freelance}
+- **Cómo aplicar:** {instrucción concreta}
+- ⚠️ {alerta si corresponde: verificar activa, deadline, etc.}
+
+## 🥈 Aplicar esta semana
+[mismo formato]
+
+## 🥉 Verificar primero, después aplicar
+[mismo formato + qué verificar]
+
+## 🎖️ Freelance bonus (opcional)
+[solo si aplica]
+
+## Sugerencia táctica
+- **Hoy:** aplicar a #1, #2, verificar #N
+- **Mañana/jueves:** #3, #4
+- **Esta semana:** total X aplicaciones
+```
+
+### Reglas estrictas del output final:
+
+1. **Ofertas con 🇪🇸 ESPAÑOL primero, SIEMPRE.** No hay excepción.
+2. **Solo ofertas con URL directa de aplicación.** Si no hay URL, marcar con ⚠️ + dar instrucción alternativa (email, LinkedIn DM, etc.).
+3. **Máximo 4-5 líneas por oferta.** Carlos debe poder escanear en <30 segundos.
+4. **No repetir ofertas que ya están en Airtable con Estado "Aplicado" o posterior.** Solo las nuevas + las pendientes de aplicar.
+5. **Si 0 ofertas nuevas:** decir "Sin ofertas nuevas hoy — se revisaron N en M fuentes" + listar fuentes principales que no respondieron.
+6. **Cerrar siempre con sugerencia táctica** de orden de aplicación esta semana.
+
+### Ejemplo de output bueno:
+
+> ## 🥇 Aplicar HOY
+>
+> ### 1. Consultoriadeventas — Technical Lead AI Platform 🇪🇸 ESPAÑOL
+> 👉 **Aplicar:** https://community.n8n.io/t/...283632
+> - Empresa española, sin restricción geo
+> - Stack: N8N + Ollama + voice (whisper/TTS) + WhatsApp
+> - Part-time + retainer mensual
+> - **Cómo aplicar:** responder thread con proyectos + propuesta tarifa
+> - ⚠️ Verificar si sigue activa (publicada hace 30 días)
+
+---
+
 ## MEJORAS PENDIENTES (backlog para v3)
 
 - [ ] Automatizar scraping de Vapi Discord via API si Carlos agrega token
