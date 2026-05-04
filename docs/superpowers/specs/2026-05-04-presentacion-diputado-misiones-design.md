@@ -96,7 +96,7 @@ Carlos González (IA & Automatización) y su hermano (Ingeniero Senior, RIPIO 5+
 - **WhatsApp Gerardo:** +54 9 11 3024-7234
 - **WhatsApp Norberto (Carlos):** +54 9 11 3087-5304
 - **WhatsApp Elan.casa:** +54 9 3764 664317
-- **Web:** elan.casa
+- **Web:** www.elan.casa
 
 ---
 
