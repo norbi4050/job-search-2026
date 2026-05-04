@@ -32,7 +32,7 @@ Carlos González (IA & Automatización) y su hermano (Ingeniero Senior, RIPIO 5+
 - **Visual fuerte** — diseño que transmita modernidad y raíces locales
 - **Nombres y roles:**
   - Carlos González — Especialista en IA & Automatización
-  - [Nombre hermano] — Ingeniero Senior en Sistemas
+  - Gerardo González Archilla — Ingeniero Senior en Sistemas
 - **Elan.casa** — empresa de domótica y energía solar (mención discreta)
 - **Tagline:** una línea que resume la propuesta de valor. Sugerencia: *"Tecnología e innovación al servicio de Misiones"* (Claude Design puede proponer variantes)
 - Sin texto adicional — solo impacto visual
@@ -46,7 +46,7 @@ Carlos González (IA & Automatización) y su hermano (Ingeniero Senior, RIPIO 5+
 | | |
 |---|---|
 | **Carlos González** | Especialista en Inteligencia Artificial & Automatización. Construye sistemas de automatización, agentes IA, chatbots y pipelines de datos para empresas y proyectos propios. |
-| **[Nombre hermano]** | Ingeniero Senior en Sistemas. +5 años en RIPIO, una de las principales plataformas de activos digitales de América Latina. Experiencia en blockchain, sistemas de alta disponibilidad e ingeniería de software. |
+| **Gerardo González Archilla** | Ingeniero Senior en Sistemas. +5 años en RIPIO, una de las principales plataformas de activos digitales de América Latina. Experiencia en blockchain, sistemas de alta disponibilidad e ingeniería de software. |
 | **Elan.casa** | Empresa fundada por ambos. Especializada en domótica y paneles solares — integra tecnología inteligente con energía renovable. |
 
 **Bloque inferior — Dos ejes de capacidades (visual, iconos o bloques de color)**
@@ -92,8 +92,11 @@ Carlos González (IA & Automatización) y su hermano (Ingeniero Senior, RIPIO 5+
 **Cierre + Contacto**
 > *"Estamos disponibles para reunirnos con quien corresponda y profundizar cualquier iniciativa."*
 
-- Email / WhatsApp de contacto
-- Elan.casa (web si existe)
+- **Email:** contacto@elan.casa
+- **WhatsApp Gerardo:** +54 9 11 3024-7234
+- **WhatsApp Norberto (Carlos):** +54 9 11 3087-5304
+- **WhatsApp Elan.casa:** +54 9 3764 664317
+- **Web:** elan.casa
 
 ---
 
