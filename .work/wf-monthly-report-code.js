@@ -97,24 +97,25 @@ let comparativaMsg = '➡️ Sin datos del mes anterior para comparar.';
 if ((turnosMesAnt || []).length > 0) {
   const delta = metricasAnt.tasaNoShow - metricas.tasaNoShow;
   if (delta > 0) {
-    comparativaMsg = `📈 Ausencias: -${delta} puntos vs mes anterior ✅`;
+    comparativaMsg = `📈 Mejora: -${delta} puntos vs mes anterior ✅`;
   } else if (delta < 0) {
-    comparativaMsg = `📉 Ausencias: +${Math.abs(delta)} puntos vs mes anterior ⚠️`;
+    comparativaMsg = `📉 Sube: +${Math.abs(delta)} puntos vs mes anterior ⚠️`;
   } else {
-    comparativaMsg = `➡️ Ausencias estables vs mes anterior.`;
+    comparativaMsg = `➡️ Estable vs mes anterior.`;
   }
 }
 
-// Enviar template reporte_mensual
+// {{6}} = ausencias + comparativa en una sola variable
+const ausenciaStr = `${metricas.noShowEstimado} (${metricas.tasaNoShow}%) — ${comparativaMsg}`;
+
+// Enviar template reporte_mensual (6 variables)
 const params = [
   CONSULTORIO_NOMBRE,
   mesLabel,
   String(metricas.total),
   String(metricas.completados),
-  String(metricas.noShowEstimado),
-  String(metricas.tasaNoShow),
   String(metricas.recordatorios),
-  comparativaMsg
+  ausenciaStr
 ];
 
 const resp = await helpers.httpRequest({
