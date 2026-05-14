@@ -1,0 +1,64 @@
+{
+  "id": "WF-ADELANTO-CRON",
+  "name": "WF-ADELANTO-CRON — Timeout",
+  "active": true,
+  "nodes": [
+    {
+      "id": "adelanto-cron-trigger",
+      "name": "Schedule Trigger 10min",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -200,
+        0
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 10
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "adelanto-cron-code",
+      "name": "Expirar y Cascada",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        20,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// WF-ADELANTO-CRON: Expirar ofertas vencidas y disparar al siguiente candidato\nconst helpers = this.helpers;\nconst SUPABASE_URL = $env.SUPABASE_URL;\nconst SUPABASE_KEY = $env.SUPABASE_SERVICE_KEY;\nconst N8N_HOST = $env.N8N_HOST || $env.WEBHOOK_URL || '';\n\nconst vencidas = await helpers.httpRequest({\n  method: 'GET',\n  url: `${SUPABASE_URL}/rest/v1/consultorio_adelanto_ofertas`,\n  qs: { estado: 'eq.pendiente', expira_at: `lte.${new Date().toISOString()}`, select: '*' },\n  headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }\n});\n\nif (!vencidas?.length) return [{ json: { action: 'no_vencidas' } }];\n\nlet procesadas = 0;\nfor (const oferta of vencidas) {\n  // Marcar expirada — NO resetear ctx del paciente (WF-ADELANTO-2 maneja respuestas tardías)\n  await helpers.httpRequest({\n    method: 'PATCH',\n    url: `${SUPABASE_URL}/rest/v1/consultorio_adelanto_ofertas`,\n    qs: { id: `eq.${oferta.id}` },\n    headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },\n    body: JSON.stringify({ estado: 'expirado', respuesta_at: new Date().toISOString() })\n  });\n\n  if (oferta.intento < 5 && N8N_HOST) {\n    const tRes = await helpers.httpRequest({\n      method: 'GET',\n      url: `${SUPABASE_URL}/rest/v1/consultorio_turnos`,\n      qs: { id: `eq.${oferta.turno_origen_id}`, select: 'paciente_id', limit: '1' },\n      headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }\n    });\n    const excluirSeed = tRes?.[0]?.paciente_id ? [tRes[0].paciente_id] : [];\n    try {\n      await helpers.httpRequest({\n        method: 'POST',\n        url: `${N8N_HOST}/webhook/adelanto-buscar`,\n        headers: { 'Content-Type': 'application/json' },\n        body: JSON.stringify({ slot_fecha: oferta.slot_fecha, profesional_id: oferta.profesional_id, intento: oferta.intento + 1, excluir_pacientes: excluirSeed })\n      });\n    } catch(e) {}\n  } else if (oferta.intento >= 5) {\n    // Ciclo completo: resetear conversaciones colgadas en adelanto_pendiente para este slot\n    const convsRes = await helpers.httpRequest({\n      method: 'GET',\n      url: `${SUPABASE_URL}/rest/v1/consultorio_conversaciones`,\n      qs: { estado: 'eq.adelanto_pendiente', select: 'telefono_wa,contexto' },\n      headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }\n    });\n    for (const conv of (convsRes || [])) {\n      if (conv.contexto?.adelantoSlotFecha === oferta.slot_fecha && conv.contexto?.adelantoProfesionalId === oferta.profesional_id) {\n        await helpers.httpRequest({\n          method: 'PATCH',\n          url: `${SUPABASE_URL}/rest/v1/consultorio_conversaciones`,\n          qs: { telefono_wa: `eq.${conv.telefono_wa}` },\n          headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },\n          body: JSON.stringify({ estado: 'inicio', contexto: {}, updated_at: new Date().toISOString() })\n        });\n      }\n    }\n  }\n  procesadas++;\n}\n\nreturn [{ json: { action: 'cron_done', procesadas, ts: new Date().toISOString() } }];"
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger 10min": {
+      "main": [
+        [
+          {
+            "node": "Expirar y Cascada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Argentina/Buenos_Aires",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "versionId": "adelanto-cron-v1"
+}

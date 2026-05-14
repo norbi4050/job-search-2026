@@ -1,0 +1,83 @@
+{
+  "id": "WF-ADELANTO-1",
+  "name": "WF-ADELANTO-1 — Buscar Candidato",
+  "active": true,
+  "nodes": [
+    {
+      "id": "adelanto1-webhook",
+      "name": "Webhook Adelanto Buscar",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -200,
+        0
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "adelanto-buscar",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "adelanto-buscar-webhook-id"
+    },
+    {
+      "id": "adelanto1-respond",
+      "name": "Respond 200",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        20,
+        -120
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"status\":\"received\"}",
+        "options": {
+          "responseCode": 200
+        }
+      }
+    },
+    {
+      "id": "adelanto1-code",
+      "name": "Buscar y Ofertar",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        20,
+        60
+      ],
+      "parameters": {
+        "jsCode": "// WF-ADELANTO-1: Buscar candidato y enviar oferta de slot liberado\n// Fix Bug 1: exclusión acumulativa via BD (no parámetro pasado)\n// Fix Bug 2: excluir paciente que canceló (viene en excluir_pacientes)\n// Fix Bug 3: filtrar candidatos en handoff activo\nconst helpers = this.helpers;\nconst SUPABASE_URL = $env.SUPABASE_URL;\nconst SUPABASE_KEY = $env.SUPABASE_SERVICE_KEY;\nconst WA_TOKEN = $env.META_WHATSAPP_TOKEN;\nconst PHONE_ID = $env.WA_PHONE_NUMBER_ID;\n\nconst input = $input.first().json.body || $input.first().json;\nconst slot_fecha = input.slot_fecha;\nconst profesional_id = input.profesional_id;\nconst intento = parseInt(input.intento) || 1;\nconst excluir_seed = Array.isArray(input.excluir_pacientes) ? input.excluir_pacientes : [];\n\nif (!slot_fecha || !profesional_id) {\n  return [{ json: { action: 'error', reason: 'missing_params' } }];\n}\nif (intento > 5) {\n  return [{ json: { action: 'max_intentos', slot_fecha, profesional_id } }];\n}\nconst slotDate = new Date(slot_fecha);\nif (slotDate < new Date(Date.now() + 2 * 60 * 60 * 1000)) {\n  return [{ json: { action: 'slot_too_soon', slot_fecha } }];\n}\n\nconst profRes = await helpers.httpRequest({\n  method: 'GET',\n  url: `${SUPABASE_URL}/rest/v1/consultorio_profesionales`,\n  qs: { id: `eq.${profesional_id}`, select: 'nombre,especialidad', limit: '1' },\n  headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }\n});\nconst prof = profRes?.[0];\nif (!prof) return [{ json: { action: 'error', reason: 'profesional_not_found' } }];\n\n// FIX BUG 1: Construir lista de exclusión acumulativa desde BD\nconst ofertasAntRes = await helpers.httpRequest({\n  method: 'GET',\n  url: `${SUPABASE_URL}/rest/v1/consultorio_adelanto_ofertas`,\n  qs: { slot_fecha: `eq.${slot_fecha}`, profesional_id: `eq.${profesional_id}`, select: 'turno_origen_id' },\n  headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }\n});\nconst turnosYaIntentadosIds = (ofertasAntRes || []).map(o => o.turno_origen_id).filter(Boolean);\n\nlet pacientesExcluidos = [...excluir_seed];\nif (turnosYaIntentadosIds.length) {\n  const pacAntRes = await helpers.httpRequest({\n    method: 'GET',\n    url: `${SUPABASE_URL}/rest/v1/consultorio_turnos`,\n    qs: { id: `in.(${turnosYaIntentadosIds.join(',')})`, select: 'paciente_id' },\n    headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }\n  });\n  pacientesExcluidos = [...new Set([...pacientesExcluidos, ...(pacAntRes || []).map(t => t.paciente_id).filter(Boolean)])];\n}\n\nconst candidatosRes = await helpers.httpRequest({\n  method: 'GET',\n  url: `${SUPABASE_URL}/rest/v1/consultorio_turnos`,\n  qs: {\n    profesional_id: `eq.${profesional_id}`,\n    quiere_adelanto: 'eq.true',\n    estado: 'in.(agendado,confirmado)',\n    fecha_hora: `gt.${slot_fecha}`,\n    select: 'id,fecha_hora,paciente_id',\n    order: 'fecha_hora.desc',\n    limit: '20'\n  },\n  headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }\n});\n\nlet candidatos = (candidatosRes || []).filter(c => !pacientesExcluidos.includes(c.paciente_id));\nif (!candidatos.length) {\n  return [{ json: { action: 'no_candidatos', slot_fecha, profesional_id, intento } }];\n}\n\n// FIX BUG 3: Filtrar pacientes en handoff activo\nconst pacIdsParaHandoffCheck = candidatos.map(c => c.paciente_id);\nconst pacTelRes = await helpers.httpRequest({\n  method: 'GET',\n  url: `${SUPABASE_URL}/rest/v1/consultorio_pacientes`,\n  qs: { id: `in.(${pacIdsParaHandoffCheck.join(',')})`, select: 'id,telefono_wa' },\n  headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }\n});\nconst telPorPacienteId = {};\n(pacTelRes || []).forEach(p => { telPorPacienteId[p.id] = p.telefono_wa; });\n\nconst telefonos = Object.values(telPorPacienteId).filter(Boolean);\nlet pacientesEnHandoff = new Set();\nif (telefonos.length) {\n  const convRes = await helpers.httpRequest({\n    method: 'GET',\n    url: `${SUPABASE_URL}/rest/v1/consultorio_conversaciones`,\n    qs: { telefono_wa: `in.(${telefonos.join(',')})`, handoff_humano: 'eq.true', select: 'telefono_wa' },\n    headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }\n  });\n  const telEnHandoff = new Set((convRes || []).map(c => c.telefono_wa));\n  Object.entries(telPorPacienteId).forEach(([pacId, tel]) => {\n    if (telEnHandoff.has(tel)) pacientesEnHandoff.add(pacId);\n  });\n}\ncandidatos = candidatos.filter(c => !pacientesEnHandoff.has(c.paciente_id));\nif (!candidatos.length) {\n  return [{ json: { action: 'no_candidatos_disponibles', slot_fecha, profesional_id, intento, razon: 'todos_en_handoff_o_excluidos' } }];\n}\n\nconst turnoOrigen = candidatos[0];\nconst paciente = { id: turnoOrigen.paciente_id, telefono_wa: telPorPacienteId[turnoOrigen.paciente_id] };\nif (!paciente.telefono_wa) return [{ json: { action: 'error', reason: 'paciente_sin_telefono' } }];\n\nconst pacNombreRes = await helpers.httpRequest({\n  method: 'GET',\n  url: `${SUPABASE_URL}/rest/v1/consultorio_pacientes`,\n  qs: { id: `eq.${turnoOrigen.paciente_id}`, select: 'nombre', limit: '1' },\n  headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }\n});\nconst paciente_nombre = pacNombreRes?.[0]?.nombre || 'Paciente';\n\nconst expiraAt = new Date(Date.now() + 20 * 60 * 1000).toISOString();\nconst ofertaRes = await helpers.httpRequest({\n  method: 'POST',\n  url: `${SUPABASE_URL}/rest/v1/consultorio_adelanto_ofertas`,\n  headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', Prefer: 'return=representation' },\n  body: JSON.stringify({ slot_fecha, profesional_id, turno_origen_id: turnoOrigen.id, intento, estado: 'pendiente', expira_at: expiraAt })\n});\nconst oferta = ofertaRes?.[0];\nif (!oferta?.id) return [{ json: { action: 'error', reason: 'oferta_insert_failed' } }];\n\nconst OFFSET_ART = -3 * 60 * 60 * 1000;\nconst DIAS = ['dom','lun','mar','mié','jue','vie','sáb'];\nfunction fmtFecha(isoStr) {\n  const d = new Date(new Date(isoStr).getTime() + OFFSET_ART);\n  return `${DIAS[d.getUTCDay()]} ${d.getUTCDate()}/${d.getUTCMonth()+1} a las ${String(d.getUTCHours()).padStart(2,'0')}:${String(d.getUTCMinutes()).padStart(2,'0')}`;\n}\nconst slotDisplay = fmtFecha(slot_fecha);\nconst turnoActualDisplay = fmtFecha(turnoOrigen.fecha_hora);\nconst primerNombre = paciente_nombre.split(' ')[0];\n\nconst nuevoCtx = {\n  estado: 'adelanto_pendiente',\n  adelantoOfertaId: oferta.id,\n  adelantoSlotFecha: slot_fecha,\n  adelantoTurnoOrigenId: turnoOrigen.id,\n  adelantoTurnoActualFecha: turnoOrigen.fecha_hora,\n  adelantoDoctorNombre: prof.nombre,\n  adelantoProfesionalId: profesional_id,\n  adelantoRepreguntas: 0\n};\n\nconst convExRes = await helpers.httpRequest({\n  method: 'GET',\n  url: `${SUPABASE_URL}/rest/v1/consultorio_conversaciones`,\n  qs: { telefono_wa: `eq.${paciente.telefono_wa}`, select: 'id', limit: '1' },\n  headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }\n});\n\nif (convExRes?.length) {\n  await helpers.httpRequest({\n    method: 'PATCH',\n    url: `${SUPABASE_URL}/rest/v1/consultorio_conversaciones`,\n    qs: { telefono_wa: `eq.${paciente.telefono_wa}` },\n    headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },\n    body: JSON.stringify({ estado: 'adelanto_pendiente', contexto: nuevoCtx, updated_at: new Date().toISOString() })\n  });\n} else {\n  await helpers.httpRequest({\n    method: 'POST',\n    url: `${SUPABASE_URL}/rest/v1/consultorio_conversaciones`,\n    headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', Prefer: 'return=minimal' },\n    body: JSON.stringify({ telefono_wa: paciente.telefono_wa, estado: 'adelanto_pendiente', contexto: nuevoCtx, handoff_humano: false })\n  });\n}\n\nconst mensaje = `Hola ${primerNombre}! 🗓️\\n\\nSe liberó un turno con el ${prof.nombre} para el *${slotDisplay}*.\\n\\n¿Querés adelantar tu turno del ${turnoActualDisplay}?\\n\\nRespondé *SI* para cambiarlo o *NO* para mantener el actual.`;\nawait helpers.httpRequest({\n  method: 'POST',\n  url: `https://graph.facebook.com/v21.0/${PHONE_ID}/messages`,\n  headers: { Authorization: `Bearer ${WA_TOKEN}`, 'Content-Type': 'application/json' },\n  body: JSON.stringify({ messaging_product: 'whatsapp', to: paciente.telefono_wa, type: 'text', text: { body: mensaje } })\n});\n\nreturn [{ json: { action: 'oferta_enviada', ofertaId: oferta.id, paciente: paciente_nombre, slot: slotDisplay, turnoActual: turnoActualDisplay, intento } }];"
+      }
+    }
+  ],
+  "connections": {
+    "Webhook Adelanto Buscar": {
+      "main": [
+        [
+          {
+            "node": "Respond 200",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Buscar y Ofertar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Argentina/Buenos_Aires",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "versionId": "adelanto-1-v1"
+}
