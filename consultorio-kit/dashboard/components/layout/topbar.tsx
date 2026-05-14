@@ -14,7 +14,7 @@ export function Topbar({ title, subtitle, children }: Props) {
     <div className="px-6 py-4 border-b border-[#21262d] flex items-center justify-between flex-shrink-0 bg-[#0d1117]">
       <div>
         <h1 className="text-base font-bold text-[#f0f6fc]">{title}</h1>
-        <p className="text-xs text-[#8b949e] mt-0.5">{subtitle ?? hoy}</p>
+        <p className="text-xs text-[#8b949e] mt-0.5" suppressHydrationWarning>{subtitle ?? hoy}</p>
       </div>
       {children && <div className="flex items-center gap-2">{children}</div>}
     </div>

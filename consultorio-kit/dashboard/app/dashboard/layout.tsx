@@ -6,11 +6,18 @@ import { Sidebar } from '@/components/layout/sidebar'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  let user
+  try {
+    const { data } = await supabase.auth.getUser()
+    user = data.user
+  } catch {
+    redirect('/login')
+  }
   if (!user) redirect('/login')
 
   const role = getRole(user.user_metadata)
-  const userName = user.email?.split('@')[0] ?? 'Usuario'
+  const email = user.email ?? ''
+  const userName = email.includes('@') ? email.split('@')[0] : (email || 'Usuario')
 
   const { count: atencionesCount } = await supabase
     .from('consultorio_conversaciones')
