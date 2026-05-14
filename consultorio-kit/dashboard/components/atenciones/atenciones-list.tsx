@@ -23,9 +23,10 @@ export function AtencionesList({ initial, selected, onSelect }: Props) {
         event: '*', schema: 'public', table: 'consultorio_conversaciones',
         filter: 'handoff_humano=eq.true'
       }, () => {
-        supabase.from('consultorio_conversaciones')
-          .select('*').eq('handoff_humano', true).order('updated_at', { ascending: false })
+        Promise.resolve(supabase.from('consultorio_conversaciones')
+          .select('*').eq('handoff_humano', true).order('updated_at', { ascending: false }))
           .then(({ data }) => { if (data) setItems(data as Conversacion[]) })
+          .catch(() => {})
       })
       .subscribe()
     return () => { supabase.removeChannel(channel) }
