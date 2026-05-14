@@ -115,3 +115,44 @@
 - [ ] Verificar canal de alertas Telegram activo
 - [ ] Entregar accesos al cliente (Supabase, Tooljet, n8n)
 - [ ] Capacitación secretaria (30 min): dashboard + cómo manejar handoffs
+
+---
+
+## Dashboard Web Profesional (reemplaza Tooljet)
+
+### Pre-requisitos Supabase
+- [ ] Ejecutar SQL de `consultorio_mensajes` + RLS + Realtime (ver `supabase/schema.sql`)
+- [ ] Crear usuario dueño en Supabase Auth → Authentication → Users → Invite
+  - Email: `admin@<consultorio>.com`
+  - Luego en SQL Editor: `UPDATE auth.users SET raw_user_meta_data = raw_user_meta_data || '{"role": "dueno"}'::jsonb WHERE email = 'admin@<consultorio>.com';`
+- [ ] Crear usuario secretaria con `{"role": "secretaria"}`
+- [ ] (Opcional) Crear usuario médico con `{"role": "medico", "profesional_id": "<UUID del profesional>"}`
+
+### Deploy en EasyPanel
+- [ ] Crear servicio App → From Source → apuntar a `consultorio-kit/dashboard/` (Dockerfile incluido)
+- [ ] Configurar env vars (ver `dashboard/.env.example`):
+  - `NEXT_PUBLIC_SUPABASE_URL`
+  - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+  - `N8N_WEBHOOK_BASE`
+  - `N8N_DASHBOARD_KEY`
+  - `NEXT_PUBLIC_CONSULTORIO_NOMBRE`
+  - `CONSULTORIO_VALOR_CONSULTA` (en ARS, para cálculo ROI)
+  - `CONSULTORIO_COSTO_MENSUAL` (en ARS, para cálculo ROI)
+- [ ] Asignar dominio y puerto 3000
+- [ ] Deploy → verificar build exitoso
+
+### Post-deploy: verificar tabs
+- [ ] Login como dueño → todos los tabs accesibles
+- [ ] Login como secretaria → Hoy, Semana, Atenciones, Pacientes (sin En vivo ni Analytics)
+- [ ] Login como médico → solo Hoy y Semana filtrados por sus turnos
+- [ ] Tab Atenciones: enviar mensaje de prueba desde la UI → verificar que llega por WhatsApp
+
+### n8n: WF-DASH-4 Responder Handoff
+- [ ] Importar `consultorio-kit/n8n/WF-DASH-4-responder-handoff.json` en n8n
+- [ ] Crear credencial "Dashboard Header Auth" con el valor de `N8N_DASHBOARD_KEY`
+- [ ] Activar WF-DASH-4
+
+### Tab En vivo (requiere parche WF01/WF02)
+- [ ] WF01 nodo "3. Extraer Mensaje": agregar INSERT a `consultorio_mensajes` (ver plan `docs/superpowers/plans/2026-05-14-dashboard-profesional.md` Task 7)
+- [ ] WF02 función `sendText`: agregar INSERT a `consultorio_mensajes` (idem)
+- [ ] Verificar: enviar mensaje al bot → aparece en tiempo real en el tab En vivo
