@@ -1,0 +1,45 @@
+{
+  "id": "WF-KEEPWARM",
+  "name": "WF-KEEPWARM — Bot Activo 24/7",
+  "active": true,
+  "nodes": [
+    {
+      "id": "keepwarm-schedule",
+      "name": "Cada 4 minutos",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-200, 0],
+      "parameters": {
+        "rule": {
+          "interval": [{ "field": "minutes", "minutesInterval": 4 }]
+        }
+      }
+    },
+    {
+      "id": "keepwarm-code",
+      "name": "Ping Gateway",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [20, 0],
+      "parameters": {
+        "jsCode": "// WF-KEEPWARM: Mantiene el webhook gateway activo para evitar cold start\n// Envia un payload de 'status update' que WF01 filtra silenciosamente\n// (los status updates son descartados en el nodo '3. Extraer Mensaje' -> skip:true)\nconst helpers = this.helpers;\nconst WEBHOOK_URL = $env.WEBHOOK_URL || $env.N8N_HOST || $env.N8N_WEBHOOK_URL || 'http://localhost:5678';\n\n// Payload que simula un status update de WhatsApp (skip=true en WF01, sin procesamiento real)\nconst dummyPayload = {\n  entry: [{\n    changes: [{\n      value: {\n        statuses: [{ id: 'keepwarm', status: 'delivered', timestamp: String(Date.now()) }]\n        // Sin campo 'messages' → WF01 nodo 3 devuelve skip:true → nodo 4 lo filtra\n      }\n    }]\n  }]\n};\n\ntry {\n  await helpers.httpRequest({\n    method: 'POST',\n    url: `${WEBHOOK_URL}/webhook/whatsapp-gateway`,\n    headers: { 'Content-Type': 'application/json' },\n    body: JSON.stringify(dummyPayload)\n  });\n  return [{ json: { action: 'keepwarm_ok', ts: new Date().toISOString() } }];\n} catch(e) {\n  return [{ json: { action: 'keepwarm_error', error: e.message } }];\n}"
+      }
+    }
+  ],
+  "connections": {
+    "Cada 4 minutos": {
+      "main": [[{ "node": "Ping Gateway", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Argentina/Buenos_Aires",
+    "saveDataErrorExecution": "none",
+    "saveDataSuccessExecution": "none",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "versionId": "keepwarm-v1"
+}
