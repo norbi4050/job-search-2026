@@ -1,0 +1,67 @@
+{
+  "name": "WF-DASH-4 — Responder Handoff",
+  "active": true,
+  "nodes": [
+    {
+      "id": "dash4-webhook",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-200, 0],
+      "parameters": {
+        "path": "dashboard-responder",
+        "httpMethod": "POST",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode"
+      },
+      "credentials": { "httpHeaderAuth": { "id": "DASH_HEADER_AUTH_CREDENTIAL_ID", "name": "Dashboard Header Auth" } }
+    },
+    {
+      "id": "dash4-set",
+      "name": "Set Env",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [0, 0],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "name": "_wa_token", "value": "={{ $env.META_WHATSAPP_TOKEN }}", "type": "string" },
+            { "name": "_phone_id", "value": "={{ $env.WA_PHONE_NUMBER_ID }}", "type": "string" },
+            { "name": "_supa_url", "value": "={{ $env.SUPABASE_URL }}", "type": "string" },
+            { "name": "_supa_key", "value": "={{ $env.SUPABASE_SERVICE_KEY }}", "type": "string" }
+          ]
+        },
+        "includeOtherFields": true
+      }
+    },
+    {
+      "id": "dash4-code",
+      "name": "Responder y Cerrar",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [200, 0],
+      "parameters": {
+        "jsCode": "const helpers = this.helpers;\nconst { telefono_wa, mensaje, cerrar } = $input.first().json.body;\nconst WA_TOKEN = $input.first().json._wa_token;\nconst PHONE_ID = $input.first().json._phone_id;\nconst SUPABASE_URL = $input.first().json._supa_url;\nconst SUPABASE_KEY = $input.first().json._supa_key;\n\nawait helpers.httpRequest({\n  method: 'POST',\n  url: `https://graph.facebook.com/v21.0/${PHONE_ID}/messages`,\n  headers: { Authorization: `Bearer ${WA_TOKEN}`, 'Content-Type': 'application/json' },\n  body: JSON.stringify({ messaging_product: 'whatsapp', to: telefono_wa, type: 'text', text: { body: mensaje } })\n});\n\nif (cerrar) {\n  await helpers.httpRequest({\n    method: 'PATCH',\n    url: `${SUPABASE_URL}/rest/v1/consultorio_conversaciones`,\n    qs: { telefono_wa: `eq.${telefono_wa}` },\n    headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },\n    body: JSON.stringify({ handoff_humano: false, estado: 'inicio', contexto: {}, updated_at: new Date().toISOString() })\n  });\n}\n\nreturn [{ json: { success: true } }];"
+      }
+    },
+    {
+      "id": "dash4-respond",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [400, 0],
+      "parameters": { "respondWith": "json", "responseBody": "={{ { success: true } }}" }
+    }
+  ],
+  "connections": {
+    "Webhook": { "main": [[{ "node": "Set Env", "type": "main", "index": 0 }]] },
+    "Set Env": { "main": [[{ "node": "Responder y Cerrar", "type": "main", "index": 0 }]] },
+    "Responder y Cerrar": { "main": [[{ "node": "Respond", "type": "main", "index": 0 }]] }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "errorWorkflow": "anEe7qyiweYG6Ar0",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none"
+  }
+}
