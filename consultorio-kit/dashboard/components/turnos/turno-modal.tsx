@@ -24,13 +24,19 @@ export function TurnoModal({ turno, onClose }: Props) {
 
   async function handleLink() {
     setLoading('link')
+    setError(null)
     const res = await fetch('/api/turnos/link', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ turno_id: turno.id }),
     })
+    if (!res.ok) {
+      setError('No se pudo generar el link')
+      setLoading(null)
+      return
+    }
     const data = await res.json()
-    setLink(data.link ?? data.url ?? JSON.stringify(data))
+    setLink(data.link ?? data.url ?? null)
     setLoading(null)
   }
 
