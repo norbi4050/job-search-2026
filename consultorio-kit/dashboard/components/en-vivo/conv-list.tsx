@@ -19,11 +19,11 @@ const DOT_COLOR: Record<string, string> = {
 
 interface Props {
   initial: Conversacion[]
-  selected: string | null
-  onSelect: (phone: string) => void
+  selectedPhone: string | null
+  onSelect: (conv: Conversacion) => void
 }
 
-export function ConvList({ initial, selected, onSelect }: Props) {
+export function ConvList({ initial, selectedPhone, onSelect }: Props) {
   const [items, setItems] = useState(initial)
 
   useEffect(() => {
@@ -56,8 +56,8 @@ export function ConvList({ initial, selected, onSelect }: Props) {
         const nombre = (ctx.pacienteNombre as string) ?? c.telefono_wa
         const dot = DOT_COLOR[c.estado] ?? 'bg-[#8b949e]'
         return (
-          <button key={c.telefono_wa} onClick={() => onSelect(c.telefono_wa)}
-            className={`text-left px-3 py-2.5 border-b border-[#21262d] transition-colors ${selected === c.telefono_wa ? 'bg-[#1f3460]' : 'hover:bg-[#1a1f2e]'}`}>
+          <button key={c.telefono_wa} onClick={() => onSelect(c)}
+            className={`text-left px-3 py-2.5 border-b border-[#21262d] transition-colors ${selectedPhone === c.telefono_wa ? 'bg-[#1f3460]' : 'hover:bg-[#1a1f2e]'}`}>
             <div className="flex items-center gap-1.5 mb-0.5">
               <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${dot}`}></span>
               <span className="text-xs font-semibold text-[#f0f6fc] truncate flex-1">{nombre}</span>

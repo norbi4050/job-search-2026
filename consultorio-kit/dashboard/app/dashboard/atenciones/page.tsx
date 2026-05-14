@@ -9,7 +9,7 @@ import type { Conversacion } from '@/lib/types'
 
 export default function AtencionesPage() {
   const [convs, setConvs] = useState<Conversacion[]>([])
-  const [selected, setSelected] = useState<string | null>(null)
+  const [selectedConv, setSelectedConv] = useState<Conversacion | null>(null)
 
   useEffect(() => {
     const supabase = createClient()
@@ -22,8 +22,6 @@ export default function AtencionesPage() {
       })
   }, [])
 
-  const selectedConv = convs.find(c => c.telefono_wa === selected)
-
   return (
     <div className="flex flex-col h-full overflow-hidden">
       <Topbar title="Atenciones en curso" subtitle={`${convs.length} paciente${convs.length !== 1 ? 's' : ''} esperando respuesta`}>
@@ -33,7 +31,7 @@ export default function AtencionesPage() {
         </div>
       </Topbar>
       <div className="flex flex-1 overflow-hidden">
-        <AtencionesList initial={convs} selected={selected} onSelect={setSelected} />
+        <AtencionesList initial={convs} selectedPhone={selectedConv?.telefono_wa ?? null} onSelect={setSelectedConv} />
         <div className="flex-1 overflow-y-auto">
           {selectedConv
             ? <AtencionDetail conv={selectedConv} />

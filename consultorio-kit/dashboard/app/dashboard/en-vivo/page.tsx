@@ -9,7 +9,7 @@ import type { Conversacion } from '@/lib/types'
 
 export default function EnVivoPage() {
   const [convs, setConvs] = useState<Conversacion[]>([])
-  const [selected, setSelected] = useState<string | null>(null)
+  const [selectedConv, setSelectedConv] = useState<Conversacion | null>(null)
 
   useEffect(() => {
     const supabase = createClient()
@@ -20,8 +20,6 @@ export default function EnVivoPage() {
       .then(({ data }) => { if (data) setConvs(data as Conversacion[]) })
   }, [])
 
-  const selectedConv = convs.find(c => c.telefono_wa === selected)
-
   return (
     <div className="flex flex-col h-full overflow-hidden">
       <Topbar title="Conversaciones en vivo" subtitle={`${convs.length} activas ahora · Solo lectura — Sofia responde automáticamente`}>
@@ -31,10 +29,10 @@ export default function EnVivoPage() {
         </div>
       </Topbar>
       <div className="flex flex-1 overflow-hidden">
-        <ConvList initial={convs} selected={selected} onSelect={setSelected} />
+        <ConvList initial={convs} selectedPhone={selectedConv?.telefono_wa ?? null} onSelect={setSelectedConv} />
         <div className="flex-1 flex overflow-hidden">
-          {selected && selectedConv
-            ? <ChatThread telefono_wa={selected} estado={selectedConv.estado} />
+          {selectedConv
+            ? <ChatThread telefono_wa={selectedConv.telefono_wa} estado={selectedConv.estado} />
             : <div className="flex items-center justify-center flex-1 text-[#8b949e] text-sm">Seleccioná una conversación</div>
           }
         </div>

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import type { Turno } from '@/lib/types'
 import { TurnoModal } from './turno-modal'
+import { NuevoTurnoModal } from './nuevo-turno-modal'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 
@@ -22,9 +23,18 @@ interface Props {
 
 export function TurnosTable({ turnos, showDate = false, canCreate = false }: Props) {
   const [selected, setSelected] = useState<Turno | null>(null)
+  const [showNuevo, setShowNuevo] = useState(false)
 
   return (
     <>
+      {canCreate && (
+        <div className="flex justify-end mb-3">
+          <button onClick={() => setShowNuevo(true)}
+            className="bg-[#238636] hover:bg-[#2ea043] text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors">
+            + Nuevo turno
+          </button>
+        </div>
+      )}
       <div className="bg-[#161b22] border border-[#21262d] rounded-xl overflow-hidden">
         <table className="w-full">
           <thead>
@@ -69,6 +79,7 @@ export function TurnosTable({ turnos, showDate = false, canCreate = false }: Pro
       </div>
 
       {selected && <TurnoModal turno={selected} onClose={() => setSelected(null)} />}
+      {showNuevo && <NuevoTurnoModal onClose={() => setShowNuevo(false)} />}
     </>
   )
 }

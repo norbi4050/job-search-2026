@@ -8,11 +8,11 @@ import { es } from 'date-fns/locale'
 
 interface Props {
   initial: Conversacion[]
-  selected: string | null
-  onSelect: (phone: string) => void
+  selectedPhone: string | null
+  onSelect: (conv: Conversacion) => void
 }
 
-export function AtencionesList({ initial, selected, onSelect }: Props) {
+export function AtencionesList({ initial, selectedPhone, onSelect }: Props) {
   const [items, setItems] = useState<Conversacion[]>(initial)
 
   useEffect(() => {
@@ -42,9 +42,9 @@ export function AtencionesList({ initial, selected, onSelect }: Props) {
         const ctx = c.contexto as Record<string, unknown>
         const nombre = (ctx.pacienteNombre as string) ?? c.telefono_wa
         return (
-          <button key={c.telefono_wa} onClick={() => onSelect(c.telefono_wa)}
+          <button key={c.telefono_wa} onClick={() => onSelect(c)}
             className={`text-left px-4 py-3 border-b border-[#21262d] transition-colors ${
-              selected === c.telefono_wa ? 'bg-[#1f3460]' : 'hover:bg-[#1a1f2e]'
+              selectedPhone === c.telefono_wa ? 'bg-[#1f3460]' : 'hover:bg-[#1a1f2e]'
             }`}>
             <div className="flex items-center justify-between mb-1">
               <span className="text-sm font-semibold text-[#f0f6fc] truncate">{nombre}</span>
