@@ -114,3 +114,41 @@ CREATE TABLE IF NOT EXISTS consultorio_adelanto_ofertas (
 CREATE INDEX IF NOT EXISTS idx_adelanto_estado ON consultorio_adelanto_ofertas(estado);
 CREATE INDEX IF NOT EXISTS idx_adelanto_expira  ON consultorio_adelanto_ofertas(expira_at);
 CREATE INDEX IF NOT EXISTS idx_adelanto_slot    ON consultorio_adelanto_ofertas(slot_fecha, profesional_id);
+
+-- ============================================================
+-- Dashboard Profesional (v2026-05-14)
+-- ============================================================
+
+-- Mensajes para tab "Conversaciones en vivo"
+CREATE TABLE IF NOT EXISTS consultorio_mensajes (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  telefono_wa TEXT NOT NULL,
+  direccion   TEXT NOT NULL CHECK (direccion IN ('entrada', 'salida')),
+  contenido   TEXT NOT NULL,
+  estado_bot  TEXT,
+  created_at  TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_mensajes_telefono
+  ON consultorio_mensajes(telefono_wa, created_at DESC);
+
+-- RLS — permite lectura a usuarios autenticados del dashboard
+ALTER TABLE consultorio_turnos ENABLE ROW LEVEL SECURITY;
+ALTER TABLE consultorio_pacientes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE consultorio_profesionales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE consultorio_conversaciones ENABLE ROW LEVEL SECURITY;
+ALTER TABLE consultorio_mensajes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE consultorio_adelanto_ofertas ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "dashboard_read_turnos" ON consultorio_turnos FOR SELECT TO authenticated USING (true);
+CREATE POLICY "dashboard_read_pacientes" ON consultorio_pacientes FOR SELECT TO authenticated USING (true);
+CREATE POLICY "dashboard_update_pacientes" ON consultorio_pacientes FOR UPDATE TO authenticated USING (true);
+CREATE POLICY "dashboard_read_profesionales" ON consultorio_profesionales FOR SELECT TO authenticated USING (true);
+CREATE POLICY "dashboard_read_conversaciones" ON consultorio_conversaciones FOR SELECT TO authenticated USING (true);
+CREATE POLICY "dashboard_read_mensajes" ON consultorio_mensajes FOR SELECT TO authenticated USING (true);
+CREATE POLICY "dashboard_read_adelanto" ON consultorio_adelanto_ofertas FOR SELECT TO authenticated USING (true);
+
+-- Realtime para las tablas que el dashboard escucha en vivo
+ALTER PUBLICATION supabase_realtime ADD TABLE consultorio_turnos;
+ALTER PUBLICATION supabase_realtime ADD TABLE consultorio_conversaciones;
+ALTER PUBLICATION supabase_realtime ADD TABLE consultorio_mensajes;
