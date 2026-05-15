@@ -28,6 +28,9 @@ jobs:
         with:
           context: consultorio-kit/dashboard
           push: true
+          build-args: |
+            NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+            NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
           tags: |
             ghcr.io/${{ github.repository_owner }}/consultorio-dashboard:latest
             ghcr.io/${{ github.repository_owner }}/consultorio-dashboard:${{ github.sha }}
