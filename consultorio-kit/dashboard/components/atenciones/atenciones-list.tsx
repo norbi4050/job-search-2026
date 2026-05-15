@@ -15,6 +15,8 @@ interface Props {
 export function AtencionesList({ initial, selectedPhone, onSelect }: Props) {
   const [items, setItems] = useState<Conversacion[]>(initial)
 
+  useEffect(() => { setItems(initial) }, [initial])
+
   useEffect(() => {
     const supabase = createClient()
     const channel = supabase
