@@ -9,14 +9,19 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Log in to Docker Hub
+      - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push
         uses: docker/build-push-action@v5
@@ -24,5 +29,5 @@ jobs:
           context: consultorio-kit/dashboard
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/consultorio-dashboard:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/consultorio-dashboard:${{ github.sha }}
+            ghcr.io/${{ github.repository_owner }}/consultorio-dashboard:latest
+            ghcr.io/${{ github.repository_owner }}/consultorio-dashboard:${{ github.sha }}
