@@ -1,15 +1,25 @@
 // components/turnos/nuevo-turno-modal.tsx
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { createClient } from '@/lib/supabase/client'
 
+const OBRAS_SOCIALES = ['OSDE','Swiss Medical','Galeno','IOMA','PAMI','Medifé','Sancor Salud','OSECAC','OSPEDYC','Unión Personal','Particular']
+
+interface Profesional { id: string; nombre: string }
 interface Props { onClose: () => void }
 
 export function NuevoTurnoModal({ onClose }: Props) {
   const [form, setForm] = useState({
     nombre: '', dni: '', telefono_wa: '', obra_social: '', profesional_id: '', fecha_hora: '',
   })
+  const [profesionales, setProfesionales] = useState<Profesional[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    createClient().from('consultorio_profesionales').select('id,nombre').order('nombre')
+      .then(({ data }) => { if (data) setProfesionales(data as Profesional[]) })
+  }, [])
 
   function set(field: keyof typeof form, value: string) {
     setForm(prev => ({ ...prev, [field]: value }))
@@ -36,14 +46,8 @@ export function NuevoTurnoModal({ onClose }: Props) {
     }
   }
 
-  const fields: { key: keyof typeof form; label: string; type?: string; placeholder?: string }[] = [
-    { key: 'nombre', label: 'Nombre del paciente', placeholder: 'Juan García' },
-    { key: 'dni', label: 'DNI', placeholder: '12345678' },
-    { key: 'telefono_wa', label: 'Teléfono WhatsApp', placeholder: '5491112345678' },
-    { key: 'obra_social', label: 'Obra social', placeholder: 'OSDE / Particular' },
-    { key: 'profesional_id', label: 'ID del profesional (UUID)', placeholder: 'xxxxxxxx-xxxx-xxxx-...' },
-    { key: 'fecha_hora', label: 'Fecha y hora', type: 'datetime-local' },
-  ]
+  const selectClass = "bg-[#0d1117] border border-[#30363d] rounded-lg px-3 py-2 text-sm text-[#e6edf3] outline-none focus:border-[#58a6ff] transition-colors"
+  const inputClass = selectClass
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={onClose}>
@@ -52,18 +56,42 @@ export function NuevoTurnoModal({ onClose }: Props) {
           <h2 className="text-base font-bold text-[#f0f6fc]">Nuevo turno</h2>
           <button onClick={onClose} className="text-[#8b949e] hover:text-[#e6edf3]">&#x2715;</button>
         </div>
-        {fields.map(f => (
+
+        {[
+          { key: 'nombre', label: 'Nombre del paciente', placeholder: 'Juan García' },
+          { key: 'dni', label: 'DNI', placeholder: '12345678' },
+          { key: 'telefono_wa', label: 'Teléfono WhatsApp', placeholder: '5491112345678' },
+        ].map(f => (
           <div key={f.key} className="flex flex-col gap-1.5">
             <label className="text-xs font-semibold text-[#8b949e]">{f.label}</label>
-            <input
-              type={f.type ?? 'text'}
-              value={form[f.key]}
-              onChange={e => set(f.key, e.target.value)}
-              placeholder={f.placeholder}
-              className="bg-[#0d1117] border border-[#30363d] rounded-lg px-3 py-2 text-sm text-[#e6edf3] outline-none focus:border-[#58a6ff] transition-colors"
-            />
+            <input type="text" value={form[f.key as keyof typeof form]}
+              onChange={e => set(f.key as keyof typeof form, e.target.value)}
+              placeholder={f.placeholder} className={inputClass} />
           </div>
         ))}
+
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-semibold text-[#8b949e]">Obra social</label>
+          <select value={form.obra_social} onChange={e => set('obra_social', e.target.value)} className={selectClass}>
+            <option value="">Seleccioná obra social</option>
+            {OBRAS_SOCIALES.map(os => <option key={os} value={os}>{os}</option>)}
+          </select>
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-semibold text-[#8b949e]">Profesional</label>
+          <select value={form.profesional_id} onChange={e => set('profesional_id', e.target.value)} className={selectClass}>
+            <option value="">Seleccioná profesional</option>
+            {profesionales.map(p => <option key={p.id} value={p.id}>{p.nombre}</option>)}
+          </select>
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-semibold text-[#8b949e]">Fecha y hora</label>
+          <input type="datetime-local" value={form.fecha_hora}
+            onChange={e => set('fecha_hora', e.target.value)} className={inputClass} />
+        </div>
+
         {error && <p className="text-xs text-red-400">{error}</p>}
         <button onClick={submit} disabled={loading}
           className="bg-[#238636] hover:bg-[#2ea043] text-white rounded-lg py-2 text-sm font-semibold transition-colors disabled:opacity-60">

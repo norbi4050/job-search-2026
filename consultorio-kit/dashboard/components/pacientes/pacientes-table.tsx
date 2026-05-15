@@ -1,6 +1,8 @@
 // components/pacientes/pacientes-table.tsx
 'use client'
 import { useState } from 'react'
+
+const OBRAS_SOCIALES = ['OSDE','Swiss Medical','Galeno','IOMA','PAMI','Medifé','Sancor Salud','OSECAC','OSPEDYC','Unión Personal','Particular']
 import { createClient } from '@/lib/supabase/client'
 import type { Paciente } from '@/lib/types'
 
@@ -87,13 +89,20 @@ export function PacientesTable({ initial }: Props) {
               <h2 className="text-base font-bold text-[#f0f6fc]">Editar paciente</h2>
               <button onClick={() => setEditing(null)} className="text-[#8b949e] hover:text-[#e6edf3]">✕</button>
             </div>
-            {(['nombre', 'obra_social', 'telefono_wa'] as const).map(field => (
+            {(['nombre', 'telefono_wa'] as const).map(field => (
               <div key={field} className="flex flex-col gap-1.5">
                 <label className="text-xs font-semibold text-[#8b949e] capitalize">{field.replace('_', ' ')}</label>
                 <input value={editing[field]} onChange={e => setEditing({ ...editing, [field]: e.target.value })}
                   className="bg-[#0d1117] border border-[#30363d] rounded-lg px-3 py-2 text-sm text-[#e6edf3] outline-none focus:border-[#58a6ff]" />
               </div>
             ))}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-[#8b949e]">Obra social</label>
+              <select value={editing.obra_social} onChange={e => setEditing({ ...editing, obra_social: e.target.value })}
+                className="bg-[#0d1117] border border-[#30363d] rounded-lg px-3 py-2 text-sm text-[#e6edf3] outline-none focus:border-[#58a6ff]">
+                {OBRAS_SOCIALES.map(os => <option key={os} value={os}>{os}</option>)}
+              </select>
+            </div>
             {saveError && <p className="text-xs text-red-400">{saveError}</p>}
             <button onClick={save} disabled={saving}
               className="bg-[#238636] text-white rounded-lg py-2 text-sm font-semibold disabled:opacity-60">
