@@ -1,11 +1,13 @@
 // components/atenciones/atencion-detail.tsx
 'use client'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import type { Conversacion } from '@/lib/types'
 
 interface Props { conv: Conversacion }
 
 export function AtencionDetail({ conv }: Props) {
+  const router = useRouter()
   const [mensaje, setMensaje] = useState('')
   const [loading, setLoading] = useState<'enviar' | 'cerrar' | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -21,7 +23,10 @@ export function AtencionDetail({ conv }: Props) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ telefono_wa: conv.telefono_wa, mensaje: mensajeEnviar, cerrar }),
     })
-    if (res.ok) { setMensaje('') } else { setError('Error al enviar. Intentá de nuevo.') }
+    if (res.ok) {
+      setMensaje('')
+      if (cerrar) router.refresh()
+    } else { setError('Error al enviar. Intentá de nuevo.') }
     setLoading(null)
   }
 
