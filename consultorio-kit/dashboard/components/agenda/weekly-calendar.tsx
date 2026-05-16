@@ -155,22 +155,13 @@ export function WeeklyCalendar({ turnos, bloqueos: initial, profesionalId, desde
                     <p className="text-[10px] text-[#8b949e]">{turnosDia.length} turno{turnosDia.length !== 1 ? 's' : ''}</p>
                   )}
                 </div>
-                {diaBloqueado ? (
+                {diaBloqueado && (
                   <button
                     onClick={() => habilitarDia(dia)}
                     disabled={isLoading(`dia-${fechaStr}`)}
                     className="text-[10px] text-red-400 hover:text-red-300 font-semibold shrink-0 disabled:opacity-50"
                   >
                     Habilitar
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => bloquearDia(dia)}
-                    disabled={isLoading(`dia-${fechaStr}`)}
-                    title="Bloquear día completo"
-                    className="text-[10px] text-[#8b949e] hover:text-red-400 shrink-0 disabled:opacity-50"
-                  >
-                    ⊘
                   </button>
                 )}
               </div>
@@ -245,12 +236,21 @@ export function WeeklyCalendar({ turnos, bloqueos: initial, profesionalId, desde
                         </div>
                       </div>
                     ) : (
-                      <button
-                        onClick={() => { setAddingDia(fechaStr); setAddForm({ hora_inicio: '09:00', hora_fin: '10:00' }) }}
-                        className="mt-auto text-[10px] text-[#8b949e] hover:text-[#e6edf3] border border-dashed border-[#30363d] hover:border-[#58a6ff]/50 rounded-lg py-1.5 transition-colors"
-                      >
-                        + Bloquear horas
-                      </button>
+                      <div className="mt-auto flex flex-col gap-1">
+                        <button
+                          onClick={() => bloquearDia(dia)}
+                          disabled={isLoading(`dia-${fechaStr}`)}
+                          className="text-[10px] text-[#8b949e] hover:text-red-400 border border-dashed border-[#30363d] hover:border-red-900/60 rounded-lg py-1.5 transition-colors disabled:opacity-50"
+                        >
+                          {isLoading(`dia-${fechaStr}`) ? '…' : '⊘ Bloquear día completo'}
+                        </button>
+                        <button
+                          onClick={() => { setAddingDia(fechaStr); setAddForm({ hora_inicio: '09:00', hora_fin: '10:00' }) }}
+                          className="text-[10px] text-[#8b949e] hover:text-[#e6edf3] border border-dashed border-[#30363d] hover:border-[#58a6ff]/50 rounded-lg py-1.5 transition-colors"
+                        >
+                          + Bloquear horas
+                        </button>
+                      </div>
                     )}
                   </>
                 )}
