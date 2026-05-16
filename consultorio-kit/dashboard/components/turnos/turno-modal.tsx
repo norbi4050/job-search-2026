@@ -5,9 +5,9 @@ import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 import type { Turno } from '@/lib/types'
 
-interface Props { turno: Turno; onClose: () => void }
+interface Props { turno: Turno; onClose: () => void; showLink?: boolean }
 
-export function TurnoModal({ turno, onClose }: Props) {
+export function TurnoModal({ turno, onClose, showLink = true }: Props) {
   const [loading, setLoading] = useState<'cancelar' | 'link' | null>(null)
   const [link, setLink] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -77,12 +77,14 @@ export function TurnoModal({ turno, onClose }: Props) {
 
         {turno.estado !== 'cancelado' && turno.estado !== 'auto_cancelado' && (
           <div className="flex gap-2">
-            <button onClick={handleLink} disabled={!!loading}
-              className="flex-1 bg-[#21262d] border border-[#30363d] text-[#e6edf3] rounded-lg py-2 text-xs font-semibold hover:bg-[#2d3748] transition-colors disabled:opacity-60">
-              {loading === 'link' ? 'Generando…' : '🔗 Link check-in'}
-            </button>
+            {showLink && (
+              <button onClick={handleLink} disabled={!!loading}
+                className="flex-1 bg-[#21262d] border border-[#30363d] text-[#e6edf3] rounded-lg py-2 text-xs font-semibold hover:bg-[#2d3748] transition-colors disabled:opacity-60">
+                {loading === 'link' ? 'Generando…' : '🔗 Link check-in'}
+              </button>
+            )}
             <button onClick={handleCancelar} disabled={!!loading}
-              className="flex-1 bg-red-950/40 border border-red-800/40 text-red-400 rounded-lg py-2 text-xs font-semibold hover:bg-red-900/40 transition-colors disabled:opacity-60">
+              className={`bg-red-950/40 border border-red-800/40 text-red-400 rounded-lg py-2 text-xs font-semibold hover:bg-red-900/40 transition-colors disabled:opacity-60 ${showLink ? 'flex-1' : 'w-full'}`}>
               {loading === 'cancelar' ? 'Cancelando…' : '✕ Cancelar turno'}
             </button>
           </div>
