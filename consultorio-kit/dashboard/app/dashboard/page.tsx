@@ -72,7 +72,7 @@ export default async function HoyPage() {
           ))}
         </div>
 
-        <TurnosTable turnos={turnosList} canCreate={role !== 'medico'} />
+        <TurnosTable turnos={turnosList} canCreate={role !== 'medico'} showLink={role !== 'medico'} />
       </div>
     </div>
   )
