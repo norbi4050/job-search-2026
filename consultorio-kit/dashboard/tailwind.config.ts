@@ -52,10 +52,13 @@ const config: Config = {
         'text-muted': '#8b949e',
         text: '#e6edf3',
         'text-strong': '#f0f6fc',
-        'dash-accent': '#58a6ff',
+        'dash-accent': '#4BA3F5',
         success: '#3fb950',
         warning: '#d29922',
         danger: '#f85149',
+        // Nexo Terra brand
+        'nt-navy': '#1B3D8F',
+        'nt-sky': '#4BA3F5',
       },
       borderRadius: {
         lg: 'var(--radius)',

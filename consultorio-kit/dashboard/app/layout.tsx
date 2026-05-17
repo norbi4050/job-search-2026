@@ -7,6 +7,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: process.env.NEXT_PUBLIC_CONSULTORIO_NOMBRE ?? 'Panel de Gestión',
+  icons: { icon: '/favicon.ico' },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

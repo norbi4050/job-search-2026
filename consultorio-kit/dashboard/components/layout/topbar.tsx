@@ -1,4 +1,5 @@
 // components/layout/topbar.tsx
+import Image from 'next/image'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 
@@ -16,7 +17,13 @@ export function Topbar({ title, subtitle, children }: Props) {
         <h1 className="text-base font-bold text-[#f0f6fc]">{title}</h1>
         <p className="text-xs text-[#8b949e] mt-0.5" suppressHydrationWarning>{subtitle ?? hoy}</p>
       </div>
-      {children && <div className="flex items-center gap-2">{children}</div>}
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-1.5 opacity-40">
+          <Image src="/nexo-terra-logo.png" alt="Nexo Terra" width={18} height={18} className="object-contain brightness-0 invert" />
+          <span className="text-[10px] text-[#8b949e] font-medium">Nexo Terra</span>
+        </div>
+        {children && <div className="flex items-center gap-2">{children}</div>}
+      </div>
     </div>
   )
 }
