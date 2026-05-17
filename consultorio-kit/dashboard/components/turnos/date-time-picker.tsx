@@ -1,0 +1,145 @@
+'use client'
+import { useState } from 'react'
+import { DayPicker } from 'react-day-picker'
+import { createClient } from '@/lib/supabase/client'
+import { format, startOfDay } from 'date-fns'
+import { es } from 'date-fns/locale'
+
+interface Props {
+  profesionalId: string
+  value: string
+  onChange: (val: string) => void
+}
+
+const DAY_CLS = [
+  'w-8 h-8 text-xs rounded-lg transition-colors',
+  'text-[#e6edf3] hover:bg-[#21262d]',
+  'disabled:opacity-25 disabled:cursor-not-allowed disabled:hover:bg-transparent',
+].join(' ')
+
+export function DateTimePicker({ profesionalId, value, onChange }: Props) {
+  const [selected, setSelected] = useState<Date | undefined>(value ? new Date(value) : undefined)
+  const [slots, setSlots] = useState<string[]>([])
+  const [slot, setSlot] = useState<string | null>(value ? format(new Date(value), 'HH:mm') : null)
+  const [loading, setLoading] = useState(false)
+
+  async function onDaySelect(day: Date | undefined) {
+    if (!day) return
+    setSelected(day)
+    setSlot(null)
+    setSlots([])
+    if (!profesionalId) return
+    setLoading(true)
+
+    const supabase = createClient()
+    const fechaStr = format(day, 'yyyy-MM-dd')
+    const diaSemana = day.getDay()
+
+    const [horariosRes, turnosRes, profRes] = await Promise.all([
+      supabase.from('consultorio_horarios_profesional')
+        .select('hora_inicio,hora_fin')
+        .eq('profesional_id', profesionalId)
+        .eq('dia_semana', diaSemana),
+      supabase.from('consultorio_turnos')
+        .select('fecha_hora')
+        .eq('profesional_id', profesionalId)
+        .gte('fecha_hora', `${fechaStr}T00:00:00`)
+        .lt('fecha_hora', `${fechaStr}T23:59:59`)
+        .not('estado', 'in', '("cancelado","auto_cancelado")'),
+      supabase.from('consultorio_profesionales')
+        .select('duracion_turno_min')
+        .eq('id', profesionalId)
+        .single(),
+    ])
+
+    const taken = new Set(
+      (turnosRes.data ?? []).map(t => format(new Date(t.fecha_hora), 'HH:mm'))
+    )
+    const dur = profRes.data?.duracion_turno_min ?? 30
+    const available: string[] = []
+
+    for (const h of horariosRes.data ?? []) {
+      const [sh, sm] = h.hora_inicio.split(':').map(Number)
+      const [eh, em] = h.hora_fin.split(':').map(Number)
+      let cur = sh * 60 + sm
+      const end = eh * 60 + em
+      while (cur < end) {
+        const hh = String(Math.floor(cur / 60)).padStart(2, '0')
+        const mm = String(cur % 60).padStart(2, '0')
+        const s = `${hh}:${mm}`
+        if (!taken.has(s)) available.push(s)
+        cur += dur
+      }
+    }
+
+    setSlots(available)
+    setLoading(false)
+  }
+
+  function pickSlot(s: string) {
+    if (!selected) return
+    setSlot(s)
+    const [h, m] = s.split(':').map(Number)
+    const dt = new Date(selected)
+    dt.setHours(h, m, 0, 0)
+    onChange(format(dt, "yyyy-MM-dd'T'HH:mm"))
+  }
+
+  return (
+    <div className="flex flex-col gap-3">
+      <DayPicker
+        mode="single"
+        selected={selected}
+        onSelect={onDaySelect}
+        locale={es}
+        disabled={{ before: startOfDay(new Date()) }}
+        showOutsideDays={false}
+        classNames={{
+          root: 'w-full',
+          months: 'w-full',
+          month: 'w-full flex flex-col gap-2',
+          month_caption: 'flex justify-between items-center px-1',
+          caption_label: 'text-sm font-semibold text-[#e6edf3] capitalize',
+          nav: 'flex gap-1',
+          button_previous: 'text-[#8b949e] hover:text-[#e6edf3] p-1 rounded transition-colors text-base leading-none',
+          button_next: 'text-[#8b949e] hover:text-[#e6edf3] p-1 rounded transition-colors text-base leading-none',
+          weeks: 'flex flex-col gap-0.5',
+          weekdays: 'flex',
+          weekday: 'flex-1 text-center text-[10px] font-semibold text-[#8b949e] uppercase py-1',
+          week: 'flex',
+          day: 'flex-1 flex items-center justify-center py-0.5',
+          day_button: DAY_CLS,
+          selected: '!bg-[#1f6feb] !text-white rounded-lg',
+          today: '!text-[#58a6ff] font-bold',
+          outside: 'opacity-0 pointer-events-none',
+          disabled: '!opacity-25 !cursor-not-allowed',
+        }}
+      />
+
+      {selected && (
+        <div className="border-t border-[#21262d] pt-3">
+          {loading ? (
+            <p className="text-xs text-[#8b949e] text-center py-2">Cargando horarios…</p>
+          ) : !profesionalId ? (
+            <p className="text-xs text-[#8b949e] text-center py-2">Seleccioná un profesional primero</p>
+          ) : slots.length === 0 ? (
+            <p className="text-xs text-[#8b949e] text-center py-2">Sin disponibilidad este día</p>
+          ) : (
+            <div className="grid grid-cols-4 gap-1.5">
+              {slots.map(s => (
+                <button key={s} type="button" onClick={() => pickSlot(s)}
+                  className={`text-xs py-1.5 rounded-lg font-mono transition-colors ${
+                    slot === s
+                      ? 'bg-[#1f6feb] text-white'
+                      : 'bg-[#21262d] text-[#8b949e] hover:text-[#e6edf3] hover:bg-[#30363d]'
+                  }`}>
+                  {s}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}

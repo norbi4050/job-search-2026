@@ -1,7 +1,7 @@
-// components/turnos/nuevo-turno-modal.tsx
 'use client'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { DateTimePicker } from './date-time-picker'
 
 const OBRAS_SOCIALES = ['OSDE','Swiss Medical','Galeno','IOMA','PAMI','Medifé','Sancor Salud','OSECAC','OSPEDYC','Unión Personal','Particular']
 
@@ -91,9 +91,14 @@ export function NuevoTurnoModal({ onClose, profesionalId }: Props) {
         )}
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-semibold text-[#8b949e]">Fecha y hora</label>
-          <input type="datetime-local" value={form.fecha_hora}
-            onChange={e => set('fecha_hora', e.target.value)} className={inputClass} />
+          <label className="text-xs font-semibold text-[#8b949e]">Fecha y horario</label>
+          <div className="bg-[#0d1117] border border-[#30363d] rounded-lg p-3">
+            <DateTimePicker
+              profesionalId={form.profesional_id}
+              value={form.fecha_hora}
+              onChange={val => set('fecha_hora', val)}
+            />
+          </div>
         </div>
 
         {error && <p className="text-xs text-red-400">{error}</p>}
