@@ -50,9 +50,10 @@ interface Props {
   showDate?: boolean
   canCreate?: boolean
   showLink?: boolean
+  profesionalId?: string
 }
 
-export function TurnosTable({ turnos, showDate = false, canCreate = false, showLink = true }: Props) {
+export function TurnosTable({ turnos, showDate = false, canCreate = false, showLink = true, profesionalId }: Props) {
   const [selected, setSelected] = useState<Turno | null>(null)
   const [showNuevo, setShowNuevo] = useState(false)
 
@@ -119,7 +120,7 @@ export function TurnosTable({ turnos, showDate = false, canCreate = false, showL
       </div>
 
       {selected && <TurnoModal turno={selected} onClose={() => setSelected(null)} showLink={showLink} />}
-      {showNuevo && <NuevoTurnoModal onClose={() => setShowNuevo(false)} />}
+      {showNuevo && <NuevoTurnoModal onClose={() => setShowNuevo(false)} profesionalId={profesionalId} />}
     </>
   )
 }

@@ -6,20 +6,22 @@ import { createClient } from '@/lib/supabase/client'
 const OBRAS_SOCIALES = ['OSDE','Swiss Medical','Galeno','IOMA','PAMI','Medifé','Sancor Salud','OSECAC','OSPEDYC','Unión Personal','Particular']
 
 interface Profesional { id: string; nombre: string }
-interface Props { onClose: () => void }
+interface Props { onClose: () => void; profesionalId?: string }
 
-export function NuevoTurnoModal({ onClose }: Props) {
+export function NuevoTurnoModal({ onClose, profesionalId }: Props) {
   const [form, setForm] = useState({
-    nombre: '', dni: '', telefono_wa: '', obra_social: '', profesional_id: '', fecha_hora: '',
+    nombre: '', dni: '', telefono_wa: '', obra_social: '',
+    profesional_id: profesionalId ?? '', fecha_hora: '',
   })
   const [profesionales, setProfesionales] = useState<Profesional[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    if (profesionalId) return
     createClient().from('consultorio_profesionales').select('id,nombre').order('nombre')
       .then(({ data }) => { if (data) setProfesionales(data as Profesional[]) })
-  }, [])
+  }, [profesionalId])
 
   function set(field: keyof typeof form, value: string) {
     setForm(prev => ({ ...prev, [field]: value }))
@@ -78,13 +80,15 @@ export function NuevoTurnoModal({ onClose }: Props) {
           </select>
         </div>
 
-        <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-semibold text-[#8b949e]">Profesional</label>
-          <select value={form.profesional_id} onChange={e => set('profesional_id', e.target.value)} className={selectClass}>
-            <option value="">Seleccioná profesional</option>
-            {profesionales.map(p => <option key={p.id} value={p.id}>{p.nombre}</option>)}
-          </select>
-        </div>
+        {profesionalId ? null : (
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-semibold text-[#8b949e]">Profesional</label>
+            <select value={form.profesional_id} onChange={e => set('profesional_id', e.target.value)} className={selectClass}>
+              <option value="">Seleccioná profesional</option>
+              {profesionales.map(p => <option key={p.id} value={p.id}>{p.nombre}</option>)}
+            </select>
+          </div>
+        )}
 
         <div className="flex flex-col gap-1.5">
           <label className="text-xs font-semibold text-[#8b949e]">Fecha y hora</label>
