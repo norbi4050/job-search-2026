@@ -4,9 +4,9 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import type { Conversacion } from '@/lib/types'
 
-interface Props { conv: Conversacion }
+interface Props { conv: Conversacion; onClosed?: () => void }
 
-export function AtencionDetail({ conv }: Props) {
+export function AtencionDetail({ conv, onClosed }: Props) {
   const router = useRouter()
   const [mensaje, setMensaje] = useState('')
   const [loading, setLoading] = useState<'enviar' | 'cerrar' | null>(null)
@@ -25,7 +25,7 @@ export function AtencionDetail({ conv }: Props) {
     })
     if (res.ok) {
       setMensaje('')
-      if (cerrar) router.refresh()
+      if (cerrar) { router.refresh(); onClosed?.() }
     } else { setError('Error al enviar. Intentá de nuevo.') }
     setLoading(null)
   }

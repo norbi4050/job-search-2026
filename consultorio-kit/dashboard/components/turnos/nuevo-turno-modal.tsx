@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { DateTimePicker } from './date-time-picker'
 
@@ -20,6 +21,7 @@ interface Profesional { id: string; nombre: string }
 interface Props { onClose: () => void; profesionalId?: string }
 
 export function NuevoTurnoModal({ onClose, profesionalId }: Props) {
+  const router = useRouter()
   const [form, setForm] = useState({
     nombre: '', dni: '', telefono_wa: '', obra_social: '',
     profesional_id: profesionalId ?? '', fecha_hora: '',
@@ -54,6 +56,7 @@ export function NuevoTurnoModal({ onClose, profesionalId }: Props) {
       body: JSON.stringify({ ...form, telefono_wa: form.telefono_wa.replace(/[\s\-\+]/g, '') }),
     })
     if (res.ok) {
+      router.refresh()
       onClose()
     } else {
       const data = await res.json().catch(() => ({}))

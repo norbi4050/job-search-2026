@@ -2,12 +2,13 @@
 import type { UserRole } from './types'
 
 export function getRole(userMetadata: Record<string, unknown>): UserRole {
-  const role = userMetadata?.role as UserRole | undefined
-  if (!role || !['dueno', 'secretaria', 'medico'].includes(role)) {
+  const role = userMetadata?.role as string | undefined
+  if (role === 'admin') return 'dueno'
+  if (!role || !(['dueno', 'secretaria', 'medico'] as string[]).includes(role)) {
     console.warn('[auth] user_metadata.role missing or invalid, defaulting to medico')
     return 'medico'
   }
-  return role
+  return role as UserRole
 }
 
 export function getProfesionalId(userMetadata: Record<string, unknown>): string | null {

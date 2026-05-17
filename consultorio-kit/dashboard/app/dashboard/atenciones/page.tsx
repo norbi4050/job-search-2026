@@ -34,7 +34,7 @@ export default function AtencionesPage() {
         <AtencionesList initial={convs} selectedPhone={selectedConv?.telefono_wa ?? null} onSelect={setSelectedConv} />
         <div className="flex-1 overflow-y-auto">
           {selectedConv
-            ? <AtencionDetail conv={selectedConv} />
+            ? <AtencionDetail conv={selectedConv} onClosed={() => setSelectedConv(null)} />
             : <div className="flex items-center justify-center h-full text-[#8b949e] text-sm">Seleccioná una atención para responder</div>
           }
         </div>

@@ -1,6 +1,7 @@
 // components/turnos/turno-modal.tsx
 'use client'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 import type { Turno } from '@/lib/types'
@@ -8,6 +9,7 @@ import type { Turno } from '@/lib/types'
 interface Props { turno: Turno; onClose: () => void; showLink?: boolean }
 
 export function TurnoModal({ turno, onClose, showLink = true }: Props) {
+  const router = useRouter()
   const [loading, setLoading] = useState<'cancelar' | 'link' | null>(null)
   const [link, setLink] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -19,7 +21,7 @@ export function TurnoModal({ turno, onClose, showLink = true }: Props) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ turno_id: turno.id }),
     })
-    if (res.ok) { onClose() } else { setError('No se pudo cancelar'); setLoading(null) }
+    if (res.ok) { router.refresh(); onClose() } else { setError('No se pudo cancelar'); setLoading(null) }
   }
 
   async function handleLink() {
@@ -75,7 +77,7 @@ export function TurnoModal({ turno, onClose, showLink = true }: Props) {
 
         {error && <p className="text-xs text-red-400">{error}</p>}
 
-        {turno.estado !== 'cancelado' && turno.estado !== 'auto_cancelado' && (
+        {turno.estado !== 'cancelado' && turno.estado !== 'auto_cancelado' && turno.estado !== 'asistido' && (
           <div className="flex gap-2">
             {showLink && (
               <button onClick={handleLink} disabled={!!loading}

@@ -31,7 +31,7 @@ export function DateTimePicker({ profesionalId, value, onChange }: Props) {
     const fechaStr = format(day, 'yyyy-MM-dd')
     const diaSemana = day.getDay()
 
-    const [horariosRes, turnosRes, profRes] = await Promise.all([
+    const [horariosRes, turnosRes, profRes, bloqueosRes] = await Promise.all([
       supabase.from('consultorio_horarios_profesional')
         .select('hora_inicio,hora_fin')
         .eq('profesional_id', profesionalId)
@@ -46,7 +46,26 @@ export function DateTimePicker({ profesionalId, value, onChange }: Props) {
         .select('duracion_turno_min')
         .eq('id', profesionalId)
         .single(),
+      supabase.from('consultorio_bloqueos')
+        .select('hora_inicio,hora_fin')
+        .eq('profesional_id', profesionalId)
+        .eq('fecha', fechaStr),
     ])
+
+    // Día completo bloqueado (hora_inicio === null)
+    if ((bloqueosRes.data ?? []).some(b => b.hora_inicio === null)) {
+      setSlots([])
+      setLoading(false)
+      return
+    }
+
+    const blockedRanges = (bloqueosRes.data ?? [])
+      .filter(b => b.hora_inicio !== null)
+      .map(b => {
+        const [bsh, bsm] = (b.hora_inicio as string).split(':').map(Number)
+        const [beh, bem] = (b.hora_fin as string).split(':').map(Number)
+        return { start: bsh * 60 + bsm, end: beh * 60 + bem }
+      })
 
     const taken = new Set(
       (turnosRes.data ?? []).map(t => format(new Date(t.fecha_hora), 'HH:mm'))
@@ -63,7 +82,8 @@ export function DateTimePicker({ profesionalId, value, onChange }: Props) {
         const hh = String(Math.floor(cur / 60)).padStart(2, '0')
         const mm = String(cur % 60).padStart(2, '0')
         const s = `${hh}:${mm}`
-        if (!taken.has(s)) available.push(s)
+        const isBlocked = blockedRanges.some(r => cur >= r.start && cur < r.end)
+        if (!taken.has(s) && !isBlocked) available.push(s)
         cur += dur
       }
     }

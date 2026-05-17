@@ -28,6 +28,7 @@ export function PacientesTable({ initial }: Props) {
     const supabase = createClient()
     const { error } = await supabase.from('consultorio_pacientes').update({
       nombre: editing.nombre,
+      dni: editing.dni,
       obra_social: editing.obra_social,
       telefono_wa: editing.telefono_wa,
     }).eq('id', editing.id)
@@ -89,7 +90,7 @@ export function PacientesTable({ initial }: Props) {
               <h2 className="text-base font-bold text-[#f0f6fc]">Editar paciente</h2>
               <button onClick={() => setEditing(null)} className="text-[#8b949e] hover:text-[#e6edf3]">✕</button>
             </div>
-            {(['nombre', 'telefono_wa'] as const).map(field => (
+            {(['nombre', 'dni', 'telefono_wa'] as const).map(field => (
               <div key={field} className="flex flex-col gap-1.5">
                 <label className="text-xs font-semibold text-[#8b949e] capitalize">{field.replace('_', ' ')}</label>
                 <input value={editing[field]} onChange={e => setEditing({ ...editing, [field]: e.target.value })}

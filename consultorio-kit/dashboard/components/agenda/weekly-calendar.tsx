@@ -60,6 +60,7 @@ export function WeeklyCalendar({ turnos, bloqueos: initial, profesionalId, desde
 
   async function bloquearDia(fecha: Date) {
     const fechaStr = format(fecha, 'yyyy-MM-dd')
+    if (!window.confirm(`¿Bloquear el día ${format(fecha, "EEEE d 'de' MMMM", { locale: es })} completo?`)) return
     setLoading(`dia-${fechaStr}`)
     const res = await fetch('/api/agenda/bloqueos', {
       method: 'POST',

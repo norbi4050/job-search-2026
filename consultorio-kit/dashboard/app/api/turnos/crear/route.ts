@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { getRole, getProfesionalId } from '@/lib/auth'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 
@@ -7,6 +8,10 @@ const WA_PHONE_ID = '963190063548521'
 const WA_PHONE_RE = /^549\d{10}$/
 
 export async function POST(req: Request) {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+
   let body: Record<string, unknown>
   try { body = await req.json() } catch {
     return NextResponse.json({ error: 'JSON inválido' }, { status: 400 })
@@ -14,14 +19,19 @@ export async function POST(req: Request) {
 
   const { nombre, dni, telefono_wa, obra_social, profesional_id, fecha_hora } = body as Record<string, string>
 
+  // Médico solo puede crear turnos para sí mismo
+  const role = getRole(user.user_metadata)
+  const profIdUsuario = getProfesionalId(user.user_metadata)
+  if (role === 'medico' && profIdUsuario && profesional_id !== profIdUsuario) {
+    return NextResponse.json({ error: 'No autorizado para este profesional' }, { status: 403 })
+  }
+
   if (!nombre || !telefono_wa || !profesional_id || !fecha_hora) {
     return NextResponse.json({ error: 'Faltan campos requeridos' }, { status: 400 })
   }
   if (!WA_PHONE_RE.test(telefono_wa)) {
     return NextResponse.json({ error: 'Teléfono inválido. Formato: 549 + código de área + número (ej: 5491137936325)' }, { status: 400 })
   }
-
-  const supabase = createClient()
 
   // 1. Upsert paciente
   const { data: existing } = await supabase
