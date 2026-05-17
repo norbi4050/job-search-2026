@@ -11,11 +11,7 @@ interface Props {
   onChange: (val: string) => void
 }
 
-const DAY_CLS = [
-  'w-8 h-8 text-xs rounded-lg transition-colors',
-  'text-[#e6edf3] hover:bg-[#21262d]',
-  'disabled:opacity-25 disabled:cursor-not-allowed disabled:hover:bg-transparent',
-].join(' ')
+const DAY_CLS = 'w-7 h-7 text-xs rounded-md transition-colors text-[#e6edf3] hover:bg-[#21262d] disabled:opacity-25 disabled:cursor-not-allowed disabled:hover:bg-transparent'
 
 export function DateTimePicker({ profesionalId, value, onChange }: Props) {
   const [selected, setSelected] = useState<Date | undefined>(value ? new Date(value) : undefined)
@@ -86,60 +82,64 @@ export function DateTimePicker({ profesionalId, value, onChange }: Props) {
   }
 
   return (
-    <div className="flex flex-col gap-3">
-      <DayPicker
-        mode="single"
-        selected={selected}
-        onSelect={onDaySelect}
-        locale={es}
-        disabled={{ before: startOfDay(new Date()) }}
-        showOutsideDays={false}
-        classNames={{
-          root: 'w-full',
-          months: 'w-full',
-          month: 'w-full flex flex-col gap-2',
-          month_caption: 'flex justify-between items-center px-1',
-          caption_label: 'text-sm font-semibold text-[#e6edf3] capitalize',
-          nav: 'flex gap-1',
-          button_previous: 'text-[#8b949e] hover:text-[#e6edf3] p-1 rounded transition-colors text-base leading-none',
-          button_next: 'text-[#8b949e] hover:text-[#e6edf3] p-1 rounded transition-colors text-base leading-none',
-          weeks: 'flex flex-col gap-0.5',
-          weekdays: 'flex',
-          weekday: 'flex-1 text-center text-[10px] font-semibold text-[#8b949e] uppercase py-1',
-          week: 'flex',
-          day: 'flex-1 flex items-center justify-center py-0.5',
-          day_button: DAY_CLS,
-          selected: '!bg-[#1f6feb] !text-white rounded-lg',
-          today: '!text-[#58a6ff] font-bold',
-          outside: 'opacity-0 pointer-events-none',
-          disabled: '!opacity-25 !cursor-not-allowed',
-        }}
-      />
+    <div className="flex gap-3">
+      {/* Calendario */}
+      <div className="shrink-0">
+        <DayPicker
+          mode="single"
+          selected={selected}
+          onSelect={onDaySelect}
+          locale={es}
+          disabled={{ before: startOfDay(new Date()) }}
+          showOutsideDays={false}
+          classNames={{
+            root: '',
+            months: '',
+            month: 'flex flex-col gap-1.5',
+            month_caption: 'flex justify-between items-center mb-1',
+            caption_label: 'text-xs font-semibold text-[#e6edf3] capitalize',
+            nav: 'flex gap-0.5',
+            button_previous: '[all:unset] cursor-pointer text-white hover:text-[#58a6ff] px-1 transition-colors text-sm',
+            button_next:     '[all:unset] cursor-pointer text-white hover:text-[#58a6ff] px-1 transition-colors text-sm',
+            weeks: 'flex flex-col gap-0.5',
+            weekdays: 'flex',
+            weekday: 'w-7 text-center text-[9px] font-semibold text-[#8b949e] uppercase',
+            week: 'flex',
+            day: 'w-7 flex items-center justify-center',
+            day_button: DAY_CLS,
+            selected: '!bg-[#1f6feb] !text-white rounded-md',
+            today: '!text-[#58a6ff] font-bold',
+            outside: 'opacity-0 pointer-events-none',
+            disabled: '!opacity-25 !cursor-not-allowed',
+          }}
+        />
+      </div>
 
-      {selected && (
-        <div className="border-t border-[#21262d] pt-3">
-          {loading ? (
-            <p className="text-xs text-[#8b949e] text-center py-2">Cargando horarios…</p>
-          ) : !profesionalId ? (
-            <p className="text-xs text-[#8b949e] text-center py-2">Seleccioná un profesional primero</p>
-          ) : slots.length === 0 ? (
-            <p className="text-xs text-[#8b949e] text-center py-2">Sin disponibilidad este día</p>
-          ) : (
-            <div className="grid grid-cols-4 gap-1.5">
-              {slots.map(s => (
-                <button key={s} type="button" onClick={() => pickSlot(s)}
-                  className={`text-xs py-1.5 rounded-lg font-mono transition-colors ${
-                    slot === s
-                      ? 'bg-[#1f6feb] text-white'
-                      : 'bg-[#21262d] text-[#8b949e] hover:text-[#e6edf3] hover:bg-[#30363d]'
-                  }`}>
-                  {s}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
+      {/* Slots */}
+      <div className="flex-1 flex flex-col justify-center min-w-0">
+        {!selected ? (
+          <p className="text-[11px] text-[#8b949e] text-center">Seleccioná un día</p>
+        ) : loading ? (
+          <p className="text-[11px] text-[#8b949e] text-center">Cargando…</p>
+        ) : !profesionalId ? (
+          <p className="text-[11px] text-[#8b949e] text-center">Seleccioná un profesional</p>
+        ) : slots.length === 0 ? (
+          <p className="text-[11px] text-[#8b949e] text-center">Sin disponibilidad</p>
+        ) : (
+          <div className="grid grid-cols-3 gap-1 max-h-48 overflow-y-auto pr-0.5">
+            {slots.map(s => (
+              <button key={s} type="button" onClick={() => pickSlot(s)}
+                className={`text-[11px] py-1.5 rounded-md font-mono transition-colors ${
+                  slot === s
+                    ? 'bg-[#1f6feb] text-white'
+                    : 'bg-[#21262d] text-[#8b949e] hover:text-[#e6edf3] hover:bg-[#30363d]'
+                }`}>
+                {s}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   )
 }
