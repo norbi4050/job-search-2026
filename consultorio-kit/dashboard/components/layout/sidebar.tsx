@@ -13,6 +13,7 @@ const NAV = [
   { href: '/dashboard/pacientes', label: 'Pacientes', icon: '👥', roles: ['dueno','secretaria'] as UserRole[] },
   { href: '/dashboard/en-vivo', label: 'En vivo', icon: '💬', roles: ['dueno'] as UserRole[], badge: 'enlivo' },
   { href: '/dashboard/analytics', label: 'Analytics', icon: '📊', roles: ['dueno'] as UserRole[] },
+  { href: '/dashboard/campanas', label: 'Campañas', icon: '📣', roles: ['dueno'] as UserRole[] },
 ]
 
 interface Props {
