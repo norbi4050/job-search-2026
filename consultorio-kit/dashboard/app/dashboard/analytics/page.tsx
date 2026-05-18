@@ -6,6 +6,10 @@ import { Topbar } from '@/components/layout/topbar'
 import { RoiCard } from '@/components/analytics/roi-card'
 import { HeroMetrics } from '@/components/analytics/hero-metrics'
 import { BarChart } from '@/components/analytics/bar-chart'
+import { NpsScoreCard } from '@/components/analytics/nps-score-card'
+import { NpsTrendChart } from '@/components/analytics/nps-trend-chart'
+import { NpsPorProfesional } from '@/components/analytics/nps-por-profesional'
+import { FeedbackUrgente } from '@/components/analytics/feedback-urgente'
 import { startOfMonth, endOfMonth, subDays, format } from 'date-fns'
 import { es } from 'date-fns/locale'
 
@@ -57,7 +61,8 @@ export default async function AnalyticsPage() {
     redirect('/login')
   }
   if (!user) redirect('/login')
-  if (getRole(user!.user_metadata) !== 'dueno') redirect('/dashboard')
+  const role = getRole(user!.user_metadata)
+  if (role !== 'dueno') redirect('/dashboard')
 
   const ahora = new Date()
   const desde = startOfMonth(ahora)
@@ -68,6 +73,65 @@ export default async function AnalyticsPage() {
   const valorConsulta = parseInt(process.env.CONSULTORIO_VALOR_CONSULTA ?? '8500')
   const costoMensual = parseInt(process.env.CONSULTORIO_COSTO_MENSUAL ?? '8500')
   const roi = costoMensual > 0 ? Math.round((data.adelantos * valorConsulta) / costoMensual) : 0
+
+  // NPS: fetch feedback from last 60 days
+  const { data: feedbackRaw } = await supabase
+    .from('consultorio_feedback')
+    .select('id, calificacion, comentario, created_at, turno_id')
+    .gte('created_at', subDays(ahora, 60).toISOString())
+    .order('created_at', { ascending: false })
+
+  const feedback = feedbackRaw ?? []
+
+  // NPS metrics computation
+  const ahora30 = subDays(ahora, 30)
+  const prev30Start = subDays(ahora, 60)
+  const fb30 = feedback.filter(f => new Date(f.created_at) >= ahora30)
+  const fbPrev = feedback.filter(f => new Date(f.created_at) >= prev30Start && new Date(f.created_at) < ahora30)
+  const npsScore = fb30.length > 0 ? Math.round((fb30.reduce((s, f) => s + f.calificacion, 0) / fb30.length) * 10) / 10 : 0
+  const npsTendencia = fbPrev.length > 0 ? Math.round((fbPrev.reduce((s, f) => s + f.calificacion, 0) / fbPrev.length) * 10) / 10 : 0
+
+  const npsWeeks = [0, 1, 2, 3, 4, 5, 6, 7].map(i => {
+    const fin = subDays(ahora, i * 7)
+    const ini = subDays(fin, 7)
+    const wf = feedback.filter(f => new Date(f.created_at) >= ini && new Date(f.created_at) < fin)
+    const avg = wf.length > 0 ? Math.round((wf.reduce((s, f) => s + f.calificacion, 0) / wf.length) * 10) / 10 : 0
+    return { label: `S${8 - i}`, avg, count: wf.length }
+  }).reverse()
+
+  const urgente = fb30.filter(f => f.calificacion <= 2)
+
+  // Per-profesional NPS: fetch turnos for feedback rows
+  const turnoIds = Array.from(new Set(feedback.map(f => f.turno_id).filter(Boolean)))
+  let npsPorProf: { nombre: string; especialidad: string; avg: number; count: number }[] = []
+  if (turnoIds.length > 0) {
+    const { data: turnosData } = await supabase
+      .from('consultorio_turnos')
+      .select('id, profesional_id, consultorio_profesionales(nombre, especialidad)')
+      .in('id', turnoIds)
+
+    if (turnosData) {
+      const turnoMap: Record<string, { nombre: string; especialidad: string }> = {}
+      for (const t of turnosData) {
+        const prof = t.consultorio_profesionales
+        const p = Array.isArray(prof) ? (prof[0] as { nombre: string; especialidad: string } | undefined) : (prof as { nombre: string; especialidad: string } | null)
+        if (p) turnoMap[t.id] = { nombre: p.nombre, especialidad: p.especialidad }
+      }
+
+      const profMap: Record<string, { nombre: string; especialidad: string; sum: number; count: number }> = {}
+      for (const f of feedback) {
+        const prof = turnoMap[f.turno_id]
+        if (!prof) continue
+        const key = prof.nombre
+        if (!profMap[key]) profMap[key] = { nombre: prof.nombre, especialidad: prof.especialidad, sum: 0, count: 0 }
+        profMap[key].sum += f.calificacion
+        profMap[key].count++
+      }
+      npsPorProf = Object.values(profMap)
+        .map(p => ({ nombre: p.nombre, especialidad: p.especialidad, avg: Math.round((p.sum / p.count) * 10) / 10, count: p.count }))
+        .sort((a, b) => b.avg - a.avg)
+    }
+  }
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
@@ -130,6 +194,15 @@ export default async function AnalyticsPage() {
               <p className="text-[10px] text-[#8b949e] mt-0.5">{s.sub}</p>
             </div>
           ))}
+        </div>
+
+        {/* NPS Section */}
+        <div className="mt-2 flex flex-col gap-4 pb-6">
+          <p className="text-xs font-semibold text-[#8b949e] uppercase tracking-wide px-1">Satisfacción de Pacientes</p>
+          <NpsScoreCard score={npsScore} count={fb30.length} tendencia={npsTendencia} />
+          <NpsTrendChart weeks={npsWeeks} />
+          {npsPorProf.length > 0 && <NpsPorProfesional rows={npsPorProf} />}
+          {role === 'dueno' && <FeedbackUrgente items={urgente} />}
         </div>
       </div>
     </div>

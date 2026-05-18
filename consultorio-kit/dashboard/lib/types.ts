@@ -46,3 +46,25 @@ export interface AnalyticsData {
   actividadSemanas: Array<{ semana: string; noShowPct: number }>
   actividadBot: { recordatorios: number; reservas: number; cancelaciones: number; handoffs: number }
 }
+
+export interface FeedbackRow {
+  id: string
+  calificacion: number
+  comentario: string | null
+  created_at: string
+  turno_id: string
+}
+
+export interface Campana {
+  id: string
+  nombre: string
+  template_key: 'reactivacion' | 'control_anual' | 'libre'
+  audiencia_tipo: 'todos' | 'especialidad' | 'dormidos'
+  audiencia_valor: string | null
+  mensaje_custom: string | null
+  programada_para: string | null
+  estado: 'borrador' | 'enviando' | 'completada' | 'cancelada'
+  total_destinatarios: number
+  total_respondieron: number
+  created_at: string
+}
