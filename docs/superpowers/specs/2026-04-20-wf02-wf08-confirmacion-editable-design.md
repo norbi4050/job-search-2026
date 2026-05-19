@@ -27,7 +27,6 @@ Este spec cubre los tres puntos en una sola iteración.
 - Helper `sendCTAUrl()` en WF02 para usar botones tipo `interactive / cta_url` de WhatsApp Cloud API.
 - Reemplazo de `sendText(link)` por `sendCTAUrl()` en los 3 puntos donde el bot envía el link de booking.
 - Modificación de `sucPg()` en WF08 para: (a) botón visible "Volver a WhatsApp", (b) redirect automático al chat de WhatsApp después de 3 segundos con cuenta regresiva visible.
-- Verificación de datos del paciente recurrente cuando pasaron más de 90 días desde su último turno (nuevo estado `verificar_datos`) + opción permanente "Actualizar mis datos" en el menú principal (nuevo estado `actualizar_datos`).
 
 **No incluye (out of scope):**
 
@@ -43,12 +42,12 @@ Este spec cubre los tres puntos en una sola iteración.
 
 | Dato | Valor | Dónde se usa |
 |---|---|---|
-| Número de WhatsApp del consultorio (demo) | `5491137936325` | Deep-link `wa.me/` en WF08 `sucPg()` |
+| Número de WhatsApp del consultorio (demo) | `+5491137936325` | Deep-link `wa.me/` en WF08 `sucPg()` |
 
 En el código se define como constante al inicio del nodo Code:
 
 ```js
-const CONSULTORIO_WA_NUMBER = '5491137936325';
+const CONSULTORIO_WA_NUMBER = '+5491137936325';
 ```
 
 Si el cliente final (no el demo) tiene otro número, basta editar esa constante.
@@ -400,217 +399,6 @@ El redirect automático puede fallar por dos razones: (a) el navegador bloquea `
 
 ---
 
-## 7bis. Feature 4 — Actualización de datos del paciente recurrente
-
-### 7bis.1 Motivación
-
-Hoy, cuando un paciente recurrente es reconocido por DNI (WF02 línea 230-234), el bot carga la OS guardada en Supabase y lo manda directo al menú. Si el paciente cambió de obra social, teléfono o cualquier otro dato desde su último turno, el bot usa data obsoleta sin preguntar.
-
-La Feature 1 resuelve parcialmente este caso (el paciente verá el resumen antes de reservar y podrá corregir ahí). Pero:
-- Si el paciente solo quiere actualizar sus datos sin reservar, no tiene flow.
-- Si el paciente no se da cuenta de que un dato está desactualizado y toca "Sí, todo bien" en el resumen, se le carga con OS vieja.
-
-### 7bis.2 Dos mecanismos combinados
-
-**A) Chequeo proactivo a los 90 días**: si pasaron más de 90 días desde el último turno del paciente, al reconocerlo por DNI el bot pregunta explícitamente si sus datos siguen iguales antes de mostrar el menú.
-
-**B) Opción permanente en el menú principal**: una nueva opción "Actualizar mis datos" disponible siempre para el recurrente, sin necesidad de reservar turno.
-
-### 7bis.3 Cambio en `esperando_dni`
-
-Reemplazar el bloque actual de "match encontrado" (WF02 líneas 230-234) por:
-
-```js
-if (pacs?.length > 0) {
-  const p = pacs[0];
-  ctx = { ...ctx, pacienteId: p.id, pacienteNombre: p.nombre, dni,
-          obraSocial: p.obra_social, esRecurrente: true, retry_count: 0 };
-
-  // Chequeo: días desde el último turno
-  const ultTurno = await supaGet('consultorio_turnos',
-    { paciente_id: `eq.${p.id}`, select: 'fecha_hora',
-      order: 'fecha_hora.desc', limit: '1' });
-  const diasDesdeUltimo = ultTurno?.[0]
-    ? Math.floor((Date.now() - new Date(ultTurno[0].fecha_hora).getTime())
-        / (1000*60*60*24))
-    : 999;
-
-  if (diasDesdeUltimo > 90) {
-    await updateConv(phone, 'verificar_datos', ctx);
-    const tiempo = diasDesdeUltimo > 365
-      ? `hace más de un año`
-      : `hace ${Math.floor(diasDesdeUltimo/30)} meses`;
-    const osLinea = p.obra_social
-      ? `🏥 Obra social: ${p.obra_social}`
-      : `🏥 Particular (sin obra social)`;
-    await sendButtons(phone,
-      `¡Hola ${p.nombre.split(' ')[0]}! 👋\n\nVeo que no nos vemos ${tiempo}. Antes de seguir, ¿tus datos siguen iguales?\n\n${osLinea}`,
-      [{ id: 'verif_ok', title: 'Sí, todo igual' },
-       { id: 'verif_actualizar', title: 'Actualizar' }]);
-    return [{ json: { action: 'verif_datos_prompt', phone, dias: diasDesdeUltimo } }];
-  }
-
-  // Flujo normal para recurrente activo
-  await updateConv(phone, 'menu_principal', ctx);
-  await mostrarMenuPrincipal(phone);
-}
-```
-
-### 7bis.4 Nuevo estado `verificar_datos`
-
-```js
-if (estado === 'verificar_datos') {
-  if (btnId === 'verif_ok') {
-    ctx.retry_count = 0;
-    await updateConv(phone, 'menu_principal', ctx);
-    await mostrarMenuPrincipal(phone);
-    return [{ json: { action: 'datos_verificados_ok', phone } }];
-  }
-  if (btnId === 'verif_actualizar') {
-    ctx.retry_count = 0;
-    await updateConv(phone, 'actualizar_datos', ctx);
-    await mostrarOpcionesActualizar(phone, ctx);
-    return [{ json: { action: 'ir_actualizar_desde_verif', phone } }];
-  }
-  ctx.retry_count = (ctx.retry_count || 0) + 1;
-  ctx.last_failed_state = estado;
-  await updateConv(phone, estado, ctx);
-  if (ctx.retry_count >= 2) {
-    return await sendHandoffWithContext(phone, ctx, estado, 'No responde a verificacion de datos');
-  }
-  await sendButtons(phone, '¿Tus datos siguen iguales?',
-    [{ id: 'verif_ok', title: 'Sí, todo igual' },
-     { id: 'verif_actualizar', title: 'Actualizar' }]);
-  return [{ json: { action: 'verif_retry', phone } }];
-}
-```
-
-### 7bis.5 Nuevo estado `actualizar_datos`
-
-Solo ofrece actualizar obra social. Nombre y DNI no se ofrecen: el nombre rara vez cambia (y cambiarlo genera problemas con registros históricos), el DNI nunca.
-
-Función auxiliar:
-
-```js
-async function mostrarOpcionesActualizar(phone, ctx) {
-  const osActual = ctx.obraSocial
-    ? `🏥 Obra social: ${ctx.obraSocial}`
-    : `🏥 Particular (sin obra social)`;
-  await sendButtons(phone,
-    `¿Qué querés actualizar?\n\n${osActual}`,
-    [{ id: 'actualizar_os', title: 'Cambiar obra social' },
-     { id: 'actualizar_volver', title: 'Volver al menú' }]);
-}
-```
-
-Handler:
-
-```js
-if (estado === 'actualizar_datos') {
-  if (btnId === 'actualizar_os') {
-    ctx.retry_count = 0;
-    await updateConv(phone, 'esperando_obra_social',
-      { ...ctx, edicion: true, modoActualizacion: true, pregOS: undefined });
-    await sendButtons(phone, '¿Tenés obra social o prepaga?',
-      [{ id: 'os_si', title: 'Sí, tengo' },
-       { id: 'os_no', title: 'No, particular' }]);
-    return [{ json: { action: 'actualizar_os_start', phone } }];
-  }
-  if (btnId === 'actualizar_volver') {
-    ctx.retry_count = 0;
-    await updateConv(phone, 'menu_principal', ctx);
-    await mostrarMenuPrincipal(phone);
-    return [{ json: { action: 'actualizar_volver_menu', phone } }];
-  }
-  ctx.retry_count = (ctx.retry_count || 0) + 1;
-  ctx.last_failed_state = estado;
-  await updateConv(phone, estado, ctx);
-  if (ctx.retry_count >= 2) {
-    return await sendHandoffWithContext(phone, ctx, estado, 'No puede actualizar datos');
-  }
-  await mostrarOpcionesActualizar(phone, ctx);
-  return [{ json: { action: 'actualizar_retry', phone } }];
-}
-```
-
-### 7bis.6 Cierre del flujo de actualización standalone
-
-En el handler de `esperando_obra_social` (WF02 sección de edición), después de completar la OS:
-
-```js
-// Si venía desde "Actualizar mis datos" (standalone)
-if (ctx.edicion && ctx.modoActualizacion) {
-  ctx.edicion = false;
-  ctx.modoActualizacion = false;
-  await sendText(phone, `✅ Listo, actualicé tu obra social a *${ctx.obraSocial || 'Particular'}*.`);
-  await updateConv(phone, 'menu_principal', ctx);
-  await mostrarMenuPrincipal(phone);
-  return [{ json: { action: 'actualizacion_standalone_done', phone } }];
-}
-// Si venía de edición dentro del flow de reserva (Feature 1)
-if (ctx.edicion) {
-  ctx.edicion = false;
-  await updateConv(phone, 'confirmar_datos', ctx);
-  await mostrarResumenConfirmacion(phone, ctx);
-  return [{ json: { action: 'edit_done', phone } }];
-}
-// Flujo normal
-```
-
-### 7bis.7 Menú principal — cambio a lista interactiva
-
-Para agregar la opción "Actualizar mis datos" sin romper el límite de 3 botones de WhatsApp, se convierte `menu_principal` de `sendButtons` a `sendList`. Nuevo helper compartido:
-
-```js
-async function mostrarMenuPrincipal(phone) {
-  await sendList(phone, '¿Qué necesitás?', 'Ver opciones', [
-    { title: 'Turnos', rows: [
-      { id: 'menu_turno', title: 'Sacar turno' },
-      { id: 'menu_cancelar', title: 'Cancelar o reprogramar' },
-      { id: 'menu_consultar', title: 'Ver mi próximo turno' }
-    ]},
-    { title: 'Mi cuenta', rows: [
-      { id: 'menu_actualizar', title: 'Actualizar mis datos' }
-    ]}
-  ]);
-}
-```
-
-Agregar handler en `menu_principal`:
-
-```js
-if (btnId === 'menu_actualizar') {
-  ctx.retry_count = 0;
-  await updateConv(phone, 'actualizar_datos', ctx);
-  await mostrarOpcionesActualizar(phone, ctx);
-  return [{ json: { action: 'menu_actualizar', phone } }];
-}
-```
-
-Reemplazar los `sendButtons` del menú principal en todos los call sites actuales (onboarding nuevo al terminar, recurrente reciente, `accion_volver`, `cancel_no`, `menu_resent`, fallback redirect) por `await mostrarMenuPrincipal(phone)`.
-
-### 7bis.8 Detalle: paciente sin turnos previos
-
-Un paciente puede existir en `consultorio_pacientes` sin tener turnos todavía (ej. se creó hace tiempo, nunca reservó). En ese caso `ultTurno` está vacío y `diasDesdeUltimo = 999` dispara el prompt de verificación. Es aceptable: mejor preguntar que asumir.
-
-### 7bis.9 Umbral de 90 días
-
-El umbral `> 90 días` es un valor de diseño que refleja "si no vino hace más de 3 meses, vale preguntar". Es arbitrario pero defendible:
-- Menos de 90 (ej. 30): demasiado agresivo, molesta a recurrentes mensuales.
-- Más de 90 (ej. 180): demasiado permisivo, deja pasar pacientes que cambiaron de cobertura en ese lapso.
-
-Se define como constante al inicio del Code node para que sea fácil de ajustar:
-
-```js
-const DIAS_VERIFICACION = 90;
-```
-
-### 7bis.10 Interacción con `esRecurrente` (Feature 1)
-
-El flag `ctx.esRecurrente = true` se setea en `esperando_dni` junto a los otros campos. Eso satisface el requisito de Feature 1 (5.4-C) de ocultar "Cambiar nombre" para recurrentes en el resumen `confirmar_datos`. No se agrega lógica nueva — el flag ya se introduce en este mismo spec.
-
----
-
 ## 8. Error handling
 
 - **Falla al insertar/actualizar paciente** — el flujo actual no valida respuestas de Supabase y sigue silenciosamente. No se toca ese comportamiento en este spec (queda para un iter de hardening dedicado).
@@ -654,43 +442,21 @@ El flag `ctx.esRecurrente = true` se setea en `esperando_dni` junto a los otros 
 3. Elegir especialidad Z → nuevo profesional Z1.
 4. Verificar que vuelve al resumen con especialidad Z y profesional Z1.
 
-### 9.5 Recurrente activo (< 90 días desde último turno)
+### 9.5 Recurrente
 
-1. Paciente con DNI existente en Supabase y último turno hace menos de 90 días.
-2. Escribe "hola" → bot pide DNI → DNI → salta directo al menú principal (sin prompt de verificación).
-3. Menu → Sacar turno → especialidad → profesional → resumen con datos guardados.
-4. Verificar que la opción "Cambiar nombre" **no aparece** en el resumen.
-5. Cambiar OS y confirmar: datos actualizados en DB.
+1. Paciente con DNI existente en Supabase.
+2. Menu → Sacar turno → especialidad → profesional → resumen con datos guardados.
+3. Verificar que la opción "Cambiar nombre" **no aparece**.
+4. Cambiar OS y confirmar: datos actualizados en DB.
 
-### 9.6 Recurrente inactivo (> 90 días desde último turno) — prompt proactivo
-
-1. Paciente con último turno hace 100+ días (se puede simular cambiando `fecha_hora` del turno más reciente en Supabase, o creando un paciente con un turno antiguo).
-2. Escribe "hola" → DNI → el bot responde con prompt de verificación mostrando su OS actual y botones `Sí, todo igual` / `Actualizar`.
-3a. Caso "Sí, todo igual": va al menú principal normalmente.
-3b. Caso "Actualizar": entra a `actualizar_datos`, cambia OS, DB se actualiza, vuelve al menú.
-
-### 9.7 Actualización standalone desde menú
-
-1. Paciente recurrente en menú principal.
-2. Elige la opción "Actualizar mis datos" (nueva row).
-3. Cambia OS.
-4. Verifica en DB que `consultorio_pacientes.obra_social` se actualizó.
-5. Verifica que el bot vuelve al menú principal (no entra al flow de reserva).
-
-### 9.8 Paciente sin turnos previos
-
-1. Paciente existe en `consultorio_pacientes` pero nunca tuvo un turno.
-2. Escribe → DNI → se dispara el prompt de verificación (porque `diasDesdeUltimo = 999`).
-3. Elige "Sí, todo igual" → va al menú.
-
-### 9.9 Fallback del estado `confirmar_datos`
+### 9.6 Fallback del estado `confirmar_datos`
 
 1. Llegar al resumen.
 2. Escribir texto libre ("qué tengo que hacer acá?").
 3. Retry #1: re-envía el resumen.
 4. Retry #2: dispara handoff a humano.
 
-### 9.10 Waitlist + CTA
+### 9.7 Waitlist + CTA
 
 1. Paciente en waitlist de profesional X.
 2. Se libera un turno (manual: cancelar un turno existente de X).

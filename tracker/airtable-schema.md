@@ -1,7 +1,11 @@
-# Airtable Schema — Job Search 2026
+# Schema — Job Search 2026
 
-**Base name:** `Job Search 2026`
-**Crear vía:** MCP Airtable de Claude Code, o manualmente en airtable.com
+**Tracker activo:** Supabase (PostgreSQL)
+**Proyecto:** Nuevo proyecto Multiagente (`xorjkjaimeampfdiichs`)
+**Host:** db.xorjkjaimeampfdiichs.supabase.co
+**Tablas:** `applications`, `empresas_target`
+**Backup Google Sheets:** https://docs.google.com/spreadsheets/d/1N4GpHXBfFnorqF2NEUSjRvRQ71TGf_rym2RHwp13kZc/edit
+**Backup Airtable:** base `appnLBbhlvjQKgWTZ` (pendiente — límite API free alcanzado abril 2026)
 
 ---
 

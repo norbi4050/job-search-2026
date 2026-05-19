@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nexo Terra — Enfoques de Marca</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0f0f0f; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; padding: 2rem; }
+
+  .page-title { color: #fff; font-size: 1.5rem; font-weight: 300; letter-spacing: 2px; text-align: center; margin-bottom: 0.5rem; }
+  .page-sub { color: #666; font-size: 0.85rem; text-align: center; margin-bottom: 2.5rem; letter-spacing: 1px; }
+
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; max-width: 1200px; margin: 0 auto; }
+
+  .brand-card {
+    border-radius: 16px; overflow: hidden; cursor: pointer;
+    border: 2px solid transparent;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .brand-card:hover { transform: translateY(-4px); }
+  .brand-card.selected { border-color: #60a5fa; }
+
+  .card-label {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    text-align: center; padding: 0.6rem 1rem; font-weight: 600;
+  }
+
+  /* A — PRECISION DARK */
+  .card-a .card-label { background: #0a0e1a; color: #38bdf8; }
+  .card-a .hero { background: #0a0e1a; padding: 2rem 1.5rem 1.5rem; position: relative; overflow: hidden; }
+  .card-a .hero::before { content: ''; position: absolute; top: -60px; right: -60px; width: 180px; height: 180px; background: radial-gradient(circle, rgba(56,189,248,0.12) 0%, transparent 70%); border-radius: 50%; }
+  .card-a .logo-row { display: flex; align-items: center; gap: 10px; margin-bottom: 1.5rem; }
+  .card-a .logo-icon { width: 32px; height: 32px; border-radius: 6px; background: #38bdf8; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: #0a0e1a; }
+  .card-a .logo-text { color: #fff; font-size: 13px; letter-spacing: 3px; font-weight: 600; text-transform: uppercase; }
+  .card-a .tagline { color: #38bdf8; font-size: 10px; letter-spacing: 2px; margin-bottom: 1rem; }
+  .card-a .headline { color: #fff; font-size: 1.15rem; font-weight: 300; line-height: 1.5; margin-bottom: 1.25rem; }
+  .card-a .btn { display: inline-block; background: #38bdf8; color: #0a0e1a; padding: 8px 20px; border-radius: 6px; font-size: 12px; font-weight: 700; letter-spacing: 1px; }
+  .card-a .palette { display: flex; gap: 6px; padding: 1rem 1.5rem; background: #07090f; }
+  .card-a .palette span { height: 24px; border-radius: 4px; flex: 1; }
+  .card-a .info { background: #07090f; padding: 1rem 1.5rem; }
+  .card-a .info h4 { color: #38bdf8; font-size: 12px; letter-spacing: 1px; margin-bottom: 0.5rem; }
+  .card-a .info p { color: #6b7280; font-size: 12px; line-height: 1.5; }
+
+  /* B — CLINICAL WHITE */
+  .card-b .card-label { background: #f8fafc; color: #0f4c81; border-bottom: 1px solid #e2e8f0; }
+  .card-b .hero { background: #ffffff; padding: 2rem 1.5rem 1.5rem; }
+  .card-b .logo-row { display: flex; align-items: center; gap: 10px; margin-bottom: 1.5rem; }
+  .card-b .logo-icon { width: 32px; height: 32px; border-radius: 6px; background: #0f4c81; display: flex; align-items: center; justify-content: center; }
+  .card-b .logo-dots { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; padding: 5px; }
+  .card-b .logo-dot { width: 8px; height: 8px; border-radius: 50%; background: #38bdf8; }
+  .card-b .logo-dot.dark { background: #fff; }
+  .card-b .logo-text { color: #0f4c81; font-size: 13px; letter-spacing: 3px; font-weight: 700; text-transform: uppercase; }
+  .card-b .tagline { color: #38bdf8; font-size: 10px; letter-spacing: 2px; margin-bottom: 1rem; }
+  .card-b .headline { color: #0f172a; font-size: 1.15rem; font-weight: 300; line-height: 1.5; margin-bottom: 1.25rem; }
+  .card-b .btn { display: inline-block; background: #0f4c81; color: #fff; padding: 8px 20px; border-radius: 6px; font-size: 12px; font-weight: 600; letter-spacing: 1px; }
+  .card-b .palette { display: flex; gap: 6px; padding: 1rem 1.5rem; background: #f8fafc; border-top: 1px solid #e2e8f0; }
+  .card-b .palette span { height: 24px; border-radius: 4px; flex: 1; }
+  .card-b .info { background: #f8fafc; padding: 1rem 1.5rem; border-top: 1px solid #e2e8f0; }
+  .card-b .info h4 { color: #0f4c81; font-size: 12px; letter-spacing: 1px; margin-bottom: 0.5rem; }
+  .card-b .info p { color: #64748b; font-size: 12px; line-height: 1.5; }
+
+  /* C — NEXO AZUL PROFUNDO */
+  .card-c .card-label { background: #0f172a; color: #94a3b8; }
+  .card-c .hero { background: linear-gradient(145deg, #0f172a 0%, #1e3a5f 60%, #162032 100%); padding: 2rem 1.5rem 1.5rem; position: relative; overflow: hidden; }
+  .card-c .hero::after { content: ''; position: absolute; bottom: -40px; left: -40px; width: 160px; height: 160px; background: radial-gradient(circle, rgba(148,163,184,0.06) 0%, transparent 70%); border-radius: 50%; }
+  .card-c .logo-row { display: flex; align-items: center; gap: 10px; margin-bottom: 1.5rem; }
+  .card-c .logo-icon { width: 32px; height: 32px; border-radius: 6px; background: linear-gradient(135deg, #c9a84c, #e8d5a3); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: #0f172a; }
+  .card-c .logo-text { color: #e2e8f0; font-size: 13px; letter-spacing: 4px; font-weight: 300; text-transform: uppercase; }
+  .card-c .tagline { color: #c9a84c; font-size: 10px; letter-spacing: 2px; margin-bottom: 1rem; }
+  .card-c .headline { color: #e2e8f0; font-size: 1.15rem; font-weight: 300; line-height: 1.5; margin-bottom: 1.25rem; }
+  .card-c .btn { display: inline-block; border: 1px solid #c9a84c; color: #c9a84c; padding: 8px 20px; border-radius: 6px; font-size: 12px; font-weight: 600; letter-spacing: 1px; }
+  .card-c .palette { display: flex; gap: 6px; padding: 1rem 1.5rem; background: #07090f; }
+  .card-c .palette span { height: 24px; border-radius: 4px; flex: 1; }
+  .card-c .info { background: #07090f; padding: 1rem 1.5rem; }
+  .card-c .info h4 { color: #c9a84c; font-size: 12px; letter-spacing: 1px; margin-bottom: 0.5rem; }
+  .card-c .info p { color: #4b5563; font-size: 12px; line-height: 1.5; }
+
+  .select-bar { text-align: center; margin-top: 2rem; color: #666; font-size: 13px; letter-spacing: 1px; }
+  .select-bar span { color: #60a5fa; }
+</style>
+</head>
+<body>
+
+<p class="page-title">NEXO TERRA — ENFOQUES DE MARCA</p>
+<p class="page-sub">Hacé clic en el que más te resuene · Podés elegir más de uno</p>
+
+<div class="grid">
+
+  <div class="brand-card card-a" onclick="selectCard(this, 'a')">
+    <div class="card-label">A — PRECISION DARK</div>
+    <div class="hero">
+      <div class="logo-row">
+        <div class="logo-icon">N</div>
+        <span class="logo-text">Nexo Terra</span>
+      </div>
+      <p class="tagline">AI PARA MEDICINA · LATAM</p>
+      <p class="headline">Tu consultorio trabaja solo. Vos atendés pacientes.</p>
+      <span class="btn">Ver demo →</span>
+    </div>
+    <div class="palette">
+      <span style="background:#0a0e1a"></span>
+      <span style="background:#38bdf8"></span>
+      <span style="background:#0ea5e9"></span>
+      <span style="background:#ffffff"></span>
+      <span style="background:#1e293b"></span>
+    </div>
+    <div class="info">
+      <h4>PERSONALIDAD</h4>
+      <p>Tecnológico, preciso, casi europeo. Genera FOMO inmediato. Para médicos que quieren lo mejor sin importar el precio.</p>
+    </div>
+  </div>
+
+  <div class="brand-card card-b" onclick="selectCard(this, 'b')">
+    <div class="card-label">B — CLINICAL WHITE ★ RECOMENDADO</div>
+    <div class="hero">
+      <div class="logo-row">
+        <div class="logo-icon">
+          <div class="logo-dots">
+            <div class="logo-dot dark"></div>
+            <div class="logo-dot"></div>
+            <div class="logo-dot"></div>
+            <div class="logo-dot dark"></div>
+          </div>
+        </div>
+        <span class="logo-text">Nexo Terra</span>
+      </div>
+      <p class="tagline">INTELIGENCIA MÉDICA · LATAM</p>
+      <p class="headline">Reducimos tus no-shows un 70% en el primer mes.</p>
+      <span class="btn">Ver demo →</span>
+    </div>
+    <div class="palette">
+      <span style="background:#ffffff; border:1px solid #e2e8f0"></span>
+      <span style="background:#0f4c81"></span>
+      <span style="background:#38bdf8"></span>
+      <span style="background:#0f172a"></span>
+      <span style="background:#f0f9ff"></span>
+    </div>
+    <div class="info">
+      <h4>PERSONALIDAD</h4>
+      <p>Prolijo, clínico, confiable. El azul marino comunica seriedad médica. El celeste trae innovación. Juntos: premium y accesible.</p>
+    </div>
+  </div>
+
+  <div class="brand-card card-c" onclick="selectCard(this, 'c')">
+    <div class="card-label">C — NEXO AZUL PROFUNDO</div>
+    <div class="hero">
+      <div class="logo-row">
+        <div class="logo-icon">N</div>
+        <span class="logo-text">Nexo Terra</span>
+      </div>
+      <p class="tagline">SISTEMAS MÉDICOS INTELIGENTES</p>
+      <p class="headline">Automatización de élite para consultorios que no se conforman.</p>
+      <span class="btn">Solicitar acceso →</span>
+    </div>
+    <div class="palette">
+      <span style="background:#0f172a"></span>
+      <span style="background:#1e3a5f"></span>
+      <span style="background:#c9a84c"></span>
+      <span style="background:#e8d5a3"></span>
+      <span style="background:#334155"></span>
+    </div>
+    <div class="info">
+      <h4>PERSONALIDAD</h4>
+      <p>Exclusivo, casi bancario. El dorado da un toque de lujo. "Solicitar acceso" en vez de "Ver demo" — máximo FOMO. Precio implícito alto.</p>
+    </div>
+  </div>
+
+</div>
+
+<p class="select-bar">Seleccionado: <span id="selected-text">ninguno todavía</span></p>
+
+<script>
+  const selected = {};
+  function selectCard(el, id) {
+    el.classList.toggle('selected');
+    if (selected[id]) { delete selected[id]; } else { selected[id] = true; }
+    const keys = Object.keys(selected);
+    document.getElementById('selected-text').textContent = keys.length ? keys.map(k => k.toUpperCase()).join(' + ') : 'ninguno todavía';
+    if (window.__companion_select) window.__companion_select(id, el.classList.contains('selected'));
+  }
+</script>
+</body>
+</html>

@@ -184,7 +184,11 @@ export function NuevaCampanaModal({ onClose, onCreated }: Props) {
           </button>
           {step < 4 ? (
             <button onClick={() => setStep(s => s + 1)}
-              disabled={step === 1 && !template}
+              disabled={
+                (step === 1 && !template) ||
+                (step === 2 && audiencia === 'especialidad' && !audienciaValor.trim()) ||
+                (step === 2 && audiencia === 'dormidos' && !audienciaValor)
+              }
               className="bg-[#1B3D8F] hover:bg-[#2251c5] disabled:opacity-40 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">
               Siguiente →
             </button>

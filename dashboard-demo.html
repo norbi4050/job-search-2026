@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Predigma — Panel de Gestión</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+  body { font-family: 'Inter', sans-serif; }
+</style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+<div class="flex h-screen overflow-hidden">
+
+  <!-- Sidebar -->
+  <aside class="w-64 bg-white border-r border-gray-200 flex flex-col flex-shrink-0">
+    <div class="px-6 py-5 border-b border-gray-100">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center">
+          <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+        </div>
+        <div>
+          <p class="font-bold text-gray-900 text-sm">PREDIGMA</p>
+          <p class="text-xs text-gray-400">Medicina Preventiva</p>
+        </div>
+      </div>
+    </div>
+    <nav class="flex-1 px-4 py-4 space-y-1">
+      <button onclick="showView('hoy')" id="nav-hoy" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-lg bg-blue-50 text-blue-700 font-medium text-sm text-left">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        Turnos de Hoy
+      </button>
+      <button onclick="showView('semana')" id="nav-semana" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50 text-sm text-left">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        Vista Semanal
+      </button>
+      <button onclick="showView('handoffs')" id="nav-handoffs" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50 text-sm text-left">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"/></svg>
+        Consultas Pendientes
+        <span class="ml-auto bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">2</span>
+      </button>
+      <button onclick="showView('pacientes')" id="nav-pacientes" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50 text-sm text-left">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        Pacientes
+      </button>
+      <button onclick="showView('reportes')" id="nav-reportes" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50 text-sm text-left">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        Reportes
+      </button>
+    </nav>
+    <div class="px-4 py-4 border-t border-gray-100">
+      <div class="flex items-center gap-3 px-3 py-2">
+        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 font-semibold text-xs">SR</div>
+        <div>
+          <p class="text-sm font-medium text-gray-800">Secretaría</p>
+          <p class="text-xs text-gray-400">Posadas, Misiones</p>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="flex-1 overflow-y-auto">
+
+    <!-- VIEW: HOY -->
+    <div id="view-hoy">
+      <div class="bg-white border-b border-gray-200 px-8 py-4 flex items-center justify-between">
+        <div><h1 class="text-xl font-bold text-gray-900">Turnos de Hoy</h1><p class="text-sm text-gray-400">Lunes 12 de mayo de 2026</p></div>
+        <button onclick="alert('Función disponible en la versión productiva')" class="flex items-center gap-2 px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          Nuevo Turno
+        </button>
+      </div>
+      <div class="px-8 py-6">
+        <div class="grid grid-cols-4 gap-4 mb-6">
+          <div class="bg-white rounded-xl p-5 border border-gray-200"><p class="text-xs font-medium text-gray-400 uppercase tracking-wide">Turnos hoy</p><p class="text-3xl font-bold text-gray-900 mt-1">24</p><p class="text-xs text-green-600 mt-1">↑ 3 vs ayer</p></div>
+          <div class="bg-white rounded-xl p-5 border border-gray-200"><p class="text-xs font-medium text-gray-400 uppercase tracking-wide">Confirmados</p><p class="text-3xl font-bold text-green-600 mt-1">19</p><p class="text-xs text-gray-400 mt-1">79% del total</p></div>
+          <div class="bg-white rounded-xl p-5 border border-gray-200"><p class="text-xs font-medium text-gray-400 uppercase tracking-wide">No-shows</p><p class="text-3xl font-bold text-red-500 mt-1">1</p><p class="text-xs text-green-600 mt-1">↓ vs promedio (4)</p></div>
+          <div class="bg-white rounded-xl p-5 border border-gray-200"><p class="text-xs font-medium text-gray-400 uppercase tracking-wide">Consultas pendientes</p><p class="text-3xl font-bold text-blue-600 mt-1">2</p><p class="text-xs text-gray-400 mt-1">Esperando secretaria</p></div>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-200">
+          <div class="px-5 py-3 border-b border-gray-100 flex items-center gap-4">
+            <input id="buscar" type="text" oninput="filtrarTabla()" placeholder="Buscar paciente..." class="flex-1 text-sm outline-none text-gray-600 placeholder-gray-300">
+            <select id="filtroMedico" onchange="filtrarTabla()" class="text-sm text-gray-600 outline-none border border-gray-200 rounded-lg px-3 py-1.5">
+              <option value="">Todos los médicos</option>
+              <option>Dr. Martín Suárez</option>
+              <option>Dra. Laura Méndez</option>
+              <option>Dra. Carolina Ríos</option>
+              <option>Dr. Federico Bravo</option>
+              <option>Dra. Valentina Torres</option>
+            </select>
+            <select id="filtroEstado" onchange="filtrarTabla()" class="text-sm text-gray-600 outline-none border border-gray-200 rounded-lg px-3 py-1.5">
+              <option value="">Todos los estados</option>
+              <option>Confirmado</option>
+              <option>Pendiente</option>
+              <option>Cancelado</option>
+              <option>En consulta</option>
+            </select>
+          </div>
+          <table class="w-full text-sm">
+            <thead><tr class="bg-gray-50 text-xs font-semibold text-gray-400 uppercase tracking-wide">
+              <th class="px-5 py-3 text-left">Hora</th>
+              <th class="px-5 py-3 text-left">Paciente</th>
+              <th class="px-5 py-3 text-left">Médico</th>
+              <th class="px-5 py-3 text-left">Especialidad</th>
+              <th class="px-5 py-3 text-left">Obra Social</th>
+              <th class="px-5 py-3 text-left">Estado</th>
+              <th class="px-5 py-3 text-left">Acciones</th>
+            </tr></thead>
+            <tbody id="tabla-turnos" class="divide-y divide-gray-50"></tbody>
+          </table>
+          <div class="px-5 py-3 border-t border-gray-100 flex items-center justify-between text-xs text-gray-400">
+            <span id="pag-info">Mostrando 1–8 de 24 turnos</span>
+            <div class="flex items-center gap-2">
+              <button onclick="cambiarPagina(-1)" class="px-3 py-1 border border-gray-200 rounded hover:bg-gray-50">← Anterior</button>
+              <button id="pag-1" onclick="irPagina(1)" class="px-3 py-1 bg-blue-600 text-white rounded">1</button>
+              <button id="pag-2" onclick="irPagina(2)" class="px-3 py-1 border border-gray-200 rounded hover:bg-gray-50">2</button>
+              <button id="pag-3" onclick="irPagina(3)" class="px-3 py-1 border border-gray-200 rounded hover:bg-gray-50">3</button>
+              <button onclick="cambiarPagina(1)" class="px-3 py-1 border border-gray-200 rounded hover:bg-gray-50">Siguiente →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW: SEMANA -->
+    <div id="view-semana" class="hidden">
+      <div class="bg-white border-b border-gray-200 px-8 py-4"><h1 class="text-xl font-bold text-gray-900">Vista Semanal</h1><p class="text-sm text-gray-400">12–16 de mayo de 2026</p></div>
+      <div class="px-8 py-6">
+        <div class="grid grid-cols-5 gap-3">
+          <div class="bg-white rounded-xl border border-gray-200 p-4"><p class="font-semibold text-gray-900 text-sm mb-3">Lun 12</p>
+            <div class="space-y-2">
+              <div class="text-xs p-2 bg-blue-50 rounded-lg"><span class="font-medium text-blue-700">08:00</span><p class="text-gray-600">Ana García — Suárez</p></div>
+              <div class="text-xs p-2 bg-green-50 rounded-lg"><span class="font-medium text-green-700">09:00</span><p class="text-gray-600">María Torres — Ríos</p></div>
+              <div class="text-xs p-2 bg-green-50 rounded-lg"><span class="font-medium text-green-700">10:00</span><p class="text-gray-600">Lucía Fernández — Torres</p></div>
+              <div class="text-xs p-2 bg-yellow-50 rounded-lg"><span class="font-medium text-yellow-700">11:00</span><p class="text-gray-600">Roberto Silva — Bravo</p></div>
+              <p class="text-xs text-gray-400 text-center mt-2">+8 más</p>
+            </div>
+          </div>
+          <div class="bg-white rounded-xl border border-gray-200 p-4"><p class="font-semibold text-gray-900 text-sm mb-3">Mar 13</p>
+            <div class="space-y-2">
+              <div class="text-xs p-2 bg-green-50 rounded-lg"><span class="font-medium text-green-700">08:30</span><p class="text-gray-600">Pedro Gómez — Méndez</p></div>
+              <div class="text-xs p-2 bg-green-50 rounded-lg"><span class="font-medium text-green-700">09:30</span><p class="text-gray-600">Laura Paz — Ríos</p></div>
+              <div class="text-xs p-2 bg-green-50 rounded-lg"><span class="font-medium text-green-700">10:30</span><p class="text-gray-600">Hugo Díaz — Suárez</p></div>
+              <p class="text-xs text-gray-400 text-center mt-2">+9 más</p>
+            </div>
+          </div>
+          <div class="bg-white rounded-xl border border-gray-200 p-4"><p class="font-semibold text-gray-900 text-sm mb-3">Mié 14</p>
+            <div class="space-y-2">
+              <div class="text-xs p-2 bg-green-50 rounded-lg"><span class="font-medium text-green-700">08:00</span><p class="text-gray-600">Marta Sosa — Torres</p></div>
+              <div class="text-xs p-2 bg-red-50 rounded-lg"><span class="font-medium text-red-700">09:00</span><p class="text-gray-600">Juan Vera — Bravo</p></div>
+              <div class="text-xs p-2 bg-green-50 rounded-lg"><span class="font-medium text-green-700">11:00</span><p class="text-gray-600">Carla Ruiz — Méndez</p></div>
+              <p class="text-xs text-gray-400 text-center mt-2">+7 más</p>
+            </div>
+          </div>
+          <div class="bg-white rounded-xl border border-gray-200 p-4"><p class="font-semibold text-gray-900 text-sm mb-3">Jue 15</p>
+            <div class="space-y-2">
+              <div class="text-xs p-2 bg-green-50 rounded-lg"><span class="font-medium text-green-700">08:30</span><p class="text-gray-600">Elena Vega — Ríos</p></div>
+              <div class="text-xs p-2 bg-yellow-50 rounded-lg"><span class="font-medium text-yellow-700">10:00</span><p class="text-gray-600">Pablo Mora — Suárez</p></div>
+              <p class="text-xs text-gray-400 text-center mt-2">+10 más</p>
+            </div>
+          </div>
+          <div class="bg-white rounded-xl border border-gray-200 p-4"><p class="font-semibold text-gray-900 text-sm mb-3">Vie 16</p>
+            <div class="space-y-2">
+              <div class="text-xs p-2 bg-green-50 rounded-lg"><span class="font-medium text-green-700">08:00</span><p class="text-gray-600">Rosa López — Torres</p></div>
+              <div class="text-xs p-2 bg-green-50 rounded-lg"><span class="font-medium text-green-700">09:30</span><p class="text-gray-600">Tomás Alves — Bravo</p></div>
+              <p class="text-xs text-gray-400 text-center mt-2">+6 más</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW: HANDOFFS -->
+    <div id="view-handoffs" class="hidden">
+      <div class="bg-white border-b border-gray-200 px-8 py-4"><h1 class="text-xl font-bold text-gray-900">Consultas Pendientes</h1><p class="text-sm text-gray-400">Pacientes esperando atención de la secretaria</p></div>
+      <div class="px-8 py-6 space-y-4">
+        <div class="bg-white rounded-xl border border-red-200 p-5">
+          <div class="flex items-start justify-between">
+            <div>
+              <div class="flex items-center gap-2 mb-1"><span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span><p class="font-semibold text-gray-900">Carlos Romero</p></div>
+              <p class="text-sm text-gray-500">+54 376 498 7654 · Iniciado hace 8 min</p>
+              <div class="mt-3 bg-gray-50 rounded-lg p-3 text-sm text-gray-600">
+                <p class="font-medium text-gray-700 mb-1">Contexto:</p>
+                <p>Paciente pregunta por resultado de análisis de sangre de la semana pasada. Pidió hablar con alguien del consultorio.</p>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="alert('Abriendo WhatsApp con Carlos Romero...')" class="px-4 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700">Responder</button>
+              <button onclick="alert('Handoff cerrado.')" class="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-600">Cerrar</button>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl border border-red-200 p-5">
+          <div class="flex items-start justify-between">
+            <div>
+              <div class="flex items-center gap-2 mb-1"><span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span><p class="font-semibold text-gray-900">Sofía Herrera</p></div>
+              <p class="text-sm text-gray-500">+54 376 412 7890 · Iniciado hace 23 min</p>
+              <div class="mt-3 bg-gray-50 rounded-lg p-3 text-sm text-gray-600">
+                <p class="font-medium text-gray-700 mb-1">Contexto:</p>
+                <p>Quiere reprogramar turno con Dra. Méndez del miércoles. Solicitó hablar con secretaria para coordinar.</p>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="alert('Abriendo WhatsApp con Sofía Herrera...')" class="px-4 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700">Responder</button>
+              <button onclick="alert('Handoff cerrado.')" class="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-600">Cerrar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW: PACIENTES -->
+    <div id="view-pacientes" class="hidden">
+      <div class="bg-white border-b border-gray-200 px-8 py-4"><h1 class="text-xl font-bold text-gray-900">Pacientes</h1><p class="text-sm text-gray-400">Base de datos del consultorio</p></div>
+      <div class="px-8 py-6">
+        <div class="bg-white rounded-xl border border-gray-200">
+          <div class="px-5 py-3 border-b border-gray-100"><input type="text" placeholder="Buscar por nombre, DNI o teléfono..." class="w-full text-sm outline-none text-gray-600 placeholder-gray-300"></div>
+          <table class="w-full text-sm">
+            <thead><tr class="bg-gray-50 text-xs font-semibold text-gray-400 uppercase tracking-wide">
+              <th class="px-5 py-3 text-left">Nombre</th>
+              <th class="px-5 py-3 text-left">DNI</th>
+              <th class="px-5 py-3 text-left">Teléfono</th>
+              <th class="px-5 py-3 text-left">Obra Social</th>
+              <th class="px-5 py-3 text-left">Último turno</th>
+              <th class="px-5 py-3 text-left">Acciones</th>
+            </tr></thead>
+            <tbody class="divide-y divide-gray-50">
+              <tr class="hover:bg-gray-50"><td class="px-5 py-3.5 font-medium text-gray-900">Ana García</td><td class="px-5 py-3.5 text-gray-500">28.341.567</td><td class="px-5 py-3.5 text-gray-500">+54 376 412 3456</td><td class="px-5 py-3.5 text-gray-500">PAMI</td><td class="px-5 py-3.5 text-gray-400">12/05/2026</td><td class="px-5 py-3.5"><button onclick="alert('Editar paciente')" class="text-blue-600 text-xs hover:underline">Editar</button></td></tr>
+              <tr class="hover:bg-gray-50"><td class="px-5 py-3.5 font-medium text-gray-900">Carlos Romero</td><td class="px-5 py-3.5 text-gray-500">35.122.890</td><td class="px-5 py-3.5 text-gray-500">+54 376 498 7654</td><td class="px-5 py-3.5 text-gray-500">OSDE</td><td class="px-5 py-3.5 text-gray-400">12/05/2026</td><td class="px-5 py-3.5"><button onclick="alert('Editar paciente')" class="text-blue-600 text-xs hover:underline">Editar</button></td></tr>
+              <tr class="hover:bg-gray-50"><td class="px-5 py-3.5 font-medium text-gray-900">María Torres</td><td class="px-5 py-3.5 text-gray-500">31.450.234</td><td class="px-5 py-3.5 text-gray-500">+54 376 423 8901</td><td class="px-5 py-3.5 text-gray-500">Swiss Medical</td><td class="px-5 py-3.5 text-gray-400">12/05/2026</td><td class="px-5 py-3.5"><button onclick="alert('Editar paciente')" class="text-blue-600 text-xs hover:underline">Editar</button></td></tr>
+              <tr class="hover:bg-gray-50"><td class="px-5 py-3.5 font-medium text-gray-900">Roberto Silva</td><td class="px-5 py-3.5 text-gray-500">22.789.012</td><td class="px-5 py-3.5 text-gray-500">+54 376 467 2345</td><td class="px-5 py-3.5 text-gray-500">IOMA</td><td class="px-5 py-3.5 text-gray-400">08/05/2026</td><td class="px-5 py-3.5"><button onclick="alert('Editar paciente')" class="text-blue-600 text-xs hover:underline">Editar</button></td></tr>
+              <tr class="hover:bg-gray-50"><td class="px-5 py-3.5 font-medium text-gray-900">Lucía Fernández</td><td class="px-5 py-3.5 text-gray-500">40.213.456</td><td class="px-5 py-3.5 text-gray-500">+54 376 489 5678</td><td class="px-5 py-3.5 text-gray-500">Galeno</td><td class="px-5 py-3.5 text-gray-400">12/05/2026</td><td class="px-5 py-3.5"><button onclick="alert('Editar paciente')" class="text-blue-600 text-xs hover:underline">Editar</button></td></tr>
+              <tr class="hover:bg-gray-50"><td class="px-5 py-3.5 font-medium text-gray-900">Diego Álvarez</td><td class="px-5 py-3.5 text-gray-500">38.901.234</td><td class="px-5 py-3.5 text-gray-500">+54 376 478 2345</td><td class="px-5 py-3.5 text-gray-500">OSDE</td><td class="px-5 py-3.5 text-gray-400">05/05/2026</td><td class="px-5 py-3.5"><button onclick="alert('Editar paciente')" class="text-blue-600 text-xs hover:underline">Editar</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW: REPORTES -->
+    <div id="view-reportes" class="hidden">
+      <div class="bg-white border-b border-gray-200 px-8 py-4"><h1 class="text-xl font-bold text-gray-900">Reportes</h1><p class="text-sm text-gray-400">Mayo 2026</p></div>
+      <div class="px-8 py-6">
+        <div class="grid grid-cols-3 gap-4 mb-6">
+          <div class="bg-white rounded-xl p-5 border border-gray-200"><p class="text-xs font-medium text-gray-400 uppercase tracking-wide">Turnos del mes</p><p class="text-3xl font-bold text-gray-900 mt-1">312</p><p class="text-xs text-green-600 mt-1">↑ 18% vs abril</p></div>
+          <div class="bg-white rounded-xl p-5 border border-gray-200"><p class="text-xs font-medium text-gray-400 uppercase tracking-wide">Tasa no-show</p><p class="text-3xl font-bold text-green-600 mt-1">4.2%</p><p class="text-xs text-green-600 mt-1">↓ desde 19% (sin sistema)</p></div>
+          <div class="bg-white rounded-xl p-5 border border-gray-200"><p class="text-xs font-medium text-gray-400 uppercase tracking-wide">Turnos vía WhatsApp</p><p class="text-3xl font-bold text-blue-600 mt-1">68%</p><p class="text-xs text-gray-400 mt-1">vs 0% hace 2 meses</p></div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="bg-white rounded-xl border border-gray-200 p-5">
+            <p class="font-semibold text-gray-900 mb-4">Turnos por especialidad</p>
+            <div class="space-y-3">
+              <div><div class="flex justify-between text-sm mb-1"><span class="text-gray-600">Clínica Médica</span><span class="font-medium">89</span></div><div class="w-full bg-gray-100 rounded-full h-2"><div class="bg-blue-500 h-2 rounded-full" style="width:85%"></div></div></div>
+              <div><div class="flex justify-between text-sm mb-1"><span class="text-gray-600">Pediatría</span><span class="font-medium">67</span></div><div class="w-full bg-gray-100 rounded-full h-2"><div class="bg-blue-400 h-2 rounded-full" style="width:64%"></div></div></div>
+              <div><div class="flex justify-between text-sm mb-1"><span class="text-gray-600">Cardiología</span><span class="font-medium">54</span></div><div class="w-full bg-gray-100 rounded-full h-2"><div class="bg-blue-300 h-2 rounded-full" style="width:52%"></div></div></div>
+              <div><div class="flex justify-between text-sm mb-1"><span class="text-gray-600">Traumatología</span><span class="font-medium">48</span></div><div class="w-full bg-gray-100 rounded-full h-2"><div class="bg-blue-200 h-2 rounded-full" style="width:46%"></div></div></div>
+              <div><div class="flex justify-between text-sm mb-1"><span class="text-gray-600">Dermatología</span><span class="font-medium">54</span></div><div class="w-full bg-gray-100 rounded-full h-2"><div class="bg-blue-100 h-2 rounded-full" style="width:52%"></div></div></div>
+            </div>
+          </div>
+          <div class="bg-white rounded-xl border border-gray-200 p-5">
+            <p class="font-semibold text-gray-900 mb-4">Canal de reserva</p>
+            <div class="space-y-3">
+              <div><div class="flex justify-between text-sm mb-1"><span class="text-gray-600">WhatsApp Bot</span><span class="font-medium text-green-600">68%</span></div><div class="w-full bg-gray-100 rounded-full h-2"><div class="bg-green-500 h-2 rounded-full" style="width:68%"></div></div></div>
+              <div><div class="flex justify-between text-sm mb-1"><span class="text-gray-600">Llamada telefónica</span><span class="font-medium">18%</span></div><div class="w-full bg-gray-100 rounded-full h-2"><div class="bg-gray-400 h-2 rounded-full" style="width:18%"></div></div></div>
+              <div><div class="flex justify-between text-sm mb-1"><span class="text-gray-600">Presencial</span><span class="font-medium">9%</span></div><div class="w-full bg-gray-100 rounded-full h-2"><div class="bg-gray-300 h-2 rounded-full" style="width:9%"></div></div></div>
+              <div><div class="flex justify-between text-sm mb-1"><span class="text-gray-600">Voz IA (Sofía)</span><span class="font-medium text-blue-600">5%</span></div><div class="w-full bg-gray-100 rounded-full h-2"><div class="bg-blue-400 h-2 rounded-full" style="width:5%"></div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Modal cancelar -->
+<div id="modal-cancelar" class="hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+  <div class="bg-white rounded-xl p-6 w-80 shadow-xl">
+    <h3 class="font-bold text-gray-900 mb-2">Cancelar turno</h3>
+    <p class="text-sm text-gray-500 mb-4">¿Confirmás la cancelación? Se enviará un WhatsApp al paciente automáticamente.</p>
+    <div class="flex gap-3">
+      <button onclick="cerrarModal()" class="flex-1 px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50">No, volver</button>
+      <button onclick="confirmarCancelacion()" class="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">Sí, cancelar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const TURNOS = [
+  { hora:'08:00', paciente:'Ana García', tel:'+54 376 412 3456', medico:'Dr. Martín Suárez', esp:'Clínica Médica', os:'PAMI', estado:'En consulta' },
+  { hora:'08:30', paciente:'Carlos Romero', tel:'+54 376 498 7654', medico:'Dra. Laura Méndez', esp:'Pediatría', os:'OSDE', estado:'Confirmado' },
+  { hora:'09:00', paciente:'María Torres', tel:'+54 376 423 8901', medico:'Dra. Carolina Ríos', esp:'Cardiología', os:'Swiss Medical', estado:'Confirmado' },
+  { hora:'09:30', paciente:'Roberto Silva', tel:'+54 376 467 2345', medico:'Dr. Federico Bravo', esp:'Traumatología', os:'IOMA', estado:'Pendiente' },
+  { hora:'10:00', paciente:'Lucía Fernández', tel:'+54 376 489 5678', medico:'Dra. Valentina Torres', esp:'Dermatología', os:'Galeno', estado:'Confirmado' },
+  { hora:'10:30', paciente:'Jorge Mendoza', tel:'+54 376 401 3456', medico:'Dr. Martín Suárez', esp:'Clínica Médica', os:'Particular', estado:'Cancelado' },
+  { hora:'11:00', paciente:'Sofía Herrera', tel:'+54 376 412 7890', medico:'Dra. Laura Méndez', esp:'Pediatría', os:'PAMI', estado:'Confirmado' },
+  { hora:'11:30', paciente:'Diego Álvarez', tel:'+54 376 478 2345', medico:'Dra. Carolina Ríos', esp:'Cardiología', os:'OSDE', estado:'Pendiente' },
+  { hora:'12:00', paciente:'Elena Vega', tel:'+54 376 445 6789', medico:'Dr. Federico Bravo', esp:'Traumatología', os:'Swiss Medical', estado:'Confirmado' },
+  { hora:'12:30', paciente:'Pablo Mora', tel:'+54 376 432 1098', medico:'Dra. Valentina Torres', esp:'Dermatología', os:'PAMI', estado:'Confirmado' },
+  { hora:'14:00', paciente:'Marta Sosa', tel:'+54 376 421 3456', medico:'Dr. Martín Suárez', esp:'Clínica Médica', os:'IOMA', estado:'Confirmado' },
+  { hora:'14:30', paciente:'Hugo Díaz', tel:'+54 376 456 7890', medico:'Dra. Laura Méndez', esp:'Pediatría', os:'OSDE', estado:'Pendiente' },
+  { hora:'15:00', paciente:'Carla Ruiz', tel:'+54 376 489 0123', medico:'Dra. Carolina Ríos', esp:'Cardiología', os:'Galeno', estado:'Confirmado' },
+  { hora:'15:30', paciente:'Pedro Gómez', tel:'+54 376 412 4567', medico:'Dr. Federico Bravo', esp:'Traumatología', os:'PAMI', estado:'Confirmado' },
+  { hora:'16:00', paciente:'Laura Paz', tel:'+54 376 478 9012', medico:'Dra. Valentina Torres', esp:'Dermatología', os:'Swiss Medical', estado:'Confirmado' },
+  { hora:'16:30', paciente:'Tomás Alves', tel:'+54 376 467 3456', medico:'Dr. Martín Suárez', esp:'Clínica Médica', os:'OSDE', estado:'Pendiente' },
+  { hora:'17:00', paciente:'Rosa López', tel:'+54 376 423 7890', medico:'Dra. Laura Méndez', esp:'Pediatría', os:'IOMA', estado:'Confirmado' },
+  { hora:'17:30', paciente:'Nicolás Vera', tel:'+54 376 498 2345', medico:'Dra. Carolina Ríos', esp:'Cardiología', os:'Galeno', estado:'Confirmado' },
+  { hora:'18:00', paciente:'Valentina Cruz', tel:'+54 376 445 6789', medico:'Dr. Federico Bravo', esp:'Traumatología', os:'PAMI', estado:'Confirmado' },
+  { hora:'18:30', paciente:'Andrés Flores', tel:'+54 376 432 0987', medico:'Dra. Valentina Torres', esp:'Dermatología', os:'Swiss Medical', estado:'Pendiente' },
+  { hora:'19:00', paciente:'Claudia Ramos', tel:'+54 376 421 5678', medico:'Dr. Martín Suárez', esp:'Clínica Médica', os:'OSDE', estado:'Confirmado' },
+  { hora:'19:30', paciente:'Fernando Reyes', tel:'+54 376 456 2345', medico:'Dra. Laura Méndez', esp:'Pediatría', os:'Particular', estado:'Confirmado' },
+  { hora:'20:00', paciente:'Graciela Ortiz', tel:'+54 376 489 6789', medico:'Dra. Carolina Ríos', esp:'Cardiología', os:'IOMA', estado:'Pendiente' },
+  { hora:'20:30', paciente:'Marcelo Castro', tel:'+54 376 412 1234', medico:'Dr. Federico Bravo', esp:'Traumatología', os:'Galeno', estado:'Confirmado' },
+];
+
+const BADGE = {
+  'Confirmado': 'bg-green-100 text-green-700',
+  'Pendiente': 'bg-yellow-100 text-yellow-700',
+  'Cancelado': 'bg-red-100 text-red-600',
+  'En consulta': 'bg-blue-100 text-blue-700'
+};
+
+let paginaActual = 1;
+const POR_PAGINA = 8;
+let turnosFiltrados = [...TURNOS];
+
+function filtrarTabla() {
+  const buscar = document.getElementById('buscar').value.toLowerCase();
+  const medico = document.getElementById('filtroMedico').value;
+  const estado = document.getElementById('filtroEstado').value;
+  turnosFiltrados = TURNOS.filter(t =>
+    (!buscar || t.paciente.toLowerCase().includes(buscar)) &&
+    (!medico || t.medico === medico) &&
+    (!estado || t.estado === estado)
+  );
+  paginaActual = 1;
+  renderTabla();
+}
+
+function renderTabla() {
+  const ini = (paginaActual - 1) * POR_PAGINA;
+  const pagina = turnosFiltrados.slice(ini, ini + POR_PAGINA);
+  const tbody = document.getElementById('tabla-turnos');
+  tbody.innerHTML = pagina.map((t, i) => `
+    <tr class="hover:bg-gray-50 transition-colors">
+      <td class="px-5 py-3.5 font-semibold text-gray-900">${t.hora}</td>
+      <td class="px-5 py-3.5"><div class="font-medium text-gray-900">${t.paciente}</div><div class="text-xs text-gray-400">${t.tel}</div></td>
+      <td class="px-5 py-3.5 text-gray-700">${t.medico}</td>
+      <td class="px-5 py-3.5 text-gray-500">${t.esp}</td>
+      <td class="px-5 py-3.5 text-gray-500">${t.os}</td>
+      <td class="px-5 py-3.5"><span class="text-xs font-medium px-2.5 py-1 rounded-full ${BADGE[t.estado]}">${t.estado}</span></td>
+      <td class="px-5 py-3.5"><button onclick="abrirModal('${t.paciente}')" class="text-xs text-red-500 hover:text-red-700 hover:underline">Cancelar</button></td>
+    </tr>
+  `).join('');
+  const total = turnosFiltrados.length;
+  const fin = Math.min(ini + POR_PAGINA, total);
+  document.getElementById('pag-info').textContent = total === 0 ? 'Sin resultados' : `Mostrando ${ini+1}–${fin} de ${total} turnos`;
+  for (let p = 1; p <= 3; p++) {
+    const btn = document.getElementById('pag-'+p);
+    if (btn) btn.className = p === paginaActual
+      ? 'px-3 py-1 bg-blue-600 text-white rounded'
+      : 'px-3 py-1 border border-gray-200 rounded hover:bg-gray-50 text-gray-500';
+  }
+}
+
+function cambiarPagina(delta) {
+  const maxPag = Math.ceil(turnosFiltrados.length / POR_PAGINA);
+  paginaActual = Math.max(1, Math.min(paginaActual + delta, maxPag));
+  renderTabla();
+}
+function irPagina(p) { paginaActual = p; renderTabla(); }
+
+let pacienteSeleccionado = '';
+function abrirModal(nombre) { pacienteSeleccionado = nombre; document.getElementById('modal-cancelar').classList.remove('hidden'); }
+function cerrarModal() { document.getElementById('modal-cancelar').classList.add('hidden'); }
+function confirmarCancelacion() {
+  cerrarModal();
+  turnosFiltrados = turnosFiltrados.filter(t => t.paciente !== pacienteSeleccionado);
+  renderTabla();
+  const toast = document.createElement('div');
+  toast.className = 'fixed bottom-6 right-6 bg-gray-900 text-white text-sm px-4 py-3 rounded-lg shadow-lg z-50';
+  toast.textContent = `✓ Turno de ${pacienteSeleccionado} cancelado. WhatsApp enviado.`;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+
+function showView(v) {
+  ['hoy','semana','handoffs','pacientes','reportes'].forEach(id => {
+    document.getElementById('view-'+id).classList.add('hidden');
+    document.getElementById('nav-'+id).className = 'nav-item w-full flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50 text-sm text-left';
+  });
+  document.getElementById('view-'+v).classList.remove('hidden');
+  document.getElementById('nav-'+v).className = 'nav-item w-full flex items-center gap-3 px-3 py-2 rounded-lg bg-blue-50 text-blue-700 font-medium text-sm text-left';
+}
+
+renderTabla();
+</script>
+</body>
+</html>

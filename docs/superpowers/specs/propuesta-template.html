@@ -1,0 +1,1229 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Propuesta Comercial â€” Consultorio Inteligente | {{CLIENTE}}</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Georgia', serif;
+    color: #1a1a2e;
+    background: #fff;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  /* â”€â”€ PORTADA â”€â”€ */
+  .cover {
+    min-height: 100vh;
+    background: linear-gradient(150deg, #0f1f45 0%, #1a3a6b 60%, #1e4d8c 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 60px 72px;
+    page-break-after: always;
+  }
+
+  .cover-logo {
+    font-family: 'Arial', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #7eb8f7;
+  }
+
+  .cover-logo span { color: #fff; }
+
+  .cover-center {
+    text-align: left;
+    padding: 40px 0;
+  }
+
+  .cover-tag {
+    display: inline-block;
+    background: rgba(126,184,247,0.18);
+    color: #7eb8f7;
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border-radius: 2px;
+    margin-bottom: 28px;
+  }
+
+  .cover h1 {
+    font-family: 'Georgia', serif;
+    font-size: 52px;
+    font-weight: normal;
+    color: #fff;
+    line-height: 1.15;
+    margin-bottom: 16px;
+  }
+
+  .cover h1 em {
+    display: block;
+    font-style: normal;
+    color: #7eb8f7;
+  }
+
+  .cover-sub {
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    color: rgba(255,255,255,0.65);
+    margin-top: 20px;
+    max-width: 500px;
+  }
+
+  .cover-divider {
+    width: 60px;
+    height: 2px;
+    background: #7eb8f7;
+    margin: 32px 0;
+  }
+
+  .cover-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+
+  .cover-meta-block label {
+    display: block;
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #7eb8f7;
+    margin-bottom: 6px;
+  }
+
+  .cover-meta-block p {
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    color: rgba(255,255,255,0.85);
+    line-height: 1.5;
+  }
+
+  .cover-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-top: 1px solid rgba(255,255,255,0.12);
+    padding-top: 24px;
+  }
+
+  .cover-footer p {
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 1px;
+  }
+
+  .cover-validity {
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    text-align: right;
+  }
+
+  /* â”€â”€ BODY PAGES â”€â”€ */
+  .page {
+    padding: 60px 72px;
+    page-break-after: always;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .page:last-child { page-break-after: avoid; }
+
+  .section-tag {
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #2563eb;
+    margin-bottom: 12px;
+  }
+
+  h2 {
+    font-family: 'Georgia', serif;
+    font-size: 28px;
+    font-weight: normal;
+    color: #0f1f45;
+    margin-bottom: 24px;
+    line-height: 1.3;
+  }
+
+  h3 {
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #0f1f45;
+    margin: 32px 0 12px;
+  }
+
+  p { margin-bottom: 16px; color: #2d3748; }
+
+  .lead {
+    font-size: 17px;
+    color: #1a2744;
+    line-height: 1.65;
+    font-family: 'Georgia', serif;
+  }
+
+  /* â”€â”€ HIGHLIGHT BOX â”€â”€ */
+  .highlight-box {
+    background: #f0f6ff;
+    border-left: 4px solid #2563eb;
+    padding: 20px 24px;
+    margin: 24px 0;
+    border-radius: 0 6px 6px 0;
+  }
+
+  .highlight-box p { margin: 0; color: #1a2744; }
+
+  /* â”€â”€ STAT CARDS â”€â”€ */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin: 28px 0;
+  }
+
+  .stat-card {
+    background: #f8faff;
+    border: 1px solid #e2eaf8;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .stat-card .number {
+    font-family: Arial, sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: #2563eb;
+    display: block;
+  }
+
+  .stat-card .label {
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    color: #64748b;
+    margin-top: 4px;
+  }
+
+  /* â”€â”€ TABLES â”€â”€ */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+  }
+
+  th {
+    background: #0f1f45;
+    color: #fff;
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  td {
+    padding: 11px 16px;
+    border-bottom: 1px solid #e8eef8;
+    color: #2d3748;
+    vertical-align: top;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: #f8faff; }
+
+  .td-yes { color: #16a34a; font-weight: 700; }
+  .td-no { color: #dc2626; font-weight: 700; }
+  .td-accent { color: #2563eb; font-weight: 700; }
+  .td-highlight td { background: #eff6ff !important; font-weight: 600; }
+
+  /* â”€â”€ MODULE LIST â”€â”€ */
+  .module-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0;
+  }
+
+  .module-card {
+    border: 1px solid #e2eaf8;
+    border-radius: 8px;
+    padding: 18px 20px;
+  }
+
+  .module-card .module-icon {
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+
+  .module-card h4 {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #0f1f45;
+    margin-bottom: 8px;
+  }
+
+  .module-card p {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* â”€â”€ PRICING â”€â”€ */
+  .price-main {
+    background: linear-gradient(135deg, #0f1f45, #1a3a6b);
+    border-radius: 12px;
+    padding: 36px 40px;
+    color: #fff;
+    margin: 28px 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+
+  .price-item label {
+    display: block;
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #7eb8f7;
+    margin-bottom: 8px;
+  }
+
+  .price-item .amount {
+    font-family: Arial, sans-serif;
+    font-size: 38px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .price-item .amount-sub {
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    color: rgba(255,255,255,0.55);
+    margin-top: 4px;
+  }
+
+  .price-item .original {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: rgba(255,255,255,0.35);
+    text-decoration: line-through;
+    margin-top: 4px;
+  }
+
+  .discount-badge {
+    display: inline-block;
+    background: #16a34a;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-top: 8px;
+  }
+
+  /* â”€â”€ TIMELINE â”€â”€ */
+  .timeline {
+    margin: 24px 0;
+    position: relative;
+  }
+
+  .timeline-item {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+
+  .timeline-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 40px;
+  }
+
+  .timeline-dot {
+    width: 36px;
+    height: 36px;
+    background: #2563eb;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .timeline-line {
+    width: 2px;
+    flex: 1;
+    background: #e2eaf8;
+    margin-top: 4px;
+  }
+
+  .timeline-item:last-child .timeline-line { display: none; }
+
+  .timeline-content {
+    padding-bottom: 8px;
+    flex: 1;
+  }
+
+  .timeline-content h4 {
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #0f1f45;
+    margin-bottom: 4px;
+  }
+
+  .timeline-content .days {
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    color: #2563eb;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .timeline-content p {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* â”€â”€ PAYMENT OPTIONS â”€â”€ */
+  .payment-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin: 24px 0;
+  }
+
+  .payment-card {
+    border: 2px solid #e2eaf8;
+    border-radius: 10px;
+    padding: 24px;
+  }
+
+  .payment-card.recommended {
+    border-color: #2563eb;
+    position: relative;
+  }
+
+  .recommended-badge {
+    position: absolute;
+    top: -10px;
+    left: 20px;
+    background: #2563eb;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 2px 10px;
+    border-radius: 10px;
+  }
+
+  .payment-card h4 {
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #0f1f45;
+    margin-bottom: 16px;
+  }
+
+  .payment-step {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+  }
+
+  .payment-step:last-child { border-bottom: none; }
+  .payment-step .step-amount { font-weight: 700; color: #2563eb; }
+
+  /* â”€â”€ FOOTER PAGE â”€â”€ */
+  .page-footer {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #e2eaf8;
+    display: flex;
+    justify-content: space-between;
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    color: #94a3b8;
+  }
+
+  /* â”€â”€ CLOSING PAGE â”€â”€ */
+  .closing-page {
+    background: linear-gradient(150deg, #0f1f45, #1a3a6b);
+    min-height: 100vh;
+    padding: 72px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    page-break-before: always;
+  }
+
+  .closing-page h2 {
+    color: #fff;
+    font-size: 36px;
+    max-width: 480px;
+    line-height: 1.25;
+  }
+
+  .next-steps {
+    margin: 40px 0;
+  }
+
+  .next-step {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    margin-bottom: 24px;
+  }
+
+  .step-num {
+    width: 32px;
+    height: 32px;
+    background: rgba(126,184,247,0.2);
+    border: 1px solid #7eb8f7;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: #7eb8f7;
+    flex-shrink: 0;
+  }
+
+  .next-step-text h4 {
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+
+  .next-step-text p {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: rgba(255,255,255,0.55);
+    margin: 0;
+  }
+
+  .contact-box {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 10px;
+    padding: 28px 32px;
+  }
+
+  .contact-box label {
+    display: block;
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #7eb8f7;
+    margin-bottom: 16px;
+  }
+
+  .contact-row {
+    display: flex;
+    gap: 48px;
+  }
+
+  .contact-item h4 {
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+
+  .contact-item p {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: rgba(255,255,255,0.55);
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  /* â”€â”€ PRINT â”€â”€ */
+  @media print {
+    body { font-size: 12px; }
+    @page { margin: 12mm; size: A4; }
+
+    .cover {
+      min-height: calc(297mm - 24mm);
+      padding: 40px 50px;
+      page-break-after: always;
+      break-after: page;
+    }
+
+    .page {
+      max-width: none;
+      padding: 24px 36px;
+      page-break-after: always;
+      break-after: page;
+    }
+
+    .closing-page {
+      page-break-before: always;
+      break-before: page;
+      min-height: calc(297mm - 24mm);
+      padding: 50px;
+    }
+
+    .module-card    { break-inside: avoid; }
+    .stat-card      { break-inside: avoid; }
+    .timeline-item  { break-inside: avoid; }
+    .payment-card   { break-inside: avoid; }
+    .highlight-box  { break-inside: avoid; }
+    .price-main     { break-inside: avoid; }
+    .payment-options{ break-inside: avoid; }
+    table           { break-inside: avoid; }
+    h2              { break-after: avoid; font-size: 24px; margin-bottom: 14px; }
+    h3              { break-after: avoid; margin: 20px 0 8px; }
+    .page-footer    { margin-top: 12px; }
+    p               { margin-bottom: 10px; }
+    td              { padding: 7px 12px; }
+    th              { padding: 8px 12px; }
+    .highlight-box  { padding: 14px 18px; margin: 14px 0; }
+    .module-grid    { gap: 10px; }
+    .module-card    { padding: 12px 14px; }
+    .timeline-item  { margin-bottom: 14px; }
+    .stat-row       { margin: 16px 0; }
+    .lead           { font-size: 15px; }
+  }
+
+  @media screen {
+    body { background: #eef2f7; }
+    .cover { border-radius: 0; margin-bottom: 0; }
+    .page { background: #fff; margin: 0 auto 2px; }
+    .closing-page { margin-top: 2px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• PORTADA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<div class="cover">
+  <div class="cover-logo">NEXO<span>&#8209;TERRA</span></div>
+
+  <div class="cover-center">
+    <div class="cover-tag">Propuesta Comercial Confidencial</div>
+    <h1>Consultorio<em>Inteligente</em></h1>
+    <div class="cover-divider"></div>
+    <p class="cover-sub">AutomatizaciÃ³n completa de la gestiÃ³n de pacientes con Inteligencia Artificial para {{EMPRESA_CLIENTE}}.</p>
+    <div class="cover-meta" style="margin-top:40px;">
+      <div class="cover-meta-block">
+        <label>Dirigido a</label>
+        <p>{{CONTACTO_1}}<br>{{CONTACTO_2}}<br>{{EMPRESA_CLIENTE}}<br>{{DIRECCION_CLIENTE}}</p>
+      </div>
+      <div class="cover-meta-block">
+        <label>Presentado por</label>
+        <p>Norberto GonzÃ¡lez Archilla<br>Director â€” Nexo-Terra<br>nexoterra.latam@gmail.com<br>+54 11 3087 5304</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="cover-footer">
+    <p>CONFIDENCIAL â€” Uso exclusivo de {{CLIENTE}}</p>
+    <div class="cover-validity">
+      <p>Mayo 2026</p>
+      <p style="margin-top:4px;">VÃ¡lida por 30 dÃ­as corridos</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• RESUMEN EJECUTIVO â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<div class="page">
+  <div class="section-tag">01 â€” Resumen Ejecutivo</div>
+  <h2>El problema tiene un costo medible. La soluciÃ³n tambiÃ©n.</h2>
+
+  <p class="lead">{{CLIENTE}} gestiona hoy las comunicaciones con pacientes de forma manual y reactiva. Cada turno solicitado, confirmado o cancelado requiere intervenciÃ³n humana. Eso tiene un costo real, medible, y evitable.</p>
+
+  <div class="highlight-box">
+    <p><strong>Consultorio Inteligente</strong> es un sistema de automatizaciÃ³n completo que reemplaza la gestiÃ³n manual de turnos por un asistente con inteligencia artificial que trabaja las 24 horas, los 7 dÃ­as de la semana â€” sin errores, sin tiempos de espera, y sin costo adicional por volumen.</p>
+  </div>
+
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:28px 0;">
+    <div style="background:#fff5f5; border:1px solid #fecaca; border-radius:8px; padding:20px;">
+      <div style="font-family:Arial,sans-serif; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#dc2626; margin-bottom:12px;">SituaciÃ³n actual</div>
+      <div style="text-align:center;">
+        <span style="font-family:Arial,sans-serif; font-size:32px; font-weight:700; color:#dc2626; display:block;">USD 3.200</span>
+        <div style="font-family:Arial,sans-serif; font-size:11px; color:#64748b; margin-top:4px;">por mes destinados a gestiÃ³n<br>manual de turnos</div>
+      </div>
+    </div>
+    <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:20px;">
+      <div style="font-family:Arial,sans-serif; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#16a34a; margin-bottom:12px;">Con Consultorio Inteligente</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; text-align:center;">
+        <div>
+          <span style="font-family:Arial,sans-serif; font-size:26px; font-weight:700; color:#16a34a; display:block;">24/7</span>
+          <div style="font-family:Arial,sans-serif; font-size:11px; color:#64748b;">disponibilidad sin intervenciÃ³n humana</div>
+        </div>
+        <div>
+          <span style="font-family:Arial,sans-serif; font-size:26px; font-weight:700; color:#16a34a; display:block;">25â€“30</span>
+          <div style="font-family:Arial,sans-serif; font-size:11px; color:#64748b;">dÃ­as hasta el primer paciente atendido</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p>Esta propuesta describe el alcance completo del servicio, el impacto econÃ³mico esperado y las condiciones de implementaciÃ³n para que {{CLIENTE}} tome una decisiÃ³n informada.</p>
+
+  <div class="page-footer">
+    <span>Nexo-Terra â€” Propuesta {{CLIENTE}} 2026</span>
+    <span>PÃ¡g. 2</span>
+  </div>
+</div>
+
+
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SITUACIÃ“N ACTUAL â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<div class="page">
+  <div class="section-tag">02 â€” DiagnÃ³stico</div>
+  <h2>La situaciÃ³n actual de {{CLIENTE}}</h2>
+
+  <p>Con mÃ¡s de 50 profesionales y una alta demanda de atenciÃ³n, {{CLIENTE}} enfrenta una brecha entre el volumen de interacciones con pacientes y la capacidad de gestionarlas eficientemente.</p>
+
+  <h3>Lo que identificamos</h3>
+
+  <table>
+    <tr>
+      <th>Indicador</th>
+      <th>Dato actual</th>
+      <th>Impacto</th>
+    </tr>
+    <tr>
+      <td>Secretarios dedicados a turnos</td>
+      <td>10 personas</td>
+      <td>40% del tiempo en gestiÃ³n repetitiva</td>
+    </tr>
+    <tr>
+      <td>Consultas de turno por dÃ­a</td>
+      <td>~200</td>
+      <td>Carga constante en horario laboral</td>
+    </tr>
+    <tr>
+      <td>Costo mensual en gestiÃ³n manual</td>
+      <td class="td-accent">USD 3.200/mes</td>
+      <td>Solo en tiempo dedicado a turnos</td>
+    </tr>
+    <tr>
+      <td>Herramienta actual de mensajerÃ­a</td>
+      <td>Respond.io</td>
+      <td>Bandeja compartida â€” no automatiza nada</td>
+    </tr>
+    <tr>
+      <td>AtenciÃ³n fuera de horario</td>
+      <td class="td-no">No disponible</td>
+      <td>Oportunidades de turno perdidas</td>
+    </tr>
+    <tr>
+      <td>Recordatorios automÃ¡ticos</td>
+      <td class="td-no">No disponible</td>
+      <td>No-shows sin recuperar</td>
+    </tr>
+  </table>
+
+  <h3>El problema con Respond.io</h3>
+
+  <p>Respond.io es una bandeja de entrada compartida. Organiza los mensajes de WhatsApp, pero cada respuesta la sigue escribiendo un humano. No toma turnos, no envÃ­a recordatorios, no entiende al paciente. {{CLIENTE}} paga entre <strong>USD 159 y 279/mes</strong> por una herramienta que no resuelve el problema de fondo.</p>
+
+  <div class="highlight-box">
+    <p><strong>El diagnÃ³stico es claro:</strong> {{CLIENTE}} tiene la infraestructura humana para atender pacientes de excelencia. Lo que necesita es tecnologÃ­a que elimine el trabajo repetitivo y libere a ese equipo para lo que realmente importa.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>Nexo-Terra â€” Propuesta {{CLIENTE}} 2026</span>
+    <span>PÃ¡g. 3</span>
+  </div>
+</div>
+
+
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• LA SOLUCIÃ“N â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<div class="page">
+  <div class="section-tag">03 â€” La SoluciÃ³n</div>
+  <h2>Consultorio Inteligente: el sistema completo</h2>
+
+  <p class="lead">Un ecosistema de automatizaciÃ³n diseÃ±ado especÃ­ficamente para centros mÃ©dicos. No es un chatbot genÃ©rico â€” es un sistema construido sobre la operaciÃ³n real de una clÃ­nica.</p>
+
+  <div class="module-grid">
+    <div class="module-card">
+      <div class="module-icon">ðŸ’¬</div>
+      <h4>Asistente WhatsApp 24/7</h4>
+      <p>Atiende mensajes de pacientes a cualquier hora. Gestiona turnos, responde preguntas frecuentes, confirma y cancela citas de forma autÃ³noma.</p>
+    </div>
+    <div class="module-card">
+      <div class="module-icon">ðŸŽ™ï¸</div>
+      <h4>SofÃ­a â€” Asistente de Voz</h4>
+      <p>Inteligencia artificial que atiende llamadas telefÃ³nicas. Responde consultas, gestiona turnos por telÃ©fono y transfiere a secretarÃ­a cuando es necesario.</p>
+    </div>
+    <div class="module-card">
+      <div class="module-icon">ðŸ–¥ï¸</div>
+      <h4>Dashboard de SecretarÃ­a</h4>
+      <p>Panel web en tiempo real con la agenda del dÃ­a, semana, consultas pendientes y base de pacientes. Acceso desde cualquier dispositivo.</p>
+    </div>
+    <div class="module-card">
+      <div class="module-icon">ðŸ””</div>
+      <h4>Recordatorios AutomÃ¡ticos</h4>
+      <p>WhatsApp automÃ¡tico 24hs antes de cada turno. Reduce significativamente la tasa de no-show sin intervenciÃ³n del equipo.</p>
+    </div>
+    <div class="module-card">
+      <div class="module-icon">ðŸ“…</div>
+      <h4>Disponibilidad Inteligente</h4>
+      <p>Si no hay turno en el dÃ­a solicitado, el bot muestra automÃ¡ticamente las prÃ³ximas 3 disponibilidades del profesional. El paciente elige y reserva en el mismo momento.</p>
+    </div>
+    <div class="module-card">
+      <div class="module-icon">ðŸ‘¤</div>
+      <h4>Handoff a SecretarÃ­a</h4>
+      <p>Casos complejos se escalan automÃ¡ticamente al equipo humano con el historial completo de la conversaciÃ³n. Sin perder contexto.</p>
+    </div>
+    <div class="module-card">
+      <div class="module-icon">ðŸ“Š</div>
+      <h4>Reporte Mensual</h4>
+      <p>Resumen ejecutivo automÃ¡tico con mÃ©tricas del mes: turnos gestionados, no-shows, conversaciones y mÃ¡s â€” directo al administrador por WhatsApp.</p>
+    </div>
+    <div class="module-card">
+      <div class="module-icon">ðŸ› ï¸</div>
+      <h4>Soporte 24/7</h4>
+      <p>Primera lÃ­nea de soporte con IA disponible todo el dÃ­a. Escalamiento al equipo tÃ©cnico de Nexo-Terra para casos crÃ­ticos.</p>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>Nexo-Terra â€” Propuesta {{CLIENTE}} 2026</span>
+    <span>PÃ¡g. 4</span>
+  </div>
+</div>
+
+
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• COMPARACIÃ“N â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<div class="page">
+  <div class="section-tag">04 â€” ComparaciÃ³n</div>
+  <h2>Consultorio Inteligente vs. Respond.io</h2>
+
+  <p>No es una comparaciÃ³n de productos similares. Son dos categorÃ­as distintas: uno organiza mensajes, el otro resuelve el problema.</p>
+
+  <table>
+    <tr>
+      <th>Capacidad</th>
+      <th>Respond.io (actual)</th>
+      <th>Consultorio Inteligente</th>
+    </tr>
+    <tr>
+      <td>GestiÃ³n de turnos automÃ¡tica</td>
+      <td class="td-no">No</td>
+      <td class="td-yes">SÃ­ â€” 24/7</td>
+    </tr>
+    <tr>
+      <td>Entiende al paciente con IA</td>
+      <td class="td-no">No</td>
+      <td class="td-yes">SÃ­</td>
+    </tr>
+    <tr>
+      <td>Recordatorios automÃ¡ticos</td>
+      <td class="td-no">No</td>
+      <td class="td-yes">SÃ­</td>
+    </tr>
+    <tr>
+      <td>Asistente de voz con IA</td>
+      <td class="td-no">No</td>
+      <td class="td-yes">SÃ­ â€” SofÃ­a</td>
+    </tr>
+    <tr>
+      <td>Dashboard para secretarÃ­a</td>
+      <td class="td-no">No</td>
+      <td class="td-yes">SÃ­ â€” en tiempo real</td>
+    </tr>
+    <tr>
+      <td>PrÃ³ximas disponibilidades automÃ¡ticas</td>
+      <td class="td-no">No</td>
+      <td class="td-yes">SÃ­</td>
+    </tr>
+    <tr>
+      <td>Reporte mensual automÃ¡tico</td>
+      <td class="td-no">No</td>
+      <td class="td-yes">SÃ­</td>
+    </tr>
+    <tr>
+      <td>AtenciÃ³n fuera de horario</td>
+      <td class="td-no">No</td>
+      <td class="td-yes">SÃ­ â€” 24hs</td>
+    </tr>
+    <tr>
+      <td>SecretarÃ­a humana necesaria</td>
+      <td>SÃ­ â€” para todo</td>
+      <td>Solo para casos complejos</td>
+    </tr>
+    <tr class="td-highlight">
+      <td><strong>Precio mensual</strong></td>
+      <td><strong>USD 159â€“279/mes</strong></td>
+      <td class="td-accent"><strong>USD 800/mes</strong></td>
+    </tr>
+  </table>
+
+  <div class="highlight-box">
+    <p><strong>La diferencia real:</strong> Respond.io requiere que una persona lea y responda cada mensaje. Consultorio Inteligente resuelve el 65â€“70% de las interacciones de forma autÃ³noma, y las restantes las escala con contexto completo. No es un costo extra â€” es reemplazar una herramienta que no funciona por una que sÃ­.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>Nexo-Terra â€” Propuesta {{CLIENTE}} 2026</span>
+    <span>PÃ¡g. 5</span>
+  </div>
+</div>
+
+
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• ROI â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<div class="page">
+  <div class="section-tag">05 â€” Impacto EconÃ³mico</div>
+  <h2>Lo que {{CLIENTE}} recupera desde el primer mes</h2>
+
+  <p>Los nÃºmeros siguientes estÃ¡n basados en los datos reales proporcionados por {{CLIENTE}}. No son proyecciones teÃ³ricas.</p>
+
+  <h3>Ahorro garantizable â€” Mes 1</h3>
+
+  <table>
+    <tr>
+      <th>Concepto</th>
+      <th>CÃ¡lculo</th>
+      <th>USD/mes</th>
+    </tr>
+    <tr>
+      <td>Tiempo de secretarÃ­a liberado</td>
+      <td>65% de USD 3.200 en gestiÃ³n de turnos</td>
+      <td class="td-accent"><strong>~USD 2.080</strong></td>
+    </tr>
+    <tr>
+      <td>EliminaciÃ³n de Respond.io</td>
+      <td>Costo actual de la herramienta</td>
+      <td class="td-accent"><strong>USD 159â€“279</strong></td>
+    </tr>
+    <tr class="td-highlight">
+      <td><strong>Total ahorro mensual</strong></td>
+      <td></td>
+      <td class="td-accent"><strong>~USD 2.240â€“2.360</strong></td>
+    </tr>
+    <tr class="td-highlight">
+      <td><strong>InversiÃ³n mensual</strong></td>
+      <td></td>
+      <td><strong>USD 800</strong></td>
+    </tr>
+    <tr class="td-highlight">
+      <td><strong>Beneficio neto mensual</strong></td>
+      <td></td>
+      <td class="td-yes"><strong>~USD 1.440â€“1.560</strong></td>
+    </tr>
+  </table>
+
+  <div class="stat-row">
+    <div class="stat-card">
+      <span class="number" style="font-size:22px;">USD 800</span>
+      <div class="label">InversiÃ³n mensual en el sistema</div>
+    </div>
+    <div class="stat-card">
+      <span class="number" style="font-size:22px; color:#16a34a;">USD 2.300</span>
+      <div class="label">Ahorro promedio mensual garantizable</div>
+    </div>
+    <div class="stat-card">
+      <span class="number" style="color:#16a34a;">2.9x</span>
+      <div class="label">Retorno sobre la inversiÃ³n â€” Mes 1</div>
+    </div>
+  </div>
+
+  <h3>Potencial adicional â€” a medir juntos</h3>
+
+  <p>Los recordatorios automÃ¡ticos reducen los no-shows en centros similares entre un 15% y un 20%. Durante los primeros 60 dÃ­as de operaciÃ³n, mediremos juntos el impacto real en {{CLIENTE}} y presentaremos un reporte con los nÃºmeros concretos de turnos recuperados.</p>
+
+  <div class="highlight-box">
+    <p><strong>Compromiso de Nexo-Terra:</strong> Los nÃºmeros garantizables son los que estÃ¡n en la tabla. El impacto en no-shows es un potencial adicional que documentaremos con datos reales durante la fase de piloto.</p>
+  </div>
+
+  <div class="page-footer">
+    <span>Nexo-Terra â€” Propuesta {{CLIENTE}} 2026</span>
+    <span>PÃ¡g. 6</span>
+  </div>
+</div>
+
+
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• INVERSIÃ“N â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<div class="page">
+  <div class="section-tag">06 â€” InversiÃ³n</div>
+  <h2>Precio e inversiÃ³n</h2>
+
+  <p>Consultorio Inteligente se comercializa como un paquete Ãºnico y completo. Sin mÃ³dulos opcionales, sin costos ocultos, sin sorpresas.</p>
+
+  <div class="price-main">
+    <div class="price-item">
+      <label>Setup â€” pago Ãºnico</label>
+      <div class="amount">USD 1.600</div>
+      <div class="original">Precio regular: USD 2.000</div>
+      <div class="discount-badge">20% descuento clientes referidos</div>
+    </div>
+    <div class="price-item">
+      <label>Mantenimiento mensual</label>
+      <div class="amount">USD 800<span style="font-size:18px; font-weight:400;">/mes</span></div>
+      <div class="original">Precio regular: USD 1.000/mes</div>
+      <div class="amount-sub">Desde el dÃ­a del go-live</div>
+    </div>
+  </div>
+
+  <p style="font-size:12px; color:#64748b; font-family:Arial,sans-serif;">El precio mensual incluye todo: hosting dedicado, base de datos, uso de inteligencia artificial, WhatsApp Business API, soporte 24/7 y todas las actualizaciones del sistema. Sin costos adicionales ni sorpresas.</p>
+
+  <h3>Opciones de pago del setup</h3>
+
+  <div class="payment-options">
+    <div class="payment-card recommended">
+      <div class="recommended-badge">Recomendada</div>
+      <h4>OpciÃ³n A â€” 50/50</h4>
+      <div class="payment-step">
+        <span>Al firmar el acuerdo</span>
+        <span class="step-amount">USD 800</span>
+      </div>
+      <div class="payment-step">
+        <span>Al go-live del sistema</span>
+        <span class="step-amount">USD 800</span>
+      </div>
+      <div class="payment-step">
+        <span>Mensual desde go-live</span>
+        <span class="step-amount">USD 800/mes</span>
+      </div>
+    </div>
+
+    <div class="payment-card">
+      <h4>OpciÃ³n B â€” Cuotas</h4>
+      <div class="payment-step">
+        <span>Al firmar el acuerdo</span>
+        <span class="step-amount">USD 600</span>
+      </div>
+      <div class="payment-step">
+        <span>Mes 1</span>
+        <span class="step-amount">USD 600</span>
+      </div>
+      <div class="payment-step">
+        <span>Mes 2</span>
+        <span class="step-amount">USD 400</span>
+      </div>
+      <div class="payment-step">
+        <span>Mensual desde go-live</span>
+        <span class="step-amount">USD 800/mes</span>
+      </div>
+    </div>
+  </div>
+
+  <p style="font-size:12px; color:#64748b; font-family:Arial,sans-serif;">La modalidad de pago (transferencia bancaria, plataforma internacional u otra) se coordina al momento de la firma. Recomendamos un perÃ­odo mÃ­nimo de 12 meses para maximizar el retorno de la inversiÃ³n, aunque el servicio puede discontinuarse en cualquier momento con 30 dÃ­as de preaviso.</p>
+
+  <div class="page-footer">
+    <span>Nexo-Terra â€” Propuesta {{CLIENTE}} 2026</span>
+    <span>PÃ¡g. 7</span>
+  </div>
+</div>
+
+
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• IMPLEMENTACIÃ“N 1 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<div class="page">
+  <div class="section-tag">07 â€” Plan de ImplementaciÃ³n</div>
+  <h2>De la firma al primer paciente: 25â€“30 dÃ­as</h2>
+
+  <p>La implementaciÃ³n se divide en fases para garantizar que el sistema estÃ© correctamente configurado y probado antes de atender pacientes reales.</p>
+
+  <div class="timeline">
+
+    <div class="timeline-item">
+      <div class="timeline-left">
+        <div class="timeline-dot">1</div>
+        <div class="timeline-line"></div>
+      </div>
+      <div class="timeline-content">
+        <div class="days">DÃ­as 1â€“3</div>
+        <h4>Kickoff y relevamiento tÃ©cnico</h4>
+        <p>ReuniÃ³n con el equipo tÃ©cnico de {{CLIENTE}}. Relevamiento del sistema de gestiÃ³n propio. DefiniciÃ³n del alcance de integraciÃ³n. ConfiguraciÃ³n del entorno de desarrollo.</p>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-left">
+        <div class="timeline-dot">2</div>
+        <div class="timeline-line"></div>
+      </div>
+      <div class="timeline-content">
+        <div class="days">DÃ­as 4â€“10</div>
+        <h4>ConfiguraciÃ³n del sistema</h4>
+        <p>Setup del servidor dedicado. ConfiguraciÃ³n del WhatsApp Business API con el nÃºmero de {{CLIENTE}}. Alta y aprobaciÃ³n de templates en Meta. Carga de los 50+ profesionales, especialidades y horarios.</p>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-left">
+        <div class="timeline-dot">3</div>
+        <div class="timeline-line"></div>
+      </div>
+      <div class="timeline-content">
+        <div class="days">DÃ­as 11â€“20</div>
+        <h4>Desarrollo e integraciÃ³n</h4>
+        <p>ConfiguraciÃ³n del bot conversacional con la informaciÃ³n especÃ­fica de {{CLIENTE}}. IntegraciÃ³n con el sistema de gestiÃ³n propio (segÃºn alcance definido en kickoff). ConfiguraciÃ³n del dashboard de secretarÃ­a.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="page-footer">
+    <span>Nexo-Terra â€” Propuesta {{CLIENTE}} 2026</span>
+    <span>PÃ¡g. 8</span>
+  </div>
+</div>
+
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• IMPLEMENTACIÃ“N 2 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<div class="page">
+  <div class="section-tag">07 â€” Plan de ImplementaciÃ³n (continuaciÃ³n)</div>
+
+  <div class="timeline">
+
+    <div class="timeline-item">
+      <div class="timeline-left">
+        <div class="timeline-dot">4</div>
+        <div class="timeline-line"></div>
+      </div>
+      <div class="timeline-content">
+        <div class="days">DÃ­as 21â€“25</div>
+        <h4>Pruebas internas â€” nÃºmero de test</h4>
+        <p>El sistema completo con los 50 profesionales se prueba en un nÃºmero de WhatsApp de prueba. El equipo de {{CLIENTE}} verifica el flujo completo: sacar turno, recordatorio, cancelaciÃ³n, handoff. Se realizan ajustes antes del lanzamiento real.</p>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-left">
+        <div class="timeline-dot" style="background:#16a34a;">âœ“</div>
+        <div class="timeline-line"></div>
+      </div>
+      <div class="timeline-content">
+        <div class="days" style="color:#16a34a;">DÃ­a 25â€“30</div>
+        <h4>Go-live</h4>
+        <p>Lanzamiento con el nÃºmero oficial de WhatsApp de {{CLIENTE}} y los 50 profesionales activos desde el dÃ­a 1. Monitoreo intensivo durante la primera semana. Informe de mÃ©tricas a los 7 dÃ­as.</p>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-left">
+        <div class="timeline-dot" style="background:#7c3aed;">ðŸ“„</div>
+      </div>
+      <div class="timeline-content">
+        <div class="days" style="color:#7c3aed;">Post go-live</div>
+        <h4>Entrega de documentaciÃ³n tÃ©cnica completa</h4>
+        <p>{{CLIENTE}} recibe el dossier tÃ©cnico llave en mano: estructura de base de datos, credenciales de acceso al servidor, arquitectura del sistema, configuraciÃ³n de workflows y accesos a todas las plataformas involucradas. El sistema es 100% propiedad de {{CLIENTE}}.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="background:#f5f3ff; border:1px solid #ddd6fe; border-radius:8px; padding:20px 24px; margin:24px 0;">
+    <div style="font-family:Arial,sans-serif; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#7c3aed; margin-bottom:10px;">Entrega llave en mano</div>
+    <p style="font-family:Arial,sans-serif; font-size:13px; color:#1a1a2e; margin:0; line-height:1.6;">Al finalizar la implementaciÃ³n, {{CLIENTE}} recibe un dossier tÃ©cnico completo con toda la base del sistema: base de datos, arquitectura, accesos y configuraciÃ³n. <strong>El sistema les pertenece.</strong> Nexo-Terra acompaÃ±a el crecimiento, pero {{CLIENTE}} tiene independencia total desde el dÃ­a 1.</p>
+  </div>
+
+  <h3>Nota sobre integraciÃ³n con sistema propio</h3>
+  <p style="font-size:13px; font-family:Arial,sans-serif; color:#64748b;">El alcance y la complejidad de la integraciÃ³n con el sistema de gestiÃ³n de {{CLIENTE}} serÃ¡ definido en la reuniÃ³n tÃ©cnica inicial con el equipo de ingenierÃ­a. En caso de que la integraciÃ³n requiera un desarrollo adicional significativo, se acordarÃ¡ un alcance y precio separado antes de iniciar esa etapa.</p>
+
+  <div class="page-footer">
+    <span>Nexo-Terra â€” Propuesta {{CLIENTE}} 2026</span>
+    <span>PÃ¡g. 9</span>
+  </div>
+</div>
+
+
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• CIERRE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<div class="closing-page">
+  <div>
+    <div class="section-tag" style="color:#7eb8f7;">08 â€” PrÃ³ximos Pasos</div>
+    <h2>Â¿CÃ³mo arrancamos?</h2>
+  </div>
+
+  <div class="next-steps">
+    <div class="next-step">
+      <div class="step-num">1</div>
+      <div class="next-step-text">
+        <h4>Confirmar la propuesta</h4>
+        <p>{{CLIENTE}} confirma su interÃ©s y selecciona la opciÃ³n de pago preferida.</p>
+      </div>
+    </div>
+    <div class="next-step">
+      <div class="step-num">2</div>
+      <div class="next-step-text">
+        <h4>Firma del acuerdo de servicio</h4>
+        <p>Nexo-Terra envÃ­a el contrato formal. Firma digital o presencial, a elecciÃ³n de {{CLIENTE}}.</p>
+      </div>
+    </div>
+    <div class="next-step">
+      <div class="step-num">3</div>
+      <div class="next-step-text">
+        <h4>Pago inicial y kickoff</h4>
+        <p>Con el pago inicial confirmado, arrancamos la reuniÃ³n de kickoff con el equipo tÃ©cnico dentro de las 48 horas.</p>
+      </div>
+    </div>
+    <div class="next-step">
+      <div class="step-num">4</div>
+      <div class="next-step-text">
+        <h4>En 25â€“30 dÃ­as: primer paciente atendido por IA</h4>
+        <p>El sistema estÃ¡ operativo, probado y listo para atender a los pacientes de {{CLIENTE}}.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="contact-box">
+    <label>Contacto</label>
+    <div class="contact-row">
+      <div class="contact-item">
+        <h4>Norberto GonzÃ¡lez Archilla</h4>
+        <p>Director â€” Nexo-Terra<br>nexoterra.latam@gmail.com<br>+54 11 3087 5304</p>
+      </div>
+      <div class="contact-item">
+        <h4>Vigencia de la propuesta</h4>
+        <p>30 dÃ­as corridos desde<br>la fecha de emisiÃ³n<br>Mayo 2026</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

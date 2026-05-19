@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contrato de Prestación de Servicios — Nexo-Terra / Predigma</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Georgia', serif;
+    font-size: 13px;
+    color: #1a1a1a;
+    background: #fff;
+    line-height: 1.75;
+  }
+
+  .page {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 60px 72px;
+  }
+
+  /* HEADER */
+  .contract-header {
+    text-align: center;
+    border-bottom: 2px solid #1a1a1a;
+    padding-bottom: 28px;
+    margin-bottom: 36px;
+  }
+
+  .contract-header .logo {
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #1a3a6b;
+    margin-bottom: 20px;
+  }
+
+  .contract-header h1 {
+    font-family: Georgia, serif;
+    font-size: 18px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+  }
+
+  .contract-header .subtitle {
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    color: #555;
+    letter-spacing: 1px;
+  }
+
+  /* PARTES */
+  .partes-block {
+    background: #f8f8f8;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 24px 28px;
+    margin-bottom: 32px;
+  }
+
+  .parte {
+    margin-bottom: 18px;
+  }
+
+  .parte:last-child { margin-bottom: 0; }
+
+  .parte-label {
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #1a3a6b;
+    margin-bottom: 6px;
+  }
+
+  .parte p {
+    font-size: 13px;
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  .parte strong { color: #1a1a1a; }
+
+  /* CONSIDERANDOS */
+  .considerandos {
+    margin-bottom: 32px;
+    font-style: italic;
+    color: #333;
+    padding-left: 16px;
+    border-left: 3px solid #ddd;
+  }
+
+  /* CLÁUSULAS */
+  .clause {
+    margin-bottom: 28px;
+    page-break-inside: avoid;
+  }
+
+  .clause-title {
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #1a3a6b;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .clause p {
+    margin-bottom: 10px;
+    text-align: justify;
+  }
+
+  .clause ul {
+    margin: 8px 0 10px 20px;
+  }
+
+  .clause ul li {
+    margin-bottom: 6px;
+  }
+
+  .clause .sub-title {
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: #333;
+    margin: 14px 0 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* TABLE */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 12px;
+    font-family: Arial, sans-serif;
+  }
+
+  th {
+    background: #1a3a6b;
+    color: #fff;
+    padding: 8px 12px;
+    text-align: left;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #e8e8e8;
+    vertical-align: top;
+  }
+
+  tr:nth-child(even) td { background: #f8f8f8; }
+
+  /* HIGHLIGHT BOX */
+  .highlight {
+    background: #fff8e6;
+    border-left: 3px solid #d4a017;
+    padding: 12px 16px;
+    margin: 12px 0;
+    font-size: 12px;
+    font-family: Arial, sans-serif;
+  }
+
+  /* PLACEHOLDER */
+  .placeholder {
+    background: #fff0f0;
+    border: 1px dashed #e06060;
+    border-radius: 3px;
+    padding: 1px 6px;
+    font-family: monospace;
+    font-size: 12px;
+    color: #c00;
+  }
+
+  /* FIRMA */
+  .firma-section {
+    margin-top: 48px;
+    page-break-inside: avoid;
+  }
+
+  .firma-divider {
+    border-top: 2px solid #1a1a1a;
+    margin-bottom: 28px;
+  }
+
+  .firma-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    margin-top: 20px;
+  }
+
+  .firma-block { text-align: center; }
+
+  .firma-line {
+    border-top: 1px solid #333;
+    margin-bottom: 8px;
+    margin-top: 60px;
+  }
+
+  .firma-block p {
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    color: #333;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .firma-block strong {
+    display: block;
+    font-size: 12px;
+    color: #1a1a1a;
+    margin-bottom: 2px;
+  }
+
+  /* FOOTER */
+  .page-footer {
+    margin-top: 40px;
+    padding-top: 16px;
+    border-top: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    color: #999;
+  }
+
+  /* PRINT */
+  @media print {
+    body { font-size: 12px; }
+    @page { margin: 15mm; size: A4; }
+    .page { padding: 0; max-width: none; }
+    .clause { page-break-inside: avoid; }
+    .firma-section { page-break-inside: avoid; }
+  }
+
+  @media screen {
+    body { background: #eef2f7; }
+    .page { background: #fff; margin: 20px auto; box-shadow: 0 2px 20px rgba(0,0,0,0.08); }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="contract-header">
+    <div class="logo">Nexo&#8209;Terra</div>
+    <h1>Contrato de Prestación de Servicios Tecnológicos</h1>
+    <div class="subtitle">Consultorio Inteligente — Automatización con Inteligencia Artificial</div>
+  </div>
+
+  <!-- PARTES -->
+  <div class="partes-block">
+    <div class="parte">
+      <div class="parte-label">El Prestador</div>
+      <p><strong>Carlos Norberto González Archilla</strong>, DNI/CUIT 20-35015391-9, con domicilio en Monseñor de Andrea 1451, Ciudad de Posadas, Provincia de Misiones, República Argentina, que en adelante se denominará <strong>"Nexo-Terra"</strong> o <strong>"el Prestador"</strong>.</p>
+    </div>
+    <div class="parte">
+      <div class="parte-label">El Cliente</div>
+      <p><span class="placeholder">{{PREDIGMA_RAZON_SOCIAL}}</span>, CUIT <span class="placeholder">{{PREDIGMA_CUIT}}</span>, con domicilio en <span class="placeholder">{{PREDIGMA_DOMICILIO}}</span>, representado en este acto por <span class="placeholder">{{PREDIGMA_REPRESENTANTE}}</span> en carácter de <span class="placeholder">{{PREDIGMA_CARGO}}</span>, que en adelante se denominará <strong>"el Cliente"</strong>.</p>
+    </div>
+  </div>
+
+  <!-- CONSIDERANDOS -->
+  <div class="considerandos">
+    <p>Que el Prestador es proveedor de soluciones tecnológicas basadas en inteligencia artificial y automatización para el sector salud; que el Cliente desea contratar el sistema denominado "Consultorio Inteligente" para la automatización de la gestión de pacientes de su centro médico; y que ambas partes acuerdan celebrar el presente contrato bajo las siguientes cláusulas y condiciones:</p>
+  </div>
+
+  <!-- CLÁUSULA 1 -->
+  <div class="clause">
+    <div class="clause-title">Cláusula Primera — Objeto del Contrato</div>
+    <p>El Prestador se compromete a implementar, configurar y mantener el sistema denominado <strong>"Consultorio Inteligente"</strong>, que comprende las siguientes prestaciones:</p>
+    <ul>
+      <li>Asistente conversacional por WhatsApp disponible 24 horas los 7 días de la semana para gestión de turnos, consultas e información.</li>
+      <li>Asistente de voz con inteligencia artificial (Sofía) para atención telefónica automatizada.</li>
+      <li>Panel de gestión web para el equipo de secretaría (dashboard) con agenda en tiempo real.</li>
+      <li>Sistema automático de recordatorios de turnos vía WhatsApp.</li>
+      <li>Reporte mensual automático de métricas operativas.</li>
+      <li>Soporte técnico 24/7 con primera línea de atención por inteligencia artificial.</li>
+      <li>Entrega de documentación técnica completa al finalizar la relación contractual.</li>
+    </ul>
+    <p>La implementación inicial comprende la configuración para hasta 60 (sesenta) profesionales médicos. La incorporación de profesionales adicionales podrá acordarse por escrito entre las partes.</p>
+  </div>
+
+  <!-- CLÁUSULA 2 -->
+  <div class="clause">
+    <div class="clause-title">Cláusula Segunda — Precio y Condiciones de Pago</div>
+
+    <div class="sub-title">2.1 Precio del servicio</div>
+    <p>Las partes acuerdan el siguiente esquema de precios, expresados en dólares estadounidenses (USD), abonables en pesos argentinos al tipo de cambio dólar MEP publicado el día hábil anterior a la fecha de cada pago:</p>
+
+    <table>
+      <tr>
+        <th>Concepto</th>
+        <th>Precio (USD)</th>
+        <th>Observación</th>
+      </tr>
+      <tr>
+        <td>Setup e implementación (pago único)</td>
+        <td><strong>USD 1.600</strong></td>
+        <td>Precio especial — cliente referido</td>
+      </tr>
+      <tr>
+        <td>Mantenimiento mensual</td>
+        <td><strong>USD 800/mes</strong></td>
+        <td>Desde el día del go-live</td>
+      </tr>
+    </table>
+
+    <div class="sub-title">2.2 Modalidad de pago del setup</div>
+    <p>Las partes podrán acordar alguna de las siguientes modalidades para el pago del setup:</p>
+    <ul>
+      <li><strong>Opción A (50/50):</strong> USD 800 al momento de la firma del presente contrato y USD 800 al momento del go-live del sistema.</li>
+      <li><strong>Opción B (cuotas):</strong> USD 600 al momento de la firma, USD 600 el mes 1 y USD 400 el mes 2 desde la firma.</li>
+    </ul>
+    <p>La modalidad elegida por las partes es: <span class="placeholder">{{OPCION_PAGO_SETUP}}</span>.</p>
+
+    <div class="sub-title">2.3 Pago mensual</div>
+    <p>El canon mensual de USD 800 comenzará a devengarse a partir del día del go-live del sistema y deberá abonarse dentro de los primeros 5 (cinco) días hábiles de cada mes.</p>
+
+    <div class="sub-title">2.4 Modalidad de pago</div>
+    <p>La modalidad de pago (transferencia bancaria, plataforma de pago internacional u otra) será acordada entre las partes al momento de la firma mediante comunicación fehaciente.</p>
+
+    <div class="highlight">
+      El precio mensual incluye: hosting dedicado, base de datos, uso de inteligencia artificial, WhatsApp Business API, soporte 24/7 y actualizaciones del sistema. No existen costos adicionales ocultos salvo los contemplados en la Cláusula Tercera.
+    </div>
+  </div>
+
+  <!-- CLÁUSULA 3 -->
+  <div class="clause">
+    <div class="clause-title">Cláusula Tercera — Ajuste de Precio</div>
+    <p>El Prestador se reserva el derecho de ajustar el precio mensual en los siguientes casos:</p>
+    <ul>
+      <li><strong>Variación de costos de terceros:</strong> En caso de aumento en los costos de plataformas proveedoras de servicios tecnológicos necesarios para el funcionamiento del sistema (APIs de inteligencia artificial, mensajería, telefonía, hosting u otros), el Prestador notificará al Cliente el nuevo valor tan pronto tome conocimiento del aumento. El precio ajustado será aplicable a partir de la siguiente factura emitida luego de dicha notificación.</li>
+      <li><strong>Expansión del servicio:</strong> La incorporación de funcionalidades no contempladas en el objeto del presente contrato podrá acordarse por escrito y dará lugar a una revisión del precio.</li>
+    </ul>
+    <p>La notificación de ajuste de precio podrá realizarse por correo electrónico a la dirección provista por el Cliente, y se tendrá por recibida dentro de las 24 horas de su envío.</p>
+  </div>
+
+  <!-- CLÁUSULA 4 -->
+  <div class="clause">
+    <div class="clause-title">Cláusula Cuarta — Plazo y Rescisión</div>
+    <p>El presente contrato entrará en vigencia a partir de la fecha de firma y tendrá una duración <strong>por tiempo indeterminado</strong>.</p>
+
+    <div class="sub-title">4.1 Rescisión por cualquiera de las partes</div>
+    <p>Cualquiera de las partes podrá rescindir el presente contrato mediante notificación escrita con <strong>30 (treinta) días corridos</strong> de anticipación, sin necesidad de invocar causa. La notificación deberá enviarse por correo electrónico a la dirección acordada por las partes.</p>
+
+    <div class="sub-title">4.2 Rescisión por mora en el pago</div>
+    <p>La mora en el pago mensual por más de <strong>10 (diez) días hábiles</strong> desde su fecha de vencimiento faculta al Prestador a suspender el servicio sin previo aviso hasta la regularización de la deuda. Si la deuda no fuera regularizada dentro de los 30 días corridos de la suspensión, el Prestador podrá rescindir el contrato de pleno derecho.</p>
+
+    <div class="sub-title">4.3 Entrega técnica al momento de la rescisión</div>
+    <p>Dentro de los 5 (cinco) días hábiles posteriores a la fecha efectiva de rescisión, el Prestador entregará al Cliente la documentación técnica completa del sistema, que incluirá: estructura de base de datos, credenciales de acceso al servidor, arquitectura del sistema, configuración de workflows y accesos a todas las plataformas involucradas.</p>
+  </div>
+
+  <!-- CLÁUSULA 5 -->
+  <div class="clause">
+    <div class="clause-title">Cláusula Quinta — Obligaciones del Prestador</div>
+    <p>Nexo-Terra se obliga a:</p>
+    <ul>
+      <li>Implementar el sistema conforme a las especificaciones acordadas en un plazo de 25 a 30 días corridos desde la firma del contrato y el pago inicial del setup.</li>
+      <li>Mantener el sistema operativo conforme al nivel de servicio establecido en la Cláusula Séptima, mientras el pago mensual se encuentre vigente y al día.</li>
+      <li>Proveer soporte técnico 24/7 con primera línea automatizada y escalamiento al equipo técnico para casos críticos.</li>
+      <li>Notificar al Cliente con la mayor anticipación posible cualquier mantenimiento programado que pueda afectar la disponibilidad del sistema.</li>
+      <li>Notificar ajustes de precio conforme a lo establecido en la Cláusula Tercera.</li>
+      <li>Entregar la documentación técnica completa al momento de la rescisión contractual.</li>
+      <li>Guardar confidencialidad sobre toda la información del Cliente conforme a la Cláusula Décima.</li>
+    </ul>
+  </div>
+
+  <!-- CLÁUSULA 6 -->
+  <div class="clause">
+    <div class="clause-title">Cláusula Sexta — Obligaciones del Cliente</div>
+    <p>El Cliente se obliga a:</p>
+    <ul>
+      <li>Abonar el precio del servicio en tiempo y forma conforme a lo establecido en la Cláusula Segunda.</li>
+      <li>Proveer acceso de administrador a su cuenta de Meta Business Manager y al número de WhatsApp Business destinado al sistema, dentro de los 3 días hábiles de solicitado por el Prestador.</li>
+      <li>Proveer en tiempo y forma la información necesaria para la configuración del sistema: listado de profesionales, especialidades, horarios de atención y cualquier otro dato operativo requerido.</li>
+      <li>Notificar al Prestador dentro de las 48 horas cualquier anomalía, fallo o comportamiento inesperado del sistema que detecte.</li>
+      <li>Notificar con al menos 15 días de anticipación cambios relevantes en su operación que puedan afectar el funcionamiento del sistema (cambio de número de WhatsApp, incorporación masiva de profesionales, etc.).</li>
+      <li>Garantizar que el número de WhatsApp provisto para el sistema no sea utilizado simultáneamente en la aplicación de WhatsApp regular, conforme a las políticas de Meta.</li>
+      <li>Designar un referente técnico de su equipo para la coordinación de la integración con el sistema de gestión propio.</li>
+    </ul>
+  </div>
+
+  <!-- CLÁUSULA 7 -->
+  <div class="clause">
+    <div class="clause-title">Cláusula Séptima — Niveles de Servicio (SLA)</div>
+
+    <div class="sub-title">7.1 Disponibilidad</div>
+    <p>El Prestador garantiza una disponibilidad mensual del sistema del <strong>95%</strong>, medida sobre los días calendario del mes, excluyendo expresamente:</p>
+    <ul>
+      <li>Interrupciones causadas por plataformas de terceros (Meta/WhatsApp Business API, proveedores de inteligencia artificial, servicios de hosting u otros).</li>
+      <li>Mantenimientos programados notificados con al menos 24 horas de anticipación.</li>
+      <li>Casos de fuerza mayor conforme a la Cláusula Undécima.</li>
+      <li>Interrupciones causadas por acción u omisión del Cliente o terceros vinculados a él.</li>
+    </ul>
+
+    <div class="sub-title">7.2 Tiempos de respuesta</div>
+    <table>
+      <tr>
+        <th>Tipo de incidente</th>
+        <th>Definición</th>
+        <th>Tiempo de respuesta</th>
+      </tr>
+      <tr>
+        <td><strong>Crítico</strong></td>
+        <td>Sistema completamente inoperativo</td>
+        <td>4 horas (cualquier día)</td>
+      </tr>
+      <tr>
+        <td><strong>Moderado</strong></td>
+        <td>Funcionalidad puntual no operativa</td>
+        <td>24 horas hábiles</td>
+      </tr>
+      <tr>
+        <td><strong>Leve</strong></td>
+        <td>Consulta, ajuste o mejora menor</td>
+        <td>72 horas hábiles</td>
+      </tr>
+    </table>
+
+    <div class="sub-title">7.3 Incumplimiento del SLA</div>
+    <p>En caso de que el Prestador no alcance el nivel de disponibilidad comprometido por causas imputables exclusivamente a su parte, el Cliente tendrá derecho a un crédito equivalente a <strong>un (1) día de servicio por cada 24 horas de interrupción no resuelta</strong>, descontable del siguiente período mensual. Este crédito constituye la única compensación aplicable y excluye cualquier otra reclamación económica.</p>
+
+    <div class="sub-title">7.4 Vigencia del SLA</div>
+    <p>Los niveles de servicio establecidos en la presente cláusula estarán vigentes <strong>exclusivamente mientras el Cliente mantenga el pago mensual al día</strong>. La mora en el pago suspende automáticamente los compromisos de SLA hasta la regularización de la deuda.</p>
+
+    <div class="sub-title">7.5 Fallas de plataformas de terceros</div>
+    <p>En caso de interrupción definitiva o cambio de regulaciones de un proveedor de terceros que afecte el funcionamiento del sistema, el Prestador se compromete a evaluar e implementar una solución tecnológica alternativa equivalente en un plazo de hasta <strong>10 (diez) días hábiles</strong>, sin costo adicional para el Cliente, siempre que el contrato se encuentre vigente y el pago al día.</p>
+  </div>
+
+  <!-- CLÁUSULA 8 -->
+  <div class="clause">
+    <div class="clause-title">Cláusula Octava — Exclusiones y Limitación de Responsabilidad</div>
+
+    <div class="sub-title">8.1 Exclusiones de responsabilidad</div>
+    <p>Nexo-Terra no será responsable por:</p>
+    <ul>
+      <li>Interrupciones, modificaciones de condiciones, cambios de política o cese definitivo de servicios de plataformas de terceros (Meta, WhatsApp Business API, proveedores de inteligencia artificial, servicios de voz, hosting, etc.).</li>
+      <li>Pérdida de datos, turnos, pacientes u oportunidades de negocio derivadas de fallas de plataformas de terceros.</li>
+      <li>Incumplimientos causados por información incorrecta, incompleta o desactualizada provista por el Cliente.</li>
+      <li>Daños o perjuicios derivados del uso indebido del sistema por parte del Cliente, su personal o terceros.</li>
+      <li>Lucro cesante, pérdida de ingresos o daños indirectos de cualquier naturaleza.</li>
+      <li>Modificaciones, fallos o consecuencias derivadas del uso o alteración del sistema por parte del Cliente luego de la entrega de la documentación técnica y la finalización del vínculo contractual.</li>
+    </ul>
+
+    <div class="sub-title">8.2 Limitación del monto de responsabilidad</div>
+    <p>En ningún caso la responsabilidad total de Nexo-Terra frente al Cliente podrá exceder el equivalente a <strong>3 (tres) meses del valor mensual del servicio</strong> vigente al momento del hecho generador, cualquiera sea la causa que origine el reclamo.</p>
+  </div>
+
+  <!-- CLÁUSULA 9 -->
+  <div class="clause">
+    <div class="clause-title">Cláusula Novena — Propiedad Intelectual</div>
+    <p>Los workflows, código fuente, arquitectura de automatización y desarrollos tecnológicos implementados por Nexo-Terra constituyen propiedad intelectual del Prestador y no serán transferidos al Cliente salvo acuerdo escrito expreso en contrario.</p>
+    <p>Los datos operativos del Cliente (información de pacientes, profesionales, turnos y demás datos propios de su actividad) son propiedad exclusiva del Cliente. Nexo-Terra no tendrá derecho alguno sobre dichos datos más allá de lo estrictamente necesario para la prestación del servicio.</p>
+    <p>La documentación técnica entregada al finalizar el contrato podrá ser utilizada libremente por el Cliente para la continuación, migración o administración del sistema por sí mismo o a través de terceros.</p>
+  </div>
+
+  <!-- CLÁUSULA 10 -->
+  <div class="clause">
+    <div class="clause-title">Cláusula Décima — Confidencialidad</div>
+    <p>Ambas partes se obligan a mantener absoluta confidencialidad sobre la información no pública que reciban de la otra parte en el marco del presente contrato, incluyendo pero no limitándose a: datos de pacientes, información comercial, técnica y operativa.</p>
+    <p>Esta obligación se mantendrá vigente durante toda la duración del contrato y por un período de <strong>2 (dos) años</strong> posteriores a su rescisión, independientemente de la causa.</p>
+    <p>Se exceptúan de esta obligación las informaciones que sean de dominio público o que deban ser divulgadas por orden judicial o requerimiento de autoridad competente.</p>
+  </div>
+
+  <!-- CLÁUSULA 11 -->
+  <div class="clause">
+    <div class="clause-title">Cláusula Undécima — Protección de Datos Personales</div>
+    <p>En el marco de la prestación del servicio, Nexo-Terra tendrá acceso a datos personales de pacientes del Cliente, en los términos de la Ley 25.326 de Protección de los Datos Personales de la República Argentina.</p>
+    <p>A los efectos de dicha normativa:</p>
+    <ul>
+      <li>El <strong>Cliente</strong> reviste el carácter de <strong>responsable del archivo o base de datos</strong>, siendo quien determina la finalidad y el tratamiento de los datos.</li>
+      <li><strong>Nexo-Terra</strong> reviste el carácter de <strong>encargado del tratamiento</strong>, limitando su actuación a las instrucciones del Cliente y a lo estrictamente necesario para la prestación del servicio.</li>
+    </ul>
+    <p>Nexo-Terra se compromete a: (a) no utilizar los datos para finalidades distintas a las instrucciones del Cliente; (b) implementar medidas técnicas y organizativas adecuadas para proteger los datos; (c) no ceder ni transferir datos a terceros salvo a los proveedores de infraestructura necesarios para la operación del servicio; (d) eliminar o devolver los datos al Cliente al finalizar la relación contractual.</p>
+  </div>
+
+  <!-- CLÁUSULA 12 -->
+  <div class="clause">
+    <div class="clause-title">Cláusula Duodécima — Fuerza Mayor</div>
+    <p>Ninguna de las partes será responsable por el incumplimiento de sus obligaciones cuando dicho incumplimiento sea consecuencia de casos de fuerza mayor o caso fortuito, entendiéndose por tales los hechos imprevisibles o inevitables ajenos a la voluntad de las partes, incluyendo pero no limitándose a: catástrofes naturales, actos de autoridad gubernamental, fallas generalizadas de infraestructura de internet, pandemias declaradas u otros eventos de fuerza mayor.</p>
+    <p>La parte afectada deberá notificar a la otra dentro de las 48 horas de producido el evento, indicando su naturaleza y duración estimada. Las obligaciones quedarán suspendidas durante el tiempo que dure la causa de fuerza mayor.</p>
+  </div>
+
+  <!-- CLÁUSULA 13 -->
+  <div class="clause">
+    <div class="clause-title">Cláusula Décimo Tercera — Integración con Sistema Propio del Cliente</div>
+    <p>Las partes reconocen que el Cliente opera un sistema de gestión propio. El alcance, complejidad y condiciones de la integración entre el sistema de Consultorio Inteligente y dicho sistema propio serán definidos en una reunión técnica entre los equipos de ambas partes, que se realizará dentro de los primeros 3 días hábiles desde la firma del contrato.</p>
+    <p>En caso de que la integración requiera un desarrollo adicional significativo que exceda el alcance del presente contrato, las partes acordarán por escrito un anexo técnico con el alcance y precio correspondientes, previo al inicio de dicho desarrollo.</p>
+  </div>
+
+  <!-- CLÁUSULA 14 -->
+  <div class="clause">
+    <div class="clause-title">Cláusula Décimo Cuarta — Jurisdicción y Ley Aplicable</div>
+    <p>Para todos los efectos legales del presente contrato, las partes se someten a la legislación de la República Argentina y a la competencia de los <strong>Tribunales Ordinarios de la Ciudad de Posadas, Provincia de Misiones</strong>, con renuncia expresa a cualquier otro fuero o jurisdicción que pudiera corresponderles.</p>
+  </div>
+
+  <!-- CLÁUSULA 15 -->
+  <div class="clause">
+    <div class="clause-title">Cláusula Décimo Quinta — Disposiciones Generales</div>
+    <ul>
+      <li><strong>Integralidad:</strong> El presente contrato, junto con sus anexos, constituye el acuerdo completo entre las partes y reemplaza cualquier entendimiento anterior, verbal o escrito, sobre el objeto aquí tratado.</li>
+      <li><strong>Modificaciones:</strong> Cualquier modificación al presente contrato deberá constar por escrito y ser suscripta por ambas partes.</li>
+      <li><strong>Comunicaciones:</strong> Toda comunicación formal entre las partes se realizará por correo electrónico a las direcciones acordadas, teniéndose por recibida dentro de las 24 horas de su envío.</li>
+      <li><strong>Divisibilidad:</strong> Si alguna cláusula del presente contrato fuera declarada nula o inaplicable, el resto del contrato mantendrá su plena vigencia.</li>
+    </ul>
+  </div>
+
+  <!-- FECHA Y FIRMA -->
+  <div class="firma-section">
+    <div class="firma-divider"></div>
+    <p style="font-family:Arial,sans-serif; font-size:12px; margin-bottom:24px;">En la ciudad de Posadas, Provincia de Misiones, a los <span class="placeholder">{{DIA}}</span> días del mes de <span class="placeholder">{{MES}}</span> de 2026, las partes firman el presente contrato en señal de conformidad, en dos ejemplares de igual tenor y valor.</p>
+
+    <div class="firma-grid">
+      <div class="firma-block">
+        <div class="firma-line"></div>
+        <strong>Carlos Norberto González Archilla</strong>
+        <p>CUIT 20-35015391-9<br>Nexo-Terra — Prestador</p>
+      </div>
+      <div class="firma-block">
+        <div class="firma-line"></div>
+        <strong><span class="placeholder">{{PREDIGMA_REPRESENTANTE}}</span></strong>
+        <p><span class="placeholder">{{PREDIGMA_CARGO}}</span><br><span class="placeholder">{{PREDIGMA_RAZON_SOCIAL}}</span><br>Cliente</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>Nexo-Terra — Contrato de Prestación de Servicios Tecnológicos</span>
+    <span>Confidencial</span>
+  </div>
+
+</div>
+</body>
+</html>

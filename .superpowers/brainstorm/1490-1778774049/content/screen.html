@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard — Arquitectura y Deploy</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f1117; color: #e2e8f0; min-height: 100vh; padding: 28px; display: flex; flex-direction: column; gap: 28px; }
+  h2 { font-size: 18px; font-weight: 700; color: #f8fafc; }
+  p.sub { font-size: 13px; color: #64748b; margin-top: 3px; }
+
+  /* ARCH DIAGRAM */
+  .arch { max-width: 960px; background: #1e2433; border: 1px solid #2d3748; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 20px; }
+
+  .arch-row { display: flex; align-items: center; gap: 0; }
+  .arch-layer { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .layer-label { font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+  .layer-cards { display: flex; flex-direction: column; gap: 6px; }
+  .arch-card { background: #141824; border: 1px solid #2d3748; border-radius: 10px; padding: 10px 14px; }
+  .arch-card.blue { border-color: #1f6feb; background: #031d2e; }
+  .arch-card.green { border-color: #238636; background: #0d2818; }
+  .arch-card.purple { border-color: #6e40c9; background: #1a0d2e; }
+  .arch-card.orange { border-color: #9e6a03; background: #271f00; }
+  .arch-card-title { font-size: 12px; font-weight: 700; color: #f0f6fc; }
+  .arch-card-sub { font-size: 11px; color: #8b949e; margin-top: 2px; }
+  .arch-card-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+  .tag { font-size: 10px; padding: 2px 7px; border-radius: 4px; font-weight: 600; background: #2d3748; color: #8b949e; }
+  .tag.b { background: #1e3a5f; color: #60a5fa; }
+  .tag.g { background: #14291e; color: #4ade80; }
+  .tag.p { background: #2d1f4a; color: #a78bfa; }
+  .tag.o { background: #271f00; color: #d29922; }
+
+  .arch-arrow { display: flex; align-items: center; justify-content: center; width: 48px; flex-shrink: 0; }
+  .arrow-line { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .arrow-label { font-size: 9px; color: #64748b; text-align: center; white-space: nowrap; }
+  .arrow-svg { color: #4f6ef7; font-size: 18px; }
+
+  /* EASYPANEL DIAGRAM */
+  .ep-diagram { max-width: 960px; }
+  .ep-title { font-size: 14px; font-weight: 700; color: #f1f5f9; margin-bottom: 16px; }
+
+  .clients-row { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 4px; }
+  .client-box { flex-shrink: 0; width: 220px; background: #141824; border: 1px solid #2d3748; border-radius: 12px; overflow: hidden; }
+  .client-header { padding: 10px 14px; background: #1f3460; display: flex; align-items: center; justify-content: space-between; }
+  .client-name { font-size: 12px; font-weight: 700; color: #58a6ff; }
+  .client-badge { font-size: 9px; background: #238636; color: white; padding: 1px 6px; border-radius: 4px; font-weight: 600; }
+  .client-services { padding: 10px 14px; display: flex; flex-direction: column; gap: 5px; }
+  .service-row { display: flex; align-items: center; gap: 7px; font-size: 11px; }
+  .service-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .service-dot.green { background: #3fb950; }
+  .service-dot.blue { background: #58a6ff; }
+  .service-dot.purple { background: #a78bfa; }
+  .service-dot.orange { background: #f97316; }
+  .service-name { color: #c9d1d9; }
+  .service-port { margin-left: auto; font-size: 10px; color: #64748b; font-family: monospace; }
+
+  .ep-note { margin-top: 12px; background: #141824; border: 1px solid #2d3748; border-radius: 8px; padding: 10px 14px; font-size: 12px; color: #8b949e; line-height: 1.6; }
+  .ep-note strong { color: #e6edf3; }
+  .ep-note code { background: #2d3748; padding: 1px 5px; border-radius: 4px; font-size: 11px; color: #a78bfa; }
+
+  /* ENV VARS */
+  .envvars { max-width: 960px; background: #1e2433; border: 1px solid #2d3748; border-radius: 16px; padding: 20px; }
+  .envvars h3 { font-size: 13px; font-weight: 700; color: #f1f5f9; margin-bottom: 12px; }
+  .env-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .env-row { display: flex; gap: 8px; align-items: flex-start; font-size: 11px; background: #141824; border-radius: 6px; padding: 7px 10px; }
+  .env-key { color: #a78bfa; font-family: monospace; flex-shrink: 0; min-width: 180px; }
+  .env-val { color: #8b949e; }
+
+  /* TIMELINE */
+  .timeline { max-width: 960px; background: #1e2433; border: 1px solid #2d3748; border-radius: 16px; padding: 20px; }
+  .timeline h3 { font-size: 13px; font-weight: 700; color: #f1f5f9; margin-bottom: 16px; }
+  .tl-items { display: flex; gap: 0; }
+  .tl-item { flex: 1; position: relative; padding: 0 12px; }
+  .tl-item:first-child { padding-left: 0; }
+  .tl-connector { position: absolute; top: 11px; left: 0; right: 0; height: 2px; background: #2d3748; z-index: 0; }
+  .tl-item:first-child .tl-connector { left: 24px; }
+  .tl-item:last-child .tl-connector { right: 50%; }
+  .tl-dot-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; position: relative; z-index: 1; }
+  .tl-dot { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0; }
+  .tl-dot.done { background: #238636; color: white; }
+  .tl-dot.todo { background: #2d3748; color: #8b949e; }
+  .tl-duration { font-size: 10px; color: #64748b; }
+  .tl-title { font-size: 12px; font-weight: 700; color: #e6edf3; margin-bottom: 4px; }
+  .tl-tasks { display: flex; flex-direction: column; gap: 3px; }
+  .tl-task { font-size: 11px; color: #8b949e; padding-left: 10px; position: relative; }
+  .tl-task::before { content: '·'; position: absolute; left: 2px; color: #4f6ef7; }
+</style>
+</head>
+<body>
+
+<div>
+  <h2>Arquitectura técnica y deploy en EasyPanel</h2>
+  <p class="sub">Un contenedor por cliente · Mismo modelo del kit actual · Parametrizado por env vars</p>
+</div>
+
+<!-- ARCH FLOW -->
+<div class="arch">
+  <div class="arch-row">
+
+    <div class="arch-layer">
+      <div class="layer-label">Usuario</div>
+      <div class="layer-cards">
+        <div class="arch-card blue">
+          <div class="arch-card-title">Browser del cliente</div>
+          <div class="arch-card-sub">Secretaria / Dueño / Médico</div>
+          <div class="arch-card-tags"><span class="tag b">HTTPS</span><span class="tag b">Supabase Realtime WS</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arch-arrow">
+      <div class="arrow-line">
+        <div class="arrow-svg">→</div>
+        <div class="arrow-label">HTTPS / WSS</div>
+      </div>
+    </div>
+
+    <div class="arch-layer">
+      <div class="layer-label">Dashboard App</div>
+      <div class="layer-cards">
+        <div class="arch-card green">
+          <div class="arch-card-title">Next.js 14 (App Router)</div>
+          <div class="arch-card-sub">Docker · puerto 3000 · EasyPanel</div>
+          <div class="arch-card-tags"><span class="tag g">SSR</span><span class="tag g">shadcn/ui</span><span class="tag g">Tailwind</span></div>
+        </div>
+        <div class="arch-card green">
+          <div class="arch-card-title">Supabase Auth</div>
+          <div class="arch-card-sub">Sesiones JWT · roles en user_metadata</div>
+          <div class="arch-card-tags"><span class="tag g">dueño</span><span class="tag g">secretaria</span><span class="tag g">médico</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arch-arrow">
+      <div class="arrow-line">
+        <div class="arrow-svg">→</div>
+        <div class="arrow-label">REST / Realtime</div>
+      </div>
+    </div>
+
+    <div class="arch-layer">
+      <div class="layer-label">Backend existente</div>
+      <div class="layer-cards">
+        <div class="arch-card purple">
+          <div class="arch-card-title">Supabase (ya existe)</div>
+          <div class="arch-card-sub">Lee turnos / pacientes / conversaciones</div>
+          <div class="arch-card-tags"><span class="tag p">Realtime</span><span class="tag p">RLS por rol</span></div>
+        </div>
+        <div class="arch-card orange">
+          <div class="arch-card-title">n8n Webhooks (ya existen)</div>
+          <div class="arch-card-sub">Escribe via WF-DASH-1/2/3/4</div>
+          <div class="arch-card-tags"><span class="tag o">cancelar</span><span class="tag o">crear</span><span class="tag o">link</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- EASYPANEL PER CLIENT -->
+<div class="ep-diagram">
+  <div class="ep-title">Modelo por cliente en EasyPanel — mismo kit, distintos clientes</div>
+  <div class="clients-row">
+
+    <div class="client-box">
+      <div class="client-header"><span class="client-name">Policonsultorio Rivadavia</span><span class="client-badge">DEMO</span></div>
+      <div class="client-services">
+        <div class="service-row"><div class="service-dot green"></div><span class="service-name">n8n</span><span class="service-port">:5678</span></div>
+        <div class="service-row"><div class="service-dot blue"></div><span class="service-name">dashboard</span><span class="service-port">:3000</span></div>
+        <div class="service-row"><div class="service-dot purple"></div><span class="service-name">postgres</span><span class="service-port">:5432</span></div>
+        <div class="service-row"><div class="service-dot orange"></div><span class="service-name">supabase (cloud)</span></div>
+      </div>
+    </div>
+
+    <div class="client-box">
+      <div class="client-header"><span class="client-name">Predigma (50 médicos)</span><span class="client-badge">ACTIVO</span></div>
+      <div class="client-services">
+        <div class="service-row"><div class="service-dot green"></div><span class="service-name">n8n</span><span class="service-port">:5678</span></div>
+        <div class="service-row"><div class="service-dot blue"></div><span class="service-name">dashboard</span><span class="service-port">:3000</span></div>
+        <div class="service-row"><div class="service-dot purple"></div><span class="service-name">postgres</span><span class="service-port">:5432</span></div>
+        <div class="service-row"><div class="service-dot orange"></div><span class="service-name">supabase (cloud)</span></div>
+      </div>
+    </div>
+
+    <div class="client-box" style="border-style:dashed;opacity:0.5">
+      <div class="client-header" style="background:#21262d"><span class="client-name" style="color:#8b949e">Próximo cliente</span></div>
+      <div class="client-services">
+        <div class="service-row"><div class="service-dot" style="background:#2d3748"></div><span class="service-name" style="color:#64748b">n8n</span></div>
+        <div class="service-row"><div class="service-dot" style="background:#2d3748"></div><span class="service-name" style="color:#64748b">dashboard</span></div>
+        <div class="service-row"><div class="service-dot" style="background:#2d3748"></div><span class="service-name" style="color:#64748b">postgres</span></div>
+      </div>
+    </div>
+
+  </div>
+  <div class="ep-note">
+    <strong>El dashboard se agrega al kit de instalación.</strong> Mismo Dockerfile parametrizado — el cliente nuevo solo necesita: <code>SUPABASE_URL</code>, <code>SUPABASE_ANON_KEY</code>, <code>NEXTAUTH_SECRET</code>, <code>N8N_WEBHOOK_BASE</code>, <code>CONSULTORIO_NOMBRE</code>. Sin cambios de código entre clientes.
+  </div>
+</div>
+
+<!-- ENV VARS -->
+<div class="envvars">
+  <h3>Variables de entorno del contenedor dashboard (nuevas)</h3>
+  <div class="env-grid">
+    <div class="env-row"><span class="env-key">SUPABASE_URL</span><span class="env-val">URL del proyecto Supabase del cliente</span></div>
+    <div class="env-row"><span class="env-key">SUPABASE_ANON_KEY</span><span class="env-val">Clave pública (RLS activo)</span></div>
+    <div class="env-row"><span class="env-key">NEXTAUTH_SECRET</span><span class="env-val">String random 32 chars (openssl rand)</span></div>
+    <div class="env-row"><span class="env-key">NEXTAUTH_URL</span><span class="env-val">https://dashboard.cliente.easypanel.host</span></div>
+    <div class="env-row"><span class="env-key">N8N_WEBHOOK_BASE</span><span class="env-val">URL base del n8n del cliente</span></div>
+    <div class="env-row"><span class="env-key">N8N_DASHBOARD_KEY</span><span class="env-val">Header auth WF-DASH-*</span></div>
+    <div class="env-row"><span class="env-key">CONSULTORIO_NOMBRE</span><span class="env-val">Nombre que aparece en sidebar/login</span></div>
+    <div class="env-row"><span class="env-key">CONSULTORIO_LOGO_URL</span><span class="env-val">Logo del cliente (opcional)</span></div>
+  </div>
+</div>
+
+<!-- TIMELINE -->
+<div class="timeline">
+  <h3>Plan de implementación estimado</h3>
+  <div class="tl-items">
+    <div class="tl-item">
+      <div class="tl-connector"></div>
+      <div class="tl-dot-row"><div class="tl-dot todo">1</div><span class="tl-duration">Día 1</span></div>
+      <div class="tl-title">Base del proyecto</div>
+      <div class="tl-tasks">
+        <div class="tl-task">Next.js + Tailwind + shadcn setup</div>
+        <div class="tl-task">Supabase Auth + roles</div>
+        <div class="tl-task">Layout sidebar + routing</div>
+        <div class="tl-task">Dockerfile + EasyPanel</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-connector"></div>
+      <div class="tl-dot-row"><div class="tl-dot todo">2</div><span class="tl-duration">Día 2</span></div>
+      <div class="tl-title">Tabs principales</div>
+      <div class="tl-tasks">
+        <div class="tl-task">Tab Hoy + Semana</div>
+        <div class="tl-task">Modales CRUD (cancelar, crear)</div>
+        <div class="tl-task">Tab Pacientes</div>
+        <div class="tl-task">Integración WF-DASH-*</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-connector"></div>
+      <div class="tl-dot-row"><div class="tl-dot todo">3</div><span class="tl-duration">Día 3</span></div>
+      <div class="tl-title">Atenciones + En vivo</div>
+      <div class="tl-tasks">
+        <div class="tl-task">Tab Atenciones en curso</div>
+        <div class="tl-task">Tabla consultorio_mensajes</div>
+        <div class="tl-task">Parche WF01/WF02 logging</div>
+        <div class="tl-task">Supabase Realtime WebSocket</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-connector"></div>
+      <div class="tl-dot-row"><div class="tl-dot todo">4</div><span class="tl-duration">Día 4</span></div>
+      <div class="tl-title">Analytics + pulido</div>
+      <div class="tl-tasks">
+        <div class="tl-task">Tab Analytics + ROI</div>
+        <div class="tl-task">Filtros por período</div>
+        <div class="tl-task">Mobile responsive</div>
+        <div class="tl-task">Deploy demo + smoke test</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-connector"></div>
+      <div class="tl-dot-row"><div class="tl-dot todo">5</div><span class="tl-duration">Día 5</span></div>
+      <div class="tl-title">Kit + docs</div>
+      <div class="tl-tasks">
+        <div class="tl-task">Dockerfile al consultorio-kit</div>
+        <div class="tl-task">Checklist onboarding actualizado</div>
+        <div class="tl-task">README instalación</div>
+        <div class="tl-task">Predigma: deploy cliente real</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

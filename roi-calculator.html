@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de ROI — Consultorio Inteligente</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, sans-serif;
+      background: #eef2f7;
+      color: #1a2e4a;
+      min-height: 100vh;
+    }
+
+    /* ── Header ─────────────────────────────────────── */
+    .header {
+      background: linear-gradient(135deg, #1a2e4a 0%, #1e5799 100%);
+      color: white;
+      padding: 28px 32px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .header-left h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+    .header-left p  { font-size: 13px; opacity: 0.7; margin-top: 4px; }
+    .header-badge {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: white;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 20px;
+    }
+
+    /* ── Layout ──────────────────────────────────────── */
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      padding: 24px 28px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 700px) {
+      .layout { grid-template-columns: 1fr; padding: 16px; }
+      .header { flex-direction: column; gap: 12px; text-align: center; }
+    }
+
+    /* ── Cards ───────────────────────────────────────── */
+    .card {
+      background: white;
+      border-radius: 18px;
+      padding: 22px 24px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+    }
+
+    .card-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: #8896a5;
+      margin-bottom: 18px;
+    }
+
+    /* ── Inputs ──────────────────────────────────────── */
+    .input-block { margin-bottom: 22px; }
+    .input-block:last-child { margin-bottom: 0; }
+
+    .input-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 5px;
+    }
+    .input-name  { font-size: 14px; font-weight: 600; color: #1a2e4a; }
+    .input-val   { font-size: 15px; font-weight: 800; color: #1e5799; }
+
+    .input-why {
+      font-size: 11.5px;
+      color: #8896a5;
+      line-height: 1.55;
+      background: #f6f8fb;
+      border-left: 3px solid #cbd5e8;
+      padding: 7px 10px;
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 10px;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      background: #dde4ef;
+      border-radius: 3px;
+      outline: none;
+      cursor: pointer;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: #1e5799;
+      box-shadow: 0 2px 6px rgba(30,87,153,0.4);
+      cursor: pointer;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 10px 14px;
+      border: 2px solid #dde4ef;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #1a2e4a;
+      outline: none;
+      transition: border-color 0.2s;
+      -moz-appearance: textfield;
+    }
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+    input[type="number"]:focus { border-color: #1e5799; }
+
+    /* ── Result rows ─────────────────────────────────── */
+    .res-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 11px 0;
+      border-bottom: 1px solid #f0f4f8;
+    }
+    .res-row:last-child { border-bottom: none; }
+    .res-label { font-size: 13px; color: #5a6a7e; line-height: 1.4; max-width: 65%; }
+    .res-value { font-size: 15px; font-weight: 800; text-align: right; }
+
+    .val-red   { color: #e53e3e; }
+    .val-green { color: #27ae60; }
+    .val-blue  { color: #1e5799; }
+    .val-gray  { color: #718096; }
+
+    /* ── Big savings box ─────────────────────────────── */
+    .savings-box {
+      border-radius: 16px;
+      padding: 22px 20px;
+      text-align: center;
+      margin-bottom: 16px;
+      transition: background 0.3s;
+    }
+    .savings-box.positive { background: linear-gradient(135deg, #27ae60, #2ecc71); }
+    .savings-box.negative { background: linear-gradient(135deg, #e53e3e, #fc8181); }
+    .savings-box .big    { font-size: 54px; font-weight: 900; color: white; line-height: 1; }
+    .savings-box .unit   { font-size: 16px; color: rgba(255,255,255,0.9); margin-top: 6px; }
+    .savings-box .sub    { font-size: 12px; color: rgba(255,255,255,0.72); margin-top: 8px; line-height: 1.5; }
+
+    /* ── ROI box ─────────────────────────────────────── */
+    .roi-box {
+      background: linear-gradient(135deg, #1a2e4a, #1e5799);
+      border-radius: 16px;
+      padding: 20px 20px 16px;
+      color: white;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .roi-box .big-roi  { font-size: 52px; font-weight: 900; line-height: 1; }
+    .roi-box .roi-label { font-size: 13px; opacity: 0.8; margin-top: 5px; }
+
+    /* ── Plan box ────────────────────────────────────── */
+    .plan-box {
+      background: #f6f8fb;
+      border: 2px dashed #c8d4e8;
+      border-radius: 14px;
+      padding: 16px 18px;
+    }
+    .plan-box h3 {
+      font-size: 13px;
+      font-weight: 700;
+      color: #3a5070;
+      margin-bottom: 12px;
+    }
+    .plan-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: #5a6a7e;
+      padding: 5px 0;
+    }
+    .plan-row strong { color: #1a2e4a; font-weight: 700; }
+    .plan-divider { height: 1px; background: #dde4ef; margin: 8px 0; }
+    .plan-pilot {
+      background: #ebf8ff;
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin-top: 10px;
+      font-size: 12px;
+      color: #2b6cb0;
+      line-height: 1.5;
+    }
+
+    /* ── Note ────────────────────────────────────────── */
+    .note {
+      font-size: 11px;
+      color: #a0aec0;
+      text-align: center;
+      padding: 16px 0 28px;
+    }
+    .note strong { color: #718096; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <h1>Calculadora de Valor</h1>
+    <p>Consultorio Inteligente — ¿Cuánto puede ahorrar su centro?</p>
+  </div>
+  <div class="header-badge">Demo en vivo</div>
+</div>
+
+<div class="layout">
+
+  <!-- ══ COLUMNA IZQUIERDA: inputs ══ -->
+  <div>
+    <div class="card">
+      <div class="card-title">Datos de su centro médico</div>
+
+      <div class="input-block">
+        <div class="input-header">
+          <span class="input-name">Empleados que atienden WhatsApp / teléfono</span>
+          <span class="input-val" id="v-emp">3</span>
+        </div>
+        <div class="input-why">
+          Cantidad de recepcionistas o administrativos que dedican tiempo a responder consultas de turno. Incluí a todos los que tocan este canal.
+        </div>
+        <input type="range" id="i-emp" min="1" max="12" value="3" oninput="calc()">
+      </div>
+
+      <div class="input-block">
+        <div class="input-header">
+          <span class="input-name">Sueldo mensual promedio (USD)</span>
+          <span class="input-val">USD <span id="v-sueldo">350</span></span>
+        </div>
+        <div class="input-why">
+          Referencia de mercado para personal administrativo en Posadas (2026). Incluye cargas sociales aproximadas. Ajustá al valor real del centro.
+        </div>
+        <input type="number" id="i-sueldo" value="350" min="100" max="3000" step="50" oninput="calc()">
+      </div>
+
+      <div class="input-block">
+        <div class="input-header">
+          <span class="input-name">% del tiempo dedicado a gestión de turnos</span>
+          <span class="input-val" id="v-pct">60%</span>
+        </div>
+        <div class="input-why">
+          Estudios del sector salud en LATAM indican que el 40–65% del tiempo administrativo se destina a gestionar turnos: atender llamadas, responder WhatsApp, confirmar, cancelar y reprogramar.
+        </div>
+        <input type="range" id="i-pct" min="20" max="90" value="60" oninput="calc()">
+      </div>
+
+      <div class="input-block">
+        <div class="input-header">
+          <span class="input-name">Consultas de turno por día (WA + teléfono)</span>
+          <span class="input-val" id="v-msgs">120</span>
+        </div>
+        <div class="input-why">
+          Para un centro de 50 médicos, lo habitual son entre 80 y 200 consultas diarias. Cada "consulta" incluye el ida y vuelta completo hasta confirmar o cancelar un turno.
+        </div>
+        <input type="range" id="i-msgs" min="20" max="500" value="120" oninput="calc()">
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ COLUMNA DERECHA: resultados ══ -->
+  <div>
+
+    <!-- Situación actual -->
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-title">Situación actual — sin el sistema</div>
+      <div class="res-row">
+        <span class="res-label">Costo mensual en atención manual de turnos</span>
+        <span class="res-value val-red" id="o-costo-manual">—</span>
+      </div>
+      <div class="res-row">
+        <span class="res-label">Horas por mes dedicadas a gestión de turnos</span>
+        <span class="res-value val-red" id="o-horas">—</span>
+      </div>
+      <div class="res-row">
+        <span class="res-label">Consultas fuera de horario sin respuesta <small>(estimado)</small></span>
+        <span class="res-value val-red" id="o-fuera">—</span>
+      </div>
+      <div class="res-row">
+        <span class="res-label">Disponibilidad para los pacientes</span>
+        <span class="res-value val-gray">Lun–Vie 7:30–20 hs</span>
+      </div>
+    </div>
+
+    <!-- Con el sistema -->
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-title">Con Consultorio Inteligente</div>
+      <div class="res-row">
+        <span class="res-label">Consultas automatizadas por mes (70%)</span>
+        <span class="res-value val-green" id="o-auto">—</span>
+      </div>
+      <div class="res-row">
+        <span class="res-label">Horas liberadas por mes para otras tareas</span>
+        <span class="res-value val-green" id="o-hs-libres">—</span>
+      </div>
+      <div class="res-row">
+        <span class="res-label">Equivalente en días laborales recuperados</span>
+        <span class="res-value val-green" id="o-dias">—</span>
+      </div>
+      <div class="res-row">
+        <span class="res-label">Disponibilidad para los pacientes</span>
+        <span class="res-value val-green">24 / 7 — 365 días</span>
+      </div>
+    </div>
+
+    <!-- Ahorro neto -->
+    <div class="savings-box positive" id="savings-box">
+      <div class="big" id="o-ahorro">—</div>
+      <div class="unit">USD ahorro mensual neto</div>
+      <div class="sub" id="o-ahorro-sub">—</div>
+    </div>
+
+    <!-- ROI -->
+    <div class="roi-box">
+      <div class="big-roi" id="o-roi">—</div>
+      <div class="roi-label">meses para recuperar la inversión inicial</div>
+      <div style="height:12px"></div>
+      <div style="display:flex;justify-content:space-between;border-top:1px solid rgba(255,255,255,0.2);padding-top:12px">
+        <span style="font-size:13px;opacity:0.8">Ahorro total — primer año</span>
+        <span style="font-size:14px;font-weight:800" id="o-anual">—</span>
+      </div>
+    </div>
+
+    <!-- Plan -->
+    <div class="plan-box">
+      <h3>Plan recomendado: Centro Médico (16+ médicos)</h3>
+      <div class="plan-row">
+        <span>Costo mensual</span>
+        <strong>USD 380 / mes</strong>
+      </div>
+      <div class="plan-row">
+        <span>Setup e implementación (pago único)</span>
+        <strong>USD 700</strong>
+      </div>
+      <div class="plan-row">
+        <span>Implementación completa</span>
+        <strong>2–3 semanas</strong>
+      </div>
+      <div class="plan-row">
+        <span>Soporte mensual incluido</span>
+        <strong>✓</strong>
+      </div>
+      <div class="plan-divider"></div>
+      <div class="plan-pilot">
+        🎯 <strong>Oferta para primer cliente de referencia:</strong> Piloto 3 meses a USD 250/mes sin cobrar el setup. Al mes 4, precio normal.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<p class="note">
+  <strong>Nota metodológica:</strong> 70% de automatización (tasa conservadora de industria) · 7 min/interacción manual · 22 días hábiles/mes · 8 hs/día · 18% consultas fuera de horario.<br>
+  Los valores son estimaciones — ajustá los datos reales del centro para un cálculo preciso.
+</p>
+
+<script>
+  const SYSTEM_COST  = 380;
+  const SETUP_COST   = 700;
+  const AUTOMATION   = 0.70;
+  const MINS_PER_MSG = 7;
+  const WORK_DAYS    = 22;
+  const WORK_HRS     = 8;
+  const OFF_HOURS    = 0.18;
+
+  function fmt(n) {
+    return 'USD ' + Math.round(Math.abs(n)).toLocaleString('es-AR');
+  }
+
+  function calc() {
+    const emp    = +document.getElementById('i-emp').value;
+    const sueldo = +document.getElementById('i-sueldo').value || 0;
+    const pct    = +document.getElementById('i-pct').value / 100;
+    const msgs   = +document.getElementById('i-msgs').value;
+
+    // Update display values
+    document.getElementById('v-emp').textContent   = emp;
+    document.getElementById('v-sueldo').textContent = sueldo;
+    document.getElementById('v-pct').textContent    = Math.round(pct * 100) + '%';
+    document.getElementById('v-msgs').textContent   = msgs;
+
+    // ── Current situation ──
+    const costoManual = emp * sueldo * pct;
+    const horasManual = emp * WORK_HRS * WORK_DAYS * pct;
+    const fueraHorario = Math.round(msgs * OFF_HOURS * WORK_DAYS);
+
+    document.getElementById('o-costo-manual').textContent = fmt(costoManual) + '/mes';
+    document.getElementById('o-horas').textContent        = Math.round(horasManual) + ' hs/mes';
+    document.getElementById('o-fuera').textContent        = fueraHorario + ' consultas/mes';
+
+    // ── With system ──
+    const msgsMonth   = msgs * WORK_DAYS;
+    const autoMsgs    = Math.round(msgsMonth * AUTOMATION);
+    const hsLibres    = Math.round(autoMsgs * MINS_PER_MSG / 60);
+    const diasLibres  = (hsLibres / WORK_HRS).toFixed(1);
+
+    document.getElementById('o-auto').textContent    = autoMsgs.toLocaleString() + ' consultas';
+    document.getElementById('o-hs-libres').textContent = hsLibres + ' hs/mes';
+    document.getElementById('o-dias').textContent    = diasLibres + ' días laborales';
+
+    // ── Savings ──
+    const ahorro = costoManual - SYSTEM_COST;
+    const anual  = ahorro * 12 - SETUP_COST;
+    const roi    = ahorro > 0 ? (SETUP_COST / ahorro).toFixed(1) : '—';
+
+    const box = document.getElementById('savings-box');
+    if (ahorro >= 0) {
+      box.className = 'savings-box positive';
+      document.getElementById('o-ahorro').textContent    = fmt(ahorro);
+      document.getElementById('o-ahorro-sub').textContent = fmt(costoManual) + '/mes costo actual  −  ' + fmt(SYSTEM_COST) + '/mes sistema';
+    } else {
+      box.className = 'savings-box negative';
+      document.getElementById('o-ahorro').textContent    = '−' + fmt(ahorro);
+      document.getElementById('o-ahorro-sub').textContent = 'Ajustá los valores para reflejar la realidad del centro';
+    }
+
+    document.getElementById('o-roi').textContent   = roi;
+    document.getElementById('o-anual').textContent = (anual >= 0 ? '' : '−') + fmt(anual);
+  }
+
+  calc();
+</script>
+</body>
+</html>
