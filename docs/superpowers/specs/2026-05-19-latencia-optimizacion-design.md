@@ -149,31 +149,30 @@ En mensajes subsiguientes, si `ctx.pacienteCache` existe y el estado no es `inic
 
 ## Fase B — Detalle
 
+**Decisión de alcance:** El proyecto actual de Supabase (`xorjkjaimeampfdiichs`, us-east-1) tiene tablas de múltiples sistemas (Content Engine, reels, leads, AlPunto, etc.). Solo migramos las tablas `consultorio_*`. El resto queda en el proyecto actual sin cambios.
+
+Para no tocar los otros workflows, se usan **env vars nuevas** en n8n (`CONSULTORIO_SUPABASE_URL` + `CONSULTORIO_SUPABASE_KEY`) en lugar de reemplazar las existentes.
+
 ### B1. Crear nuevo proyecto Supabase
 
 - Región: **sa-east-1 (South America - São Paulo)**
-- Nombre sugerido: `Consultorio Inteligente` (o mantener `Nuevo proyecto Multiagente`)
-- Anotar: nuevo `SUPABASE_URL` y `SUPABASE_SERVICE_KEY`
+- Nombre: `Consultorio Inteligente`
+- Anotar: nuevo proyecto URL y keys (anon + service role)
 
 ### B2. Aplicar schema + índices
 
-Extraer DDL del proyecto actual vía `execute_sql`:
+Extraer DDL del proyecto actual vía MCP `execute_sql` y aplicar al nuevo proyecto en orden (respetando foreign keys):
 
-```sql
-SELECT 'CREATE TABLE ...' -- pg_dump style DDL para cada tabla consultorio_*
-```
-
-Aplicar al nuevo proyecto en orden (respetando foreign keys):
-1. Tablas base: `consultorio_profesionales`, `consultorio_pacientes`
+1. Tablas base (sin FK entrantes): `consultorio_profesionales`, `consultorio_pacientes`
 2. Tablas dependientes: `consultorio_conversaciones`, `consultorio_turnos`, `consultorio_horarios_profesional`, `consultorio_waitlist`, `consultorio_feedback`, `consultorio_mensajes`, `consultorio_configuracion`, `consultorio_campanas`, `consultorio_campana_envios`, `consultorio_adelanto_ofertas`, `consultorio_bloqueos`
-3. Índices: todos los `idx_*` actuales + `idx_pacientes_telefono` (ya aplicado en Fase A)
-4. RLS policies: replicar exactas del proyecto actual
+3. Índices: todos los `idx_*` actuales + `idx_pacientes_telefono` (ya aplicado en Fase A sobre proyecto viejo — reaplicar en nuevo)
+4. RLS policies: extraer del proyecto actual y replicar exactas
 
 ### B3. Migrar datos
 
-Via `execute_sql`: exportar cada tabla como INSERT batch e importar al nuevo proyecto. Orden respetando foreign keys (mismo que B2).
+Via MCP `execute_sql`: exportar cada tabla como INSERT batch e importar al nuevo proyecto. Orden respetando foreign keys (mismo que B2).
 
-Tablas con datos a migrar (estado actual):
+Tablas con datos a migrar:
 - `consultorio_profesionales` — 5 filas
 - `consultorio_pacientes` — 22 filas
 - `consultorio_conversaciones` — 31 filas
@@ -182,22 +181,41 @@ Tablas con datos a migrar (estado actual):
 - `consultorio_mensajes` — 129 filas
 - `consultorio_configuracion` — 1 fila
 - `consultorio_campana_envios` — 16 filas
-- Resto de tablas: 0 filas (skip)
+- Resto de tablas consultorio_*: 0 filas (solo schema, sin datos)
 
-### B4. Actualizar env vars — ventana de downtime (~3 min)
+### B4. Actualizar código de workflows consultorio
 
-**EasyPanel → n8n → Environment Variables:**
+Los workflows actualmente usan `$env.SUPABASE_URL` / `$env.SUPABASE_SERVICE_KEY`. Hay que cambiarlos a las nuevas vars `CONSULTORIO_SUPABASE_URL` / `CONSULTORIO_SUPABASE_KEY`.
+
+Workflows a actualizar (2 líneas al inicio de cada uno):
+| Workflow | Archivo local | Cambio |
+|---|---|---|
+| WF02 | `C:/Users/noyag/wf02_code.js` | `$env.SUPABASE_URL` → `$env.CONSULTORIO_SUPABASE_URL` (línea 8) y `$env.SUPABASE_SERVICE_KEY` → `$env.CONSULTORIO_SUPABASE_KEY` (línea 9) |
+| WF01 | inline n8n | mismo reemplazo en nodo "3. Extraer Mensaje" si referencia Supabase |
+| WF05 | `C:/Users/noyag/wf05_new.js` | mismo reemplazo |
+| WF08 | `C:/Users/noyag/wf08_code.js` | mismo reemplazo |
+| WF09 | `C:/Users/noyag/wf09-code.js` | mismo reemplazo |
+| WF-CUMPLEANOS | `C:/Users/noyag/wf_cumpleanos_code.js` | mismo reemplazo |
+| WF-REACTIVACION | `C:/Users/noyag/wf_reactivacion_code.js` | mismo reemplazo |
+| WF-CAMPANAS | `C:/Users/noyag/wf_campanas_code.js` | mismo reemplazo |
+| WF-DASH-* | inline n8n | mismo reemplazo en cada nodo Code |
+
+### B5. Agregar env vars en EasyPanel + ventana de downtime (~3 min)
+
+**EasyPanel → n8n → Environment Variables (AGREGAR, no reemplazar):**
+| Variable nueva | Valor |
+|---|---|
+| `CONSULTORIO_SUPABASE_URL` | URL del nuevo proyecto sa-east-1 |
+| `CONSULTORIO_SUPABASE_KEY` | Service role key del nuevo proyecto |
+
+Las vars `SUPABASE_URL` y `SUPABASE_SERVICE_KEY` **permanecen sin cambios** — siguen siendo usadas por Content Engine, reels y demás.
+
+**EasyPanel → dashboard Next.js → Environment Variables (actualizar valores):**
+
+El dashboard solo sirve consultorio, así que los valores cambian pero los nombres de vars no:
 | Variable | Valor nuevo |
 |---|---|
-| `SUPABASE_URL` | URL del nuevo proyecto sa-east-1 |
-| `SUPABASE_SERVICE_KEY` | Service role key del nuevo proyecto |
-
-Cubren automáticamente todos los workflows (WF01, WF02, WF05, WF08, WF09, WF-CUMPLEANOS, WF-REACTIVACION, WF-CAMPANAS, WF-MONTHLY-REPORT, WF-DASH-*).
-
-**EasyPanel → dashboard Next.js → Environment Variables:**
-| Variable | Valor nuevo |
-|---|---|
-| `NEXT_PUBLIC_SUPABASE_URL` | URL del nuevo proyecto |
+| `NEXT_PUBLIC_SUPABASE_URL` | URL del nuevo proyecto sa-east-1 |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Anon key del nuevo proyecto |
 | `SUPABASE_SERVICE_ROLE_KEY` | Service role key del nuevo proyecto |
 
@@ -206,17 +224,23 @@ Después de actualizar: reiniciar el servicio de dashboard en EasyPanel.
 **Supabase Auth (nuevo proyecto):**
 - Site URL: `https://nexo-terra-consultorio-rivadavia-dashboard.6fwciw.easypanel.host`
 - Redirect URLs: mismas que el proyecto actual
+- Recrear usuario de acceso al dashboard (sign up con el mismo email — los datos están en Auth del proyecto viejo, no en tabla pública)
 
-### B5. Validar
+### B6. Desplegar workflows actualizados
+
+Después de agregar las env vars en EasyPanel, deployar todos los workflows modificados en B4 vía n8n API. Orden: WF02 primero (ya tiene deploy script), el resto vía PUT manual o scripts equivalentes.
+
+### B7. Validar
 
 1. Enviar mensaje de WhatsApp al bot de demo → verificar respuesta correcta
-2. Login al dashboard → verificar autenticación funciona
-3. Verificar un turno existente aparece en el dashboard
+2. Login al dashboard con el usuario recreado → verificar autenticación
+3. Verificar que un turno existente aparece en el dashboard
 4. Revisar n8n execution logs → 0 errores Supabase
+5. Verificar que los otros workflows (Content Engine, reels) siguen funcionando con el proyecto viejo
 
 ### Rollback Fase B
 
-Si algo falla: revertir `SUPABASE_URL` y `SUPABASE_SERVICE_KEY` al valor anterior en EasyPanel. El bot vuelve al proyecto viejo en ~1 minuto. Proyecto viejo permanece activo 48h antes de eliminarlo.
+Si algo falla antes de completar B6: no hay nada que revertir — el código viejo sigue apuntando a `SUPABASE_URL` (proyecto viejo). Si falla después de deployar: revertir los workflows a sus versiones anteriores (el código viejo no usa `CONSULTORIO_SUPABASE_URL`). Proyecto viejo permanece activo indefinidamente (no se elimina hasta confirmar estabilidad en producción por al menos 1 semana).
 
 ---
 
@@ -254,5 +278,7 @@ Resultado esperado: de ~2-3 segundos actuales → **~1-1.5 segundos**. Competiti
 | `C:/Users/noyag/wf02_code.js` | A2 + A3 + A4 |
 | Supabase proyecto actual | A1 (índice) |
 | Supabase proyecto nuevo (sa-east-1) | Schema + datos completos |
-| EasyPanel n8n env vars | SUPABASE_URL + SUPABASE_SERVICE_KEY |
-| EasyPanel dashboard env vars | NEXT_PUBLIC_SUPABASE_URL + anon key + service key |
+| Supabase proyecto nuevo (sa-east-1) | Schema + datos consultorio_* solamente |
+| EasyPanel n8n env vars | AGREGAR: CONSULTORIO_SUPABASE_URL + CONSULTORIO_SUPABASE_KEY (no tocar SUPABASE_URL) |
+| EasyPanel dashboard env vars | NEXT_PUBLIC_SUPABASE_URL + anon key + service key (actualizar valores) |
+| WF01/05/08/09/WF-CUMPLEANOS/WF-REACTIVACION/WF-CAMPANAS/WF-DASH-* | Reemplazar $env.SUPABASE_URL → CONSULTORIO_SUPABASE_URL en cada nodo Code |
