@@ -1,6 +1,6 @@
 # Sofía Vendedora — Design
 
-**Goal:** Sofía (Vapi) actúa como cerradora de ventas cuando Carlos la llama estando con un prospecto. Carlos la briefea en voz, pasa el teléfono, y Sofía cierra la venta con los datos del prospecto.
+**Goal:** Sofía (Vapi) actúa como cerradora de ventas cuando Carlos la llama estando con un prospecto. Sofía ya sabe quién es el prospecto (carga automática desde la sesión demo), va directo a resolver dudas y cierra.
 
 **The close:** El prospecto está siendo convencido por el mismo producto que está comprando. Al final Carlos dice: "Eso que acabás de vivir — eso es lo que van a vivir tus pacientes."
 
@@ -11,52 +11,63 @@
 | Paso | Herramienta | Qué pasa |
 |------|-------------|----------|
 | 1. Cargar datos | Dashboard `/dashboard/demos` | Carlos crea sesión DEMO-XXXX con datos del prospecto |
-| 2. Demo WhatsApp | Bot WF02 con código DEMO-XXXX | Prospecto experimenta el sistema, bot cierra con ROI |
-| 3. Llamada Sofia | Vapi — modo vendedora | Carlos briefea a Sofia, pasa el teléfono, Sofia cierra |
+| 2. Demo WhatsApp | Bot WF02 con código DEMO-XXXX | Prospecto experimenta el sistema, bot muestra ROI |
+| 3. Llamada Sofía | Vapi — modo vendedora | Carlos llama, Sofía ya tiene el contexto, pasa el teléfono, Sofía cierra |
 
-*Pasos 1 y 2 ya están especificados en `2026-05-20-demo-cierre-comercial-design.md`. Este spec cubre solo el paso 3.*
+*Pasos 1 y 2 están especificados en `2026-05-20-demo-cierre-comercial-design.md`. Este spec cubre el paso 3.*
+
+---
+
+## Infraestructura de llamadas
+
+**Flujo actual (Zadarma eliminado):**
+```
+Tel personal → Twilio → Vapi → Sofía
+```
+Carlos llama al número Twilio que apunta directamente a Vapi. Zadarma ya no existe en el stack.
 
 ---
 
 ## Flujo detallado — Paso 3
 
-### Carlos briefea a Sofía
+### Carga automática del contexto
 
-Carlos llama al número de Sofía (Zadarma +541150328146 → Vapi). Al conectar, dice algo como:
+Cuando entra una llamada a Sofía, WF09 recibe el evento `call-start` y ejecuta automáticamente una query a `consultorio_demo_sessions` buscando la sesión más reciente con `estado = 'activo'`. Retorna los datos del prospecto al assistant como contexto inicial.
 
-> "Sofía, estoy con Javier, tiene una clínica con 20 turnos por día y 4 médicos. Te lo voy a pasar."
+**No hay fase de briefing verbal.** Carlos llama, pasa el teléfono a Javier. Punto.
 
-O con el código demo:
+Si WF09 no encuentra sesión activa (edge case), Sofía opera sin datos y pregunta el nombre del prospecto al inicio.
 
-> "Sofía, modo presentación, código DEMO-A7K3, te paso a Javier."
+### Sofía con el prospecto
 
-**Sofía detecta** que Carlos la está briefeando (no es un paciente llamando). Extrae:
-- Nombre del prospecto (obligatorio)
-- Nombre de la clínica (opcional)
-- Turnos por día (opcional, para el ROI)
-- Código DEMO-XXXX (opcional, para fetchear datos completos desde Supabase)
+Carlos pasa el teléfono. Sofía va directo:
 
-**Sofía responde a Carlos** en max 2 oraciones:
+**1. Apertura** (ya sabe el nombre):
+> "¡Hola Javier! ¿Qué te pareció la demo que te mostró el sistema por WhatsApp? ¿Te quedó alguna duda?"
 
-> "Entendido, tengo los datos de Javier y Clínica San Martín. Cuando me lo pasés arranco."
+El ROI ya lo vio en la demo de WhatsApp — Sofía no lo repite. Ataca desde las dudas.
 
-### Prospecto habla con Sofía
+**2. Modo preguntas / dudas:**
+- Responde cualquier pregunta técnica del sistema con autoridad total
+- Sabe todo: bot de WhatsApp, recordatorios, lista de espera, obras sociales, dashboard, campañas, reactivación de pacientes dormidos
+- Si falta algún dato del prospecto (clínica, turnos), lo pregunta naturalmente en la conversación
 
-Carlos pasa el teléfono. Sofía:
+**3. El pitch vivo:**
+Sofía puede mostrar lo que hace EN LA MISMA LLAMADA:
+> "Si querés, puedo mostrarte cómo transferiría una llamada de un paciente urgente — es exactamente lo que haría en tu consultorio."
 
-1. **Saluda** por nombre: *"¡Hola Javier! Soy Sofía, la asistente de Consultorio Inteligente. Carlos me contó un poco de tu clínica."*
+Esto es la demostración definitiva: el prospecto experimenta la IA en tiempo real.
 
-2. **Valida el contexto** (una sola pregunta de confirmación si falta info): *"¿Tienen más o menos 20 turnos por día, no?"*
+**4. Precio:**
+> "Para los números de precio y los detalles del setup, Carlos te puede hablar mejor que yo — él conoce los distintos planes según el volumen del consultorio."
+Nunca da precio. Siempre deriva a Carlos.
 
-3. **Responde preguntas técnicas** con autoridad. Sabe todo sobre el sistema: cómo funciona el bot de WhatsApp, los recordatorios, la lista de espera, la integración con obras sociales, el dashboard, las campañas.
+**5. Cierre:**
+> "¿Tiene sentido esto para [nombre de la clínica]?"
 
-4. **Presenta el ROI** si tiene los datos de turnos/día. Usa la misma fórmula: `turnos_dia × 22 × 0.15 × 0.80 × $45.000 = $/mes recuperados`.
+Si interés confirmado: *"Carlos, creo que Javier está listo para los próximos pasos."* — devuelve el control.
 
-5. **Cierre:** *"¿Tiene sentido esto para [nombre de la clínica]?"* — pregunta abierta, no de sí/no.
-
-6. **En interés confirmado:** *"Carlos, creo que Javier está listo para arrancar."* — devuelve el control a Carlos.
-
-7. **En dudas persistentes:** responde hasta 3 objeciones, luego: *"Creo que lo mejor es que Carlos te cuente los detalles del proceso de setup. Él puede explicarte los tiempos y costos mejor que yo."*
+Si dudas persistentes (más de 3 objeciones): *"Las preguntas que tenés son muy buenas para hablarlas con Carlos directamente — él puede mostrarte el proceso de setup y los tiempos reales."*
 
 ---
 
@@ -64,72 +75,65 @@ Carlos pasa el teléfono. Sofía:
 
 | Objeción | Respuesta de Sofía |
 |----------|-------------------|
-| "¿Cuánto cuesta?" | "Eso lo define Carlos según el volumen de tu consultorio. Lo que sí te puedo decir es que en promedio el sistema se paga en el primer mes con los turnos que recupera." |
-| "¿Y si los pacientes no quieren hablar con una IA?" | "Buena pregunta. La mayoría de los pacientes no saben que están hablando con un sistema — perciben que es la secretaria del consultorio. Y si prefieren hablar con una persona, el sistema los deriva automáticamente." |
-| "Ya tenemos un sistema" | "¿Manejan las confirmaciones de turnos de forma automática? ¿Y la reactivación de pacientes que no vienen hace meses?" — explora el gap. |
-| "Necesito pensarlo" | "Claro, es una decisión importante. ¿Qué es lo que más te genera dudas — el precio, la implementación, o cómo va a funcionar con tus pacientes?" |
-| "¿Cuánto tiempo lleva implementar?" | "El setup inicial lleva entre 2 y 4 horas. Al día siguiente ya está atendiendo. Carlos te puede contar el proceso exacto." |
+| "¿Cuánto cuesta?" | "Para los números te habla Carlos — lo que sí te digo es que el sistema en promedio se paga en el primer mes con los turnos que recupera." |
+| "¿Los pacientes van a aceptar hablar con una IA?" | "La mayoría no sabe que es un sistema — perciben que es la asistente del consultorio. Y si alguien prefiere hablar con una persona, el sistema los deriva automáticamente. Como ahora mismo, que Carlos está ahí con vos." |
+| "Ya tenemos un sistema de turnos" | "¿El sistema les manda recordatorios automáticos 24 horas antes? ¿Y reactiva pacientes que no vienen hace meses sin que la secretaria tenga que hacer nada?" |
+| "Necesito pensarlo" | "Claro, ¿qué es lo que más te genera duda — la implementación, cómo lo van a vivir tus pacientes, o algo del sistema en sí?" |
+| "¿Cuánto lleva implementar?" | "Entre 2 y 4 horas el setup inicial. Al día siguiente ya está atendiendo. Carlos te puede contar el proceso exacto." |
+| "¿Y si falla?" | "El sistema tiene alertas automáticas — si algo no funciona, Carlos lo sabe antes que vos. Y siempre hay un humano como respaldo cuando el sistema no puede resolver algo." |
 
 ---
 
 ## Lo que cambia técnicamente
 
-### 1. Prompt del assistant Sofía (Vapi) — cambio principal
+### 1. WF09 — carga automática del contexto en `call-start`
 
-Agregar una nueva sección al system prompt:
+WF09 ya maneja el webhook de Vapi. Agregar handler para el evento `type: 'assistant-request'` (o `call-start`) que:
+1. Query a `consultorio_demo_sessions` WHERE `estado = 'activo'` ORDER BY `created_at DESC` LIMIT 1
+2. Si encontrado: retorna `assistantOverrides` con el nombre del prospecto y datos del consultorio inyectados en el prompt
+3. Si no encontrado: retorna sin overrides (Sofía opera en modo normal)
+
+Alternativa más simple: nueva tool `obtenerContextoDemo` que Sofía llama automáticamente al inicio de cada llamada (configurada como `firstMessage` trigger en el prompt).
+
+### 2. Prompt del assistant Sofía (Vapi) — sección MODO VENDEDORA
 
 ```
 ## MODO VENDEDORA
 
-Cuando detectés que Carlos te está briefeando (dice tu nombre + datos de un prospecto + que te va a pasar el teléfono), respondé con lo siguiente:
-1. Confirmá que entendiste los datos del prospecto en UNA oración.
-2. Decí que estás lista para recibirlo.
-3. NO hagas preguntas a Carlos — solo confirmá y esperá.
+Al inicio de cada llamada, si tenés datos de un prospecto cargados (nombre, clínica, turnos/día), estás en modo vendedora. Aplicá estas reglas:
 
-Cuando el prospecto tome el teléfono:
-- Saludalo por su nombre de inmediato.
-- Presentate como asistente de Consultorio Inteligente.
-- Mencioná que Carlos te contó un poco sobre su clínica.
-- Respondé sus preguntas con autoridad. Sos la experta en el sistema.
-- Si pregunta por precio: nunca des un número, derivá a Carlos.
-- Si pregunta cómo arrancar: derivá a Carlos.
-- Calculá y presentá el ROI si tenés los datos de turnos por día.
-- Cuando el prospecto esté convencido o haya dicho "me interesa" o similar: decí "Carlos, creo que [NOMBRE] está listo para arrancar" para que Carlos retome.
-- Máximo 3 objeciones respondidas. A la 4ta: derivá a Carlos.
+APERTURA: Saludá al prospecto por su nombre de inmediato. Preguntá qué le pareció la demo de WhatsApp y qué dudas le quedaron. NO repitas el ROI — ya lo vio.
 
-Señales de que es Carlos hablando (no un paciente):
-- Menciona tu nombre "Sofía" al inicio de la llamada
-- Dice "modo presentación", "modo venta", "te paso a", "estoy con"
-- Dice un código del estilo "DEMO-XXXX"
-- El contexto es de una reunión comercial, no de un turno médico
+FOCO: Tu trabajo es resolver dudas técnicas y objeciones, no hacer un pitch nuevo. El prospecto ya vio el sistema funcionar. Ahora necesita que le transmitas seguridad.
+
+DEMOSTRACIÓN EN VIVO: Si el contexto lo permite, mostrá lo que podés hacer — ofrecerte a simular una transferencia de llamada urgente, explicar cómo sonaría el saludo para su consultorio, etc.
+
+PRECIO: Nunca des números de precio. Siempre: "Para eso está Carlos — él maneja los planes según cada caso."
+
+CIERRE: Cuando el prospecto muestre interés o diga algo como "me convence" / "qué hay que hacer": decí "Carlos, creo que [NOMBRE] está listo para los próximos pasos" — devolvés el control explícitamente.
+
+LÍMITE DE OBJECIONES: Máximo 3 objeciones respondidas. A la cuarta: derivá a Carlos.
+
+SI FALTA EL NOMBRE: preguntalo naturalmente al inicio ("¿Con quién tengo el gusto?") antes de continuar.
 ```
-
-### 2. WF09 — tool opcional `cargarSesionDemo`
-
-*Solo si se implementa el código DEMO como briefing.*
-
-Nueva tool en Vapi + handler en WF09:
-- Input: `{ code: "DEMO-A7K3" }`
-- Acción: fetch de `consultorio_demo_sessions` WHERE `code = $code` AND `estado = 'activo'`
-- Output: `{ clinic_name, turnos_dia, profesionales, admin_name }` o error si no encontrado
-- Sofía usa los datos retornados para personalizar el pitch
-
-Esta tool es **opcional para MVP**. Si Carlos prefiere decirle los datos de voz, no hace falta.
 
 ---
 
 ## Decisiones
 
-- **Detección del briefing por LLM, no por regex:** la variedad de frases que Carlos puede usar es alta. Es más robusto dejar que el LLM entienda el contexto de la llamada que parsear con reglas fijas.
-- **Precio siempre derivado a Carlos:** Sofía nunca da números de precio. Evita comprometer a Carlos en una oferta específica.
-- **Cierre explícito "Carlos, [nombre] está listo":** marca el momento exacto para que Carlos retome el control sin awkwardness.
-- **Máx 3 objeciones:** evita que Sofía se quede en bucle. Si el prospecto tiene muchas dudas, Carlos cierra mejor en persona.
-- **Tool `cargarSesionDemo` es opcional:** el MVP funciona 100% con briefing de voz.
+- **Carga automática, no verbal:** Carlos no tiene que decir nada — la sesión demo ya está en Supabase. WF09 la fetchea al inicio de la llamada. Cero fricción para Carlos.
+- **ROI no se repite:** el prospecto ya lo vio en WhatsApp. Repetirlo sería redundante y restaría impacto. Sofía ataca las dudas que quedaron.
+- **Zadarma eliminado:** flujo es Twilio → Vapi directo.
+- **Precio siempre a Carlos:** evita comprometer precios específicos.
+- **Demostración en vivo:** Sofía puede mostrar lo que hace MIENTRAS habla. Es el argumento más poderoso — el prospecto lo vive.
+- **Cierre explícito verbal:** "Carlos, [nombre] está listo" — marca el momento sin awkwardness para que Carlos retome.
 
 ---
 
 ## MVP (implementable en 30 min)
 
-Solo el item 1: actualizar el system prompt del assistant `1f39b10f-72e9-4185-84e4-95a884b49436` con la sección MODO VENDEDORA. PATCH vía Vapi API. Sin WF09, sin backend, sin dashboard.
+Solo el prompt — sin WF09 todavía. Sofía opera sin carga automática de datos: si Carlos dice el nombre al pasar el teléfono o el prospecto se presenta, Sofía lo toma del audio.
 
-**Script:** `C:/Users/noyag/fix_sofia_v2.js` ya tiene el patrón de PATCH al assistant — es el mismo mecanismo.
+**Siguiente paso (1-2 horas):** WF09 handler `call-start` + tool `obtenerContextoDemo` para la carga automática desde Supabase.
+
+**Script de deploy:** `C:/Users/noyag/fix_sofia_v2.js` — mismo patrón PATCH al assistant `1f39b10f-72e9-4185-84e4-95a884b49436`.
