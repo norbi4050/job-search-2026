@@ -150,26 +150,26 @@ Inmediatamente después del mensaje "Esto es lo que pasa automáticamente...":
 **Mensaje texto — ROI personalizado:**
 
 ```
-📊 *Lo que esto significa para [clínica]:*
+📊 *Lo que pasa hoy en tu clínica:*
 
-🔴 Hoy estás perdiendo:
-• [noshows_mes] turnos por mes por no-shows
-• $[roi_noshows] pesos que no ingresan — todos los meses
+• Turnos por mes: [turnos_mes]
+• No-shows estimados (15%): [noshows_mes] turnos que se pierden
+• Ingreso que no llega: $[roi_noshows]/mes
 
 💼 Tu secretaria dedica ~40% de su tiempo a llamar, confirmar y recordar turnos manualmente.
 
-✅ Con el sistema:
-• Recuperamos [recuperados_mes] turnos por mes (ROI: $[roi_noshows])
-• Tu secretaria se libera del teléfono (ahorro: $[ahorro_admin]/mes)
+✅ *Lo que cambia con el sistema:*
+• [recuperados_mes] turnos recuperados por mes ($[roi_noshows])
+• Tu secretaria se libera del teléfono ($[ahorro_admin]/mes en tiempo recuperado)
 
-💰 *Total recuperado: $[roi_total]/mes*
+💰 *Impacto estimado: $[roi_total]/mes*
 ```
 
 ---
 
 **Audio de Sofía — script de cierre (framework PAS: Pain → Agitate → Solve):**
 
-> "Hola. Lo que acabás de ver no es solo un sistema de turnos. Cada mes, sin saberlo, tu clínica está perdiendo [noshows_mes] consultas. Pacientes que confirmaron, que tenían turno, que no aparecieron — y nadie los llamó, nadie los reactivó. A [precio_consulta] pesos por consulta, eso son $[roi_noshows] pesos que se van solos, todos los meses. Y además, tu secretaria está dedicando casi la mitad de su día a atender el teléfono, confirmar turnos, mandar recordatorios a mano — cuando podría estar con los pacientes. El sistema lo hace todo eso solo. Confirma, recuerda, llena huecos en la agenda, reactiva pacientes que no vienen hace meses. Las veinticuatro horas, los siete días de la semana. El primer mes que lo tenés, los números que te acabo de mostrar ya cubrieron el costo. Para arrancar, solo tenés que hablar con Carlos."
+> "Hola. Lo que acabás de ver no es solo un sistema de turnos. Cada mes, sin saberlo, tu clínica está perdiendo [noshows_mes] consultas. Pacientes que confirmaron, que tenían turno, que no aparecieron — y nadie los llamó, nadie los reactivó. A [precio_consulta] pesos por consulta, eso son $[roi_noshows] pesos que se van solos, todos los meses. Y además, tu secretaria está dedicando casi la mitad de su día a atender el teléfono, confirmar turnos, mandar recordatorios a mano — cuando podría estar con los pacientes, o siendo más efectiva en otras áreas del consultorio. El sistema hace todo eso solo. Confirma, recuerda, llena huecos en la agenda, reactiva pacientes que no vienen hace meses. Las veinticuatro horas, los siete días de la semana. Los números que te acabo de mostrar son los tuyos — calculados con los datos de tu clínica. Para saber cómo arrancar, hablás con Carlos."
 
 *Nota: script estudiado sobre el framework PAS (Pain-Agitate-Solve). Cada frase tiene propósito: Pain identifica el problema conocido, Agitate lo hace doler con números reales del prospecto, Solve ofrece la salida.*
 
@@ -216,6 +216,7 @@ Al recibir llamada entrante:
 - Puede demostrar en vivo: *"¿Querés escuchar cómo sonaría el saludo para tu consultorio?"*
 - Precio: derivar siempre a Carlos
 - Máximo 3 objeciones. A la 4ta: *"Carlos te puede responder eso mejor que yo — él tiene todos los detalles."*
+- Fuera de contexto (pregunta que Sofía no puede responder con seguridad): *"Eso es algo que Carlos te puede explicar mucho mejor que yo."* No inventar datos ni comprometerse con información que no tiene.
 
 **Cierre:** *"¿Tiene sentido esto para [clínica]?"*
 
@@ -227,7 +228,7 @@ Interés confirmado: *"Carlos, creo que [nombre] está listo para los próximos 
 
 | Objeción | Respuesta |
 |----------|-----------|
-| "¿Cuánto cuesta?" | "Para los números te habla Carlos — lo que sí te puedo decir es que el ROI que ya calculamos con tus datos reales cubre el costo desde el primer mes." |
+| "¿Cuánto cuesta?" | "Para los números te habla Carlos — él maneja los planes según cada caso. Lo que sí te puedo mostrar es el impacto que calculamos con tus datos reales." |
 | "Los pacientes no van a querer hablar con una IA" | "La mayoría no sabe que es un sistema — perciben que es la asistente del consultorio. Si alguien prefiere hablar con una persona, el sistema los deriva automáticamente. ¿Querés probar? Puedo mostrarte cómo sonaría el saludo para tu clínica ahora mismo." |
 | "Ya tenemos sistema de turnos" | "¿Mandan recordatorios automáticos 24hs antes? ¿Y reactivan pacientes que no vienen hace meses sin que la secretaria haga nada?" |
 | "Necesito pensarlo" | "Claro. ¿Qué es lo que más te genera duda — la implementación, cómo lo van a vivir tus pacientes, o algo del sistema en sí?" |
