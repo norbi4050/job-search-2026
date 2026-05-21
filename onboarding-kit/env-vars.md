@@ -1,0 +1,41 @@
+# Env Vars de n8n (EasyPanel) — Consultorio Inteligente
+
+Lista de claves (sin valores — ver EasyPanel para los valores reales):
+
+## WhatsApp / Meta
+- META_WHATSAPP_TOKEN
+- WA_PHONE_NUMBER_ID
+
+## AI
+- ANTHROPIC_API_KEY
+- ELEVENLABS_API_KEY
+- ELEVENLABS_VOICE_ID
+
+## Supabase
+- CONSULTORIO_SUPABASE_URL
+- CONSULTORIO_SUPABASE_KEY
+- SUPABASE_URL
+- SUPABASE_SERVICE_KEY
+
+## Consultorio
+- CONSULTORIO_NOMBRE
+- CONSULTORIO_DIRECCION
+- CONSULTORIO_HORARIO
+- CONSULTORIO_TELEFONO
+- CONSULTORIO_WA_NUMBER
+- CONSULTORIO_OBRAS_SOCIALES
+- CONSULTORIO_PRECIO_PARTICULAR
+- CONSULTORIO_MAPS_LINK
+- CONSULTORIO_GOOGLE_REVIEWS_URL
+
+## Sistema de Ventas
+- CARLOS_WA_NUMBER  (= 541130875304)
+
+## Infra
+- WEBHOOK_URL
+- N8N_HOST
+
+## Hardcodeados en código (registrar aquí por referencia)
+- TELEGRAM BOT TOKEN: en wf02_code.js / wf09-code.js
+- TELEGRAM CHAT ID: en wf02_code.js / wf09-code.js
+- VAPI SECRET KEY: en wf09-code.js (NT2026-vapi-s3cur3-k3y)
